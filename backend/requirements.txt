@@ -1,0 +1,11 @@
+fastapi==0.116.1
+uvicorn==0.35.0
+pydantic==2.9.2
+pyjwt==2.9.0
+motor==3.6.0
+pymongo==4.9.0
+asyncpg==0.30.0
+slowapi==0.1.9
+python-dotenv==1.0.1
+loguru==0.7.2
+httpx==0.28.1 

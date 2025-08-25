@@ -1,0 +1,18 @@
+2025-07-20 15:36:13.162 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: password authentication failed for user "postgres"
+2025-07-20 15:36:17.722 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: password authentication failed for user "postgres"
+2025-07-20 15:47:21.521 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: password authentication failed for user "postgres"
+2025-07-20 15:47:55.957 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: password authentication failed for user "postgres"
+2025-07-20 15:49:14.825 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: password authentication failed for user "postgres"
+2025-07-20 20:30:10.668 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: password authentication failed for user "postgres"
+2025-07-27 21:08:44.440 | ERROR    | main:test_analyze:162 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-07-27 21:11:01.635 | ERROR    | main:test_analyze:164 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-07-27 21:11:20.058 | ERROR    | main:test_analyze:164 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-07-27 21:11:49.136 | ERROR    | main:test_analyze:164 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-07-27 21:12:44.674 | ERROR    | main:test_analyze:165 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2025-07-27 21:13:22.609 | ERROR    | main:test_analyze:165 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
