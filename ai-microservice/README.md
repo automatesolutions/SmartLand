@@ -9,7 +9,10 @@ The AI microservice implements the proprietary **GeoTrendSync algorithm** for Ph
 - **Price Prediction**: XGBoost-based model for accurate PHP/sqm predictions
 - **Growth Scoring**: K-Means clustering for investment category classification
 - **Philippine-Specific Features**: Typhoon risk, proximity to amenities, economic indicators
-- **NLP Analysis**: News sentiment and infrastructure development detection
+- **NLP Analysis**: 
+  - spaCy for entity extraction (locations, organizations)
+  - Transformers pipeline for sentiment analysis
+  - News text analysis for infrastructure development detection
 
 ### 📊 Data Sources
 - **OpenStreetMap (OSM)**: Geospatial data for amenities, roads, land use
@@ -44,8 +47,10 @@ python -m spacy download en_core_web_sm
 
 ### 4. Run the Service
 ```bash
-uvicorn main:app --reload --port 8000
+uvicorn geotrend:app --reload --port 8000
 ```
+
+**Note**: The service uses `geotrend.py` as the main application file. On first run, models will be automatically trained and saved to the `models/` directory.
 
 ## API Endpoints
 
@@ -93,6 +98,16 @@ Health check endpoint.
 ### GET /models/info
 Information about loaded ML models.
 
+**Response:**
+```json
+{
+  "price_model": "XGBoost Regressor",
+  "growth_model": "K-Means Clustering",
+  "scaler": "StandardScaler",
+  "nlp_model": "spaCy en_core_web_sm"
+}
+```
+
 ## Data Collectors
 
 ### OSM Data Collector (`data_collectors/osm_collector.py`)
@@ -116,6 +131,11 @@ The GeoTrendSync algorithm automatically trains models on startup if pre-trained
 1. **Price Prediction Model**: XGBoost regressor trained on Philippine real estate data
 2. **Growth Classification Model**: K-Means clustering for investment categories
 3. **Feature Engineering**: Philippine-specific features (typhoon risk, proximity scores)
+
+### Model Persistence
+- Models are automatically saved to the `models/` directory after training
+- On subsequent runs, pre-trained models are loaded automatically
+- To retrain models, delete the `models/` directory and restart the service
 
 ### Training Data Features
 - Distance to amenities (km)
@@ -194,12 +214,14 @@ Models are saved in `models/` directory:
 - `growth_model.pkl`: K-Means growth classification model
 - `scaler.pkl`: Feature scaling parameters
 
+**Note**: NLP models (spaCy and transformers) are loaded from their respective libraries and don't require separate model files.
+
 ## Development
 
 ### Adding New Features
 1. **New Data Sources**: Add collectors in `data_collectors/`
-2. **Model Improvements**: Modify `GeoTrendSync` class in `main.py`
-3. **API Extensions**: Add new endpoints in `main.py`
+2. **Model Improvements**: Modify `GeoTrendSync` class in `geotrend.py`
+3. **API Extensions**: Add new endpoints in `geotrend.py`
 
 ### Testing
 ```bash
@@ -235,15 +257,28 @@ print(response.json())
 
 2. **Model Training Fails**
    - Check disk space in `models/` directory
-   - Verify Python dependencies are installed
+   - Verify Python dependencies are installed (especially `xgboost`, `scikit-learn`, `joblib`)
+   - Ensure `transformers` library is installed for sentiment analysis
+   - Check that `spacy` model is downloaded: `python -m spacy download en_core_web_sm`
 
 3. **OSM API Timeout**
    - Increase timeout in `osm_collector.py`
    - Check internet connection
 
 4. **Memory Issues**
-   - Reduce model complexity in `GeoTrendSync.train_models()`
+   - Reduce model complexity in `GeoTrendSync.train_models()` in `geotrend.py`
    - Use smaller training datasets
+   - Transformers sentiment analysis may require additional memory (~500MB)
+
+5. **XGBoost or Transformers Import Errors**
+   ```bash
+   pip install xgboost transformers torch
+   ```
+
+6. **Models Not Loading**
+   - Check that `models/` directory exists and contains `.pkl` files
+   - Verify file permissions for model files
+   - Models will auto-train on first run if not found
 
 ## License
 Proprietary - SmartLand GeoTrendSync Algorithm 
