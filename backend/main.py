@@ -50,7 +50,7 @@ async def authenticate(credentials: HTTPAuthorizationCredentials = Depends(secur
 # Database Connections
 async def connect_databases():
     try:
-        mongo_client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URI", "mongodb://localhost:27017"))
+        mongo_client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URI", "mongodb://localhost:27017"), serverSelectionTimeoutMS=2000)
         app.state.mongo_db = mongo_client["smartland"]
         logger.info("MongoDB connected")
     except Exception as e:
@@ -77,7 +77,10 @@ class AnalyzeData(BaseModel):
     gdp_growth: float = 0
     infrastructure_score: float = 0
     typhoon_risk: float = 0
-    news_text: str | None = None
+    proximity_to_mall: float = 5
+    proximity_to_school: float = 3
+    proximity_to_hospital: float = 4
+    news_text: str = ""
 
 class AnalyzeRequest(BaseModel):
     location: str
@@ -86,7 +89,12 @@ class AnalyzeRequest(BaseModel):
 # Agency Model (for MongoDB)
 async def get_agency(location: str):
     collection = app.state.mongo_db.agencies
-    agency = await collection.find_one({"location": location})
+    try:
+        agency = await collection.find_one({"location": location}, {"_id": 0}, max_time_ms=2000)
+    except Exception as e:
+        # Reports still work without MongoDB; agency info is optional
+        logger.warning(f"Agency lookup skipped: {e}")
+        agency = None
     return agency or {"name": "N/A"}
 
 # API Endpoint: Analyze location
@@ -116,6 +124,8 @@ async def analyze(request: Request, body: AnalyzeRequest, user: dict = Depends(a
             "predicted_price_sqm": ai_data.get("predicted_price_sqm"),
             "growth_score": ai_data.get("growth_score"),
             "insights": ai_data.get("insights"),
+            "news_analysis": ai_data.get("news_analysis"),
+            "feature_analysis": ai_data.get("feature_analysis"),
             "agency": agency,
             "geo_data": geo_data
         }
@@ -157,6 +167,8 @@ async def test_analyze(body: AnalyzeRequest):
             "predicted_price_sqm": ai_data.get("predicted_price_sqm"),
             "growth_score": ai_data.get("growth_score"),
             "insights": ai_data.get("insights"),
+            "news_analysis": ai_data.get("news_analysis"),
+            "feature_analysis": ai_data.get("feature_analysis"),
             "agency": agency,
             "geo_data": geo_data
         }
