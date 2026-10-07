@@ -16,6 +16,8 @@ import httpx
 
 load_dotenv()
 
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://localhost:8002/predict")
+
 app = FastAPI()
 security = HTTPBearer()
 
@@ -50,7 +52,7 @@ async def authenticate(credentials: HTTPAuthorizationCredentials = Depends(secur
 # Database Connections
 async def connect_databases():
     try:
-        mongo_client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URI", "mongodb://localhost:27017"))
+        mongo_client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGODB_URI", "mongodb://localhost:27017"), serverSelectionTimeoutMS=2000)
         app.state.mongo_db = mongo_client["smartland"]
         logger.info("MongoDB connected")
     except Exception as e:
@@ -77,7 +79,10 @@ class AnalyzeData(BaseModel):
     gdp_growth: float = 0
     infrastructure_score: float = 0
     typhoon_risk: float = 0
-    news_text: str | None = None
+    proximity_to_mall: float = 5
+    proximity_to_school: float = 3
+    proximity_to_hospital: float = 4
+    news_text: str = ""
 
 class AnalyzeRequest(BaseModel):
     location: str
@@ -86,7 +91,12 @@ class AnalyzeRequest(BaseModel):
 # Agency Model (for MongoDB)
 async def get_agency(location: str):
     collection = app.state.mongo_db.agencies
-    agency = await collection.find_one({"location": location})
+    try:
+        agency = await collection.find_one({"location": location}, {"_id": 0}, max_time_ms=2000)
+    except Exception as e:
+        # Reports still work without MongoDB; agency info is optional
+        logger.warning(f"Agency lookup skipped: {e}")
+        agency = None
     return agency or {"name": "N/A"}
 
 # API Endpoint: Analyze location
@@ -94,11 +104,8 @@ async def get_agency(location: str):
 @limiter.limit("100/15minute")  # 100 requests per 15 minutes
 async def analyze(request: Request, body: AnalyzeRequest, user: dict = Depends(authenticate)):
     try:
-        async with httpx.AsyncClient() as client:
-            ai_service_url = "http://localhost:8002/predict"  # Hardcoded for testing
-            logger.info(f"Environment AI_SERVICE_URL: {os.getenv('AI_SERVICE_URL')}")
-            logger.info(f"Using AI service URL: {ai_service_url}")
-            ai_response = await client.post(ai_service_url, json=body.data.dict())
+        async with httpx.AsyncClient(timeout=30) as client:
+            ai_response = await client.post(AI_SERVICE_URL, json=body.data.dict())
             ai_response.raise_for_status()
             ai_data = ai_response.json()
 
@@ -116,6 +123,8 @@ async def analyze(request: Request, body: AnalyzeRequest, user: dict = Depends(a
             "predicted_price_sqm": ai_data.get("predicted_price_sqm"),
             "growth_score": ai_data.get("growth_score"),
             "insights": ai_data.get("insights"),
+            "news_analysis": ai_data.get("news_analysis"),
+            "feature_analysis": ai_data.get("feature_analysis"),
             "agency": agency,
             "geo_data": geo_data
         }
@@ -136,10 +145,8 @@ async def health():
 async def test_analyze(body: AnalyzeRequest):
     """Test endpoint without authentication for development"""
     try:
-        async with httpx.AsyncClient() as client:
-            ai_service_url = "http://localhost:8002/predict"  # Hardcoded for testing
-            logger.info(f"Using AI service URL: {ai_service_url}")
-            ai_response = await client.post(ai_service_url, json=body.data.dict())
+        async with httpx.AsyncClient(timeout=30) as client:
+            ai_response = await client.post(AI_SERVICE_URL, json=body.data.dict())
             ai_response.raise_for_status()
             ai_data = ai_response.json()
 
@@ -157,6 +164,8 @@ async def test_analyze(body: AnalyzeRequest):
             "predicted_price_sqm": ai_data.get("predicted_price_sqm"),
             "growth_score": ai_data.get("growth_score"),
             "insights": ai_data.get("insights"),
+            "news_analysis": ai_data.get("news_analysis"),
+            "feature_analysis": ai_data.get("feature_analysis"),
             "agency": agency,
             "geo_data": geo_data
         }
@@ -166,6 +175,22 @@ async def test_analyze(body: AnalyzeRequest):
     except Exception as e:
         logger.error(f"Error in /api/test-analyze: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+# Serve the built web app when STATIC_DIR points at frontend/dist (set in the Docker image)
+STATIC_DIR = os.getenv("STATIC_DIR")
+if STATIC_DIR and os.path.isdir(STATIC_DIR):
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    async def spa(path: str):
+        file = os.path.join(STATIC_DIR, path)
+        if path and os.path.isfile(file) and os.path.abspath(file).startswith(os.path.abspath(STATIC_DIR)):
+            return FileResponse(file)
+        # React Router handles every other path in the browser
+        return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 if __name__ == "__main__":
     import uvicorn

@@ -1,0 +1,268 @@
+@import "tailwindcss";
+@import "@fontsource-variable/inter";
+@import "./tokens.css";
+
+/*
+ * Tailwind theme = DESIGN.md tokens only. Default palette, type scale,
+ * radii and breakpoints are cleared so off-system values don't compile.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-black: var(--apple-surface-black);
+  --color-canvas: var(--sl-canvas);
+  --color-canvas-alt: var(--sl-canvas-alt);
+  --color-surface: var(--sl-surface);
+  --color-surface-raised: var(--sl-surface-raised);
+  --color-tile: var(--sl-tile);
+  --color-tile-2: var(--sl-tile-2);
+  --color-on-tile: var(--sl-on-tile);
+  --color-on-tile-secondary: var(--sl-on-tile-secondary);
+  --color-on-tile-accent: var(--sl-on-tile-accent);
+  --color-ink: var(--sl-ink);
+  --color-ink-secondary: var(--sl-ink-secondary);
+  --color-ink-disabled: var(--sl-ink-disabled);
+  --color-hairline: var(--sl-hairline);
+  --color-divider-soft: var(--sl-divider-soft);
+  --color-accent: var(--sl-accent);
+  --color-accent-fill: var(--sl-accent-fill);
+  --color-on-accent: var(--sl-on-accent);
+  --color-focus: var(--sl-focus);
+  --color-nav: var(--sl-nav);
+  --color-positive: var(--sl-positive);
+  --color-caution: var(--sl-caution);
+  --color-critical: var(--sl-critical);
+  --color-positive-soft: color-mix(in srgb, var(--sl-positive) 12%, transparent);
+  --color-caution-soft: color-mix(in srgb, var(--sl-caution) 12%, transparent);
+  --color-critical-soft: color-mix(in srgb, var(--sl-critical) 12%, transparent);
+  --color-tile-hairline: rgba(255, 255, 255, 0.14);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-*: initial;
+  --font-sans: var(--sl-font);
+
+  /* Type scale: DESIGN.md typography, in rem so it follows browser zoom */
+  --text-*: initial;
+  --text-hero: 3.5rem;
+  --text-hero--line-height: 1.07;
+  --text-hero--letter-spacing: -0.0175rem;
+  --text-hero--font-weight: 600;
+  --text-display-lg: 2.5rem;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: 0;
+  --text-display-lg--font-weight: 600;
+  --text-display-md: 2.125rem;
+  --text-display-md--line-height: 1.18;
+  --text-display-md--letter-spacing: -0.0234rem;
+  --text-display-md--font-weight: 600;
+  --text-display-sm: 1.75rem;
+  --text-display-sm--line-height: 1.14;
+  --text-display-sm--letter-spacing: 0.0123rem;
+  --text-display-sm--font-weight: 600;
+  --text-lead: 1.75rem;
+  --text-lead--line-height: 1.14;
+  --text-lead--letter-spacing: 0.0123rem;
+  --text-lead-airy: 1.5rem;
+  --text-lead-airy--line-height: 1.5;
+  --text-tagline: 1.3125rem;
+  --text-tagline--line-height: 1.19;
+  --text-tagline--letter-spacing: 0.0144rem;
+  --text-body: 1.0625rem;
+  --text-body--line-height: 1.47;
+  --text-body--letter-spacing: -0.0234rem;
+  --text-caption: 0.875rem;
+  --text-caption--line-height: 1.43;
+  --text-caption--letter-spacing: -0.014rem;
+  --text-button-large: 1.125rem;
+  --text-button-large--line-height: 1;
+  --text-fine-print: 0.75rem;
+  --text-fine-print--line-height: 1.33;
+  --text-fine-print--letter-spacing: -0.0075rem;
+
+  --font-weight-*: initial;
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Spacing: DESIGN.md scale. Numeric utilities still use the 4px base */
+  --spacing: 0.25rem;
+  --spacing-xxs: 0.25rem;
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1.0625rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxl: 3rem;
+  --spacing-section: 5rem;
+  --spacing-tap: 2.75rem;
+  --spacing-btn-x: 1.375rem;
+  --spacing-btn-x-lg: 1.75rem;
+  --spacing-nav: 2.75rem;
+  --spacing-subnav: 3.25rem;
+  --spacing-footer: 4rem;
+
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 18px;
+  --radius-pill: 9999px;
+
+  --container-*: initial;
+  --container-reading: 61.25rem;
+  --container-grid: 90rem;
+  --container-prose: 70ch;
+  --container-form: 40rem;
+
+  --breakpoint-*: initial;
+  --breakpoint-xs: 26.25rem;
+  --breakpoint-sm: 40.0625rem;
+  --breakpoint-md: 52.125rem;
+  --breakpoint-lg: 66.8125rem;
+  --breakpoint-xl: 90rem;
+
+  --ease-apple: var(--sl-ease);
+  --animate-shimmer: sl-shimmer 1.6s var(--sl-ease) infinite;
+  --animate-spin: spin 0.9s linear infinite;
+}
+
+@keyframes sl-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-family: var(--sl-font);
+    font-feature-settings: "ss03";
+    background: var(--sl-canvas);
+    color: var(--sl-ink);
+  }
+  body {
+    min-height: 100dvh;
+    background: var(--sl-canvas);
+    color: var(--sl-ink);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    letter-spacing: var(--text-body--letter-spacing);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  /* One focus style for every interactive element */
+  :focus-visible {
+    outline: 2px solid var(--sl-focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--sl-accent) 25%, transparent);
+  }
+}
+
+@layer components {
+  /* Press feedback from DESIGN.md: scale(0.95) on every button */
+  .press {
+    transition: transform var(--sl-dur-fast) var(--sl-ease),
+      background-color var(--sl-dur-fast) var(--sl-ease),
+      color var(--sl-dur-fast) var(--sl-ease),
+      opacity var(--sl-dur-fast) var(--sl-ease);
+  }
+  .press:active:not(:disabled) {
+    transform: scale(0.95);
+  }
+  .frosted {
+    background: var(--sl-nav);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+  .gutter {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  @media (min-width: 40.0625rem) {
+    .gutter {
+      padding-left: max(1.5rem, env(safe-area-inset-left));
+      padding-right: max(1.5rem, env(safe-area-inset-right));
+    }
+  }
+  @media (min-width: 66.8125rem) {
+    .gutter {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+  }
+  /* Range input in tokens */
+  .range {
+    appearance: none;
+    width: 100%;
+    height: 2.75rem;
+    background: transparent;
+    cursor: pointer;
+  }
+  .range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 9999px;
+    background: linear-gradient(to right, var(--sl-accent-fill) var(--fill, 50%), var(--sl-hairline) var(--fill, 50%));
+  }
+  .range::-moz-range-track {
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--sl-hairline);
+  }
+  .range::-moz-range-progress {
+    height: 4px;
+    border-radius: 9999px;
+    background: var(--sl-accent-fill);
+  }
+  .range::-webkit-slider-thumb {
+    appearance: none;
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: -0.625rem;
+    border-radius: 9999px;
+    background: var(--sl-accent-fill);
+    border: 3px solid var(--sl-surface);
+  }
+  .range::-moz-range-thumb {
+    width: 1.5rem;
+    height: 1.5rem;
+    box-sizing: border-box;
+    border-radius: 9999px;
+    background: var(--sl-accent-fill);
+    border: 3px solid var(--sl-surface);
+  }
+  .range:focus-visible {
+    outline: none;
+  }
+  .range:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--sl-focus);
+    outline-offset: 2px;
+  }
+  .range:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--sl-focus);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .press:active:not(:disabled) {
+    transform: none;
+  }
+}

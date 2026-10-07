@@ -79,7 +79,7 @@ class GeoTrendSync:
     def extract_news_insights(self, news_text: str) -> dict:
         """Extract insights from news text using simple text analysis"""
         if not news_text:
-            return {"sentiment": "neutral", "entities": [], "insights": "No news data available"}
+            return {"sentiment": "neutral", "entities": [], "insights": []}
         
         # Simple keyword analysis
         news_lower = news_text.lower()
@@ -87,15 +87,15 @@ class GeoTrendSync:
         
         # Check for infrastructure keywords
         if any(word in news_lower for word in ["infrastructure", "development", "project"]):
-            insights.append("Infrastructure development mentioned")
+            insights.append("News mentions infrastructure projects")
         if any(word in news_lower for word in ["airport", "transportation", "railway"]):
-            insights.append("Transportation development")
+            insights.append("News mentions transport projects")
         if any(word in news_lower for word in ["mall", "commercial", "business"]):
-            insights.append("Commercial development")
+            insights.append("News mentions commercial projects")
         if any(word in news_lower for word in ["school", "education", "university"]):
-            insights.append("Educational facilities")
+            insights.append("News mentions new schools")
         if any(word in news_lower for word in ["hospital", "medical", "healthcare"]):
-            insights.append("Healthcare facilities")
+            insights.append("News mentions new hospitals")
         
         # Simple sentiment analysis
         positive_words = ["announced", "investment", "growth", "development", "new", "expansion"]
@@ -225,46 +225,46 @@ def generate_insights(predictions: dict, news_insights: dict, data: dict) -> str
     # Price insights
     price = predictions['predicted_price_sqm']
     if price > 6000:
-        insights.append("High-end area with premium pricing")
+        insights.append("Prices here are in the top range")
     elif price > 4000:
-        insights.append("Mid-range area with good value potential")
+        insights.append("Mid-range prices with room to rise")
     elif price > 2000:
-        insights.append("Affordable area with growth potential")
+        insights.append("Lower prices with room to grow")
     else:
-        insights.append("Budget-friendly area, consider development timeline")
+        insights.append("Low prices. Check when roads and utilities will arrive")
     
     # Growth insights
     growth_score = predictions['growth_score']
     if growth_score > 80:
-        insights.append("Exceptional growth potential - prime investment opportunity")
+        insights.append("Very strong growth signals")
     elif growth_score > 60:
-        insights.append("Strong growth indicators - recommended for investment")
+        insights.append("Strong growth signals")
     elif growth_score > 40:
-        insights.append("Moderate growth potential - suitable for long-term investment")
+        insights.append("Moderate growth. Better for long holds")
     else:
-        insights.append("Higher risk area - requires careful due diligence")
+        insights.append("Weak growth signals. Check the area carefully before you buy")
     
     # Economic insights
     if data.get('gdp_growth', 0) > 5:
-        insights.append("Strong economic fundamentals support growth")
+        insights.append("The local economy is growing fast")
     if data.get('population_growth', 0) > 3:
-        insights.append("Population growth indicates increasing demand")
+        insights.append("More people are moving in, which raises demand")
     
     # Infrastructure insights
     if data.get('infrastructure_score', 0) > 7:
-        insights.append("Excellent infrastructure supports property values")
+        insights.append("Good roads and utilities support prices")
     elif data.get('infrastructure_score', 0) < 4:
-        insights.append("Infrastructure development needed - monitor progress")
+        insights.append("Roads and utilities are still lacking. Watch for planned projects")
     
     # Risk insights
     if data.get('typhoon_risk', 0) > 5:
-        insights.append("High typhoon risk - consider insurance and building standards")
+        insights.append("High typhoon risk. Budget for insurance and stronger construction")
     
     # News insights
     if news_insights.get('insights'):
         insights.extend(news_insights['insights'])
     
-    return " | ".join(insights) if insights else "Standard market conditions"
+    return " | ".join(insights) if insights else "No strong signals either way"
 
 @app.get("/health")
 async def health():

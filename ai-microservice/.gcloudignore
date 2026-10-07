@@ -1,0 +1,7 @@
+.gcloudignore
+venv
+__pycache__
+*.log
+.env
+geodata
+models
