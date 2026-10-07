@@ -576,7 +576,7 @@ On Apple devices this resolves to real SF Pro. Elsewhere Inter (self-hosted via 
 
 ## Light and dark mode [ext]
 
-The source only documents light mode. Dark mode reuses the source's own dark-tile hexes so no new greys appear.
+The source only documents light mode, so light is the default. Opt-in dark mode reuses the source's own dark-tile hexes so no new greys appear.
 
 | Role | Light | Dark |
 |---|---|---|
@@ -595,7 +595,7 @@ The source only documents light mode. Dark mode reuses the source's own dark-til
 
 **Why `#6e6e73`:** the source's `ink-muted-48` (`#7a7a7a`) measures 4.3:1 on white, which fails the 4.5:1 rule for small text. `#6e6e73` is Apple's own secondary label grey and measures 5.1:1 on white and 4.7:1 on parchment. `#7a7a7a` stays, for disabled text only.
 
-Theme follows the system by default. People can pin light or dark from the nav. The choice is saved per browser.
+Light is the default, as on apple.com, even when the device is in dark mode. Dark mode is opt-in from the nav button. The choice is saved per browser.
 
 ## Status colours [ext]
 

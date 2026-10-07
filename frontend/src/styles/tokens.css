@@ -52,6 +52,7 @@
   --sl-surface: var(--apple-canvas);
   --sl-surface-raised: var(--apple-surface-pearl);
   --sl-tile: var(--apple-surface-tile-1);
+  --sl-tile-2: var(--apple-surface-tile-2);
   --sl-on-tile: var(--apple-body-on-dark);
   --sl-on-tile-secondary: var(--apple-body-muted);
   --sl-on-tile-accent: var(--apple-primary-on-dark);
@@ -70,28 +71,7 @@
   --sl-critical: var(--sl-critical-light);
 }
 
-/* Dark roles: reuse Apple's dark tile hexes */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    color-scheme: dark;
-    --sl-canvas: var(--apple-surface-black);
-    --sl-canvas-alt: var(--apple-surface-tile-3);
-    --sl-surface: var(--apple-surface-tile-1);
-    --sl-surface-raised: var(--apple-surface-tile-2);
-    --sl-tile: var(--apple-surface-tile-2);
-    --sl-ink: var(--apple-body-on-dark);
-    --sl-ink-secondary: var(--apple-body-muted);
-    --sl-hairline: rgba(255, 255, 255, 0.14);
-    --sl-divider-soft: rgba(255, 255, 255, 0.08);
-    --sl-accent: var(--apple-primary-on-dark);
-    --sl-focus: var(--apple-primary-on-dark);
-    --sl-nav: rgba(37, 37, 39, 0.8);
-    --sl-positive: var(--sl-positive-dark);
-    --sl-caution: var(--sl-caution-dark);
-    --sl-critical: var(--sl-critical-dark);
-  }
-}
-
+/* Dark roles: opt-in only, reuse Apple's dark tile hexes. Light is the default, as on apple.com */
 :root[data-theme="dark"] {
   color-scheme: dark;
   --sl-canvas: var(--apple-surface-black);
@@ -99,6 +79,7 @@
   --sl-surface: var(--apple-surface-tile-1);
   --sl-surface-raised: var(--apple-surface-tile-2);
   --sl-tile: var(--apple-surface-tile-2);
+  --sl-tile-2: var(--apple-surface-tile-1);
   --sl-ink: var(--apple-body-on-dark);
   --sl-ink-secondary: var(--apple-body-muted);
   --sl-hairline: rgba(255, 255, 255, 0.14);

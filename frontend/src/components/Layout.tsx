@@ -1,50 +1,53 @@
 import { useEffect, useRef } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { Bookmark, House, LandPlot, Monitor, Moon, Search, Sun } from 'lucide-react'
+import { LandPlot, Moon, Sun } from 'lucide-react'
 import { useTheme, type ThemeChoice } from '../lib/theme'
+import { ButtonLink } from './Button'
 
 const THEME_LABEL: Record<ThemeChoice, string> = {
-  system: 'Theme: match device. Switch to light',
-  light: 'Theme: light. Switch to dark',
-  dark: 'Theme: dark. Switch to match device',
+  light: 'Switch to dark mode',
+  dark: 'Switch to light mode',
 }
 
 function ThemeButton() {
   const { choice, cycle } = useTheme()
-  const Icon = choice === 'light' ? Sun : choice === 'dark' ? Moon : Monitor
+  const Icon = choice === 'light' ? Moon : Sun
   return (
     <button
       type="button"
       onClick={cycle}
       aria-label={THEME_LABEL[choice]}
       title={THEME_LABEL[choice]}
-      className="press inline-flex size-tap items-center justify-center rounded-pill text-ink hover:bg-surface-raised"
+      className="press inline-flex size-tap items-center justify-center rounded-pill text-on-tile"
     >
-      <Icon size={20} strokeWidth={1.75} aria-hidden />
+      <Icon size={16} strokeWidth={1.75} aria-hidden />
     </button>
   )
 }
 
-const desktopLink = ({ isActive }: { isActive: boolean }) =>
-  `press inline-flex min-h-tap items-center px-sm text-caption ${isActive ? 'text-ink font-semibold' : 'text-ink-secondary hover:text-ink'}`
+const navLink = ({ isActive }: { isActive: boolean }) =>
+  `press inline-flex min-h-tap items-center px-sm text-fine-print tracking-[-0.0075rem] ${
+    isActive ? 'text-on-tile' : 'text-on-tile-secondary hover:text-on-tile'
+  }`
 
-function TopNav() {
+function GlobalNav() {
   return (
-    <header className="frosted sticky top-0 z-40 border-b border-hairline pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-50 bg-black pt-[env(safe-area-inset-top)]">
       <nav aria-label="Main" className="gutter mx-auto flex h-nav max-w-grid items-center justify-between">
-        <Link to="/" className="press -ml-xs inline-flex min-h-tap items-center gap-xs px-xs text-tagline font-semibold text-ink">
-          <LandPlot size={22} strokeWidth={1.75} className="text-accent" aria-hidden />
+        <Link
+          to="/"
+          className="press -ml-xs inline-flex min-h-tap items-center gap-xs px-xs text-fine-print text-on-tile"
+        >
+          <LandPlot size={16} strokeWidth={1.75} aria-hidden />
           SmartLand
         </Link>
-        <div className="flex items-center gap-xxs">
-          <div className="hidden items-center sm:flex">
-            <NavLink to="/check" className={desktopLink}>
-              Check a location
-            </NavLink>
-            <NavLink to="/reports" className={desktopLink}>
-              Saved reports
-            </NavLink>
-          </div>
+        <div className="flex items-center">
+          <NavLink to="/check" className={navLink}>
+            Check
+          </NavLink>
+          <NavLink to="/reports" className={navLink}>
+            Saved
+          </NavLink>
           <ThemeButton />
         </div>
       </nav>
@@ -52,55 +55,75 @@ function TopNav() {
   )
 }
 
-const tabs = [
-  { to: '/', label: 'Home', icon: House, end: true },
-  { to: '/check', label: 'Check', icon: Search, end: false },
-  { to: '/reports', label: 'Saved', icon: Bookmark, end: false },
-]
-
-// HIG tab bar on phones: visible on every top-level screen
-function TabBar() {
+function SubNav() {
+  const { pathname } = useLocation()
+  if (pathname === '/') return null
+  const title = pathname.startsWith('/reports/')
+    ? 'Report'
+    : pathname.startsWith('/reports')
+      ? 'Saved reports'
+      : 'Check a location'
   return (
-    <nav
-      aria-label="Main"
-      className="frosted fixed inset-x-0 bottom-0 z-40 border-t border-hairline pb-[env(safe-area-inset-bottom)] sm:hidden"
-    >
-      <ul className="grid grid-cols-3">
-        {tabs.map(({ to, label, icon: Icon, end }) => (
-          <li key={to}>
-            <NavLink
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `press flex min-h-tabbar flex-col items-center justify-center gap-0.5 text-fine-print ${isActive ? 'text-accent' : 'text-ink-secondary'}`
-              }
-            >
-              {({ isActive }) => (
-                <>
-                  <Icon size={22} strokeWidth={isActive ? 2.25 : 1.75} aria-hidden />
-                  {label}
-                </>
-              )}
-            </NavLink>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className="frosted sticky top-[calc(var(--spacing-nav)+env(safe-area-inset-top))] z-40">
+      <div className="gutter mx-auto flex h-subnav max-w-grid items-center justify-between gap-sm">
+        <p className="truncate text-tagline font-semibold">{title}</p>
+        {pathname !== '/check' && (
+          <ButtonLink to="/check" className="shrink-0">
+            Check a location
+          </ButtonLink>
+        )}
+      </div>
+    </div>
   )
 }
 
 const YEAR = new Date().getFullYear()
 
+const FOOTER = [
+  {
+    heading: 'Check land',
+    links: [
+      { to: '/check', label: 'Check a location' },
+      { to: '/reports', label: 'Saved reports' },
+      { to: '/#how', label: 'How it works' },
+    ],
+  },
+  {
+    heading: 'The report',
+    links: [
+      { to: '/#outputs', label: 'Price per sqm' },
+      { to: '/#outputs', label: 'Growth score' },
+      { to: '/#grades', label: 'Investment grade' },
+    ],
+  },
+]
+
 function Footer() {
   return (
-    <footer className="bg-canvas-alt pb-tabbar-safe pt-xxl text-ink-secondary sm:py-footer">
-      <div className="gutter mx-auto flex max-w-grid flex-col gap-lg">
-        <p className="max-w-prose text-caption">
+    <footer className="bg-canvas-alt pb-[max(4rem,env(safe-area-inset-bottom))] pt-footer text-ink-secondary">
+      <div className="gutter mx-auto flex max-w-reading flex-col gap-xl">
+        <p className="text-fine-print">
           SmartLand estimates come from a scoring model that uses the numbers you enter. They are not an appraisal.
           Check with a licensed appraiser and the local assessor before you buy.
         </p>
-        <div className="flex flex-col gap-xs border-t border-hairline pt-lg text-fine-print xs:flex-row xs:justify-between">
-          <p>© {YEAR} SmartLand. Prices in Philippine pesos.</p>
+        <div className="grid gap-xl sm:grid-cols-2">
+          {FOOTER.map((col) => (
+            <div key={col.heading}>
+              <p className="text-caption font-semibold text-ink">{col.heading}</p>
+              <ul className="mt-xs">
+                {col.links.map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to} className="press inline-flex min-h-tap items-center text-body leading-[2.41] text-ink-secondary hover:text-ink">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div className="flex flex-col gap-xs border-t border-hairline pt-lg text-fine-print text-ink-disabled xs:flex-row xs:justify-between">
+          <p>Copyright © {YEAR} SmartLand. All rights reserved. Prices in Philippine pesos.</p>
           <p>Icons by Lucide</p>
         </div>
       </div>
@@ -113,7 +136,6 @@ export function Layout() {
   const mainRef = useRef<HTMLElement>(null)
   const first = useRef(true)
 
-  // On route change: scroll to top and move focus to the new page for screen readers
   useEffect(() => {
     window.scrollTo(0, 0)
     if (first.current) {
@@ -131,12 +153,12 @@ export function Layout() {
       >
         Skip to content
       </a>
-      <TopNav />
+      <GlobalNav />
+      <SubNav />
       <main id="main" ref={mainRef} tabIndex={-1} className="flex-1 outline-none">
         <Outlet />
       </main>
       <Footer />
-      <TabBar />
     </div>
   )
 }

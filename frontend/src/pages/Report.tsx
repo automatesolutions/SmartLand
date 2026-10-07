@@ -273,7 +273,7 @@ export function ReportPage() {
                 <li
                   key={g}
                   aria-current={current ? 'true' : undefined}
-                  className={`flex flex-col gap-xs rounded-md p-sm sm:flex-row sm:items-center sm:gap-md ${current ? 'bg-surface-raised ring-2 ring-focus' : ''}`}
+                  className={`flex flex-col gap-xs rounded-lg p-sm sm:flex-row sm:items-center sm:gap-md ${current ? 'bg-surface-raised ring-2 ring-focus' : ''}`}
                 >
                   <div className="sm:w-56 sm:shrink-0">
                     <GradeBadge grade={info} />

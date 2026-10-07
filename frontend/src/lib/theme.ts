@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type ThemeChoice = 'system' | 'light' | 'dark'
+export type ThemeChoice = 'light' | 'dark'
 const KEY = 'smartland:theme'
 
 function readChoice(): ThemeChoice {
   try {
-    const v = localStorage.getItem(KEY)
-    return v === 'light' || v === 'dark' ? v : 'system'
+    return localStorage.getItem(KEY) === 'dark' ? 'dark' : 'light'
   } catch {
-    return 'system'
+    return 'light'
   }
 }
 
@@ -17,18 +16,18 @@ export function useTheme() {
 
   useEffect(() => {
     const root = document.documentElement
-    if (choice === 'system') delete root.dataset.theme
-    else root.dataset.theme = choice
+    if (choice === 'dark') root.dataset.theme = 'dark'
+    else delete root.dataset.theme
     try {
-      if (choice === 'system') localStorage.removeItem(KEY)
-      else localStorage.setItem(KEY, choice)
+      if (choice === 'dark') localStorage.setItem(KEY, 'dark')
+      else localStorage.removeItem(KEY)
     } catch {
       // Storage blocked: the theme still applies for this visit
     }
   }, [choice])
 
   const cycle = useCallback(() => {
-    setChoice((c) => (c === 'system' ? 'light' : c === 'light' ? 'dark' : 'system'))
+    setChoice((c) => (c === 'light' ? 'dark' : 'light'))
   }, [])
 
   return { choice, cycle }

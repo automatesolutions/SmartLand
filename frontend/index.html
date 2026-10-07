@@ -5,15 +5,13 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Check a land price per sqm, growth score, and investment grade for any location in the Philippines." />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#f5f5f7" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#252527" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f5f5f7" />
     <title>SmartLand</title>
     <script>
-      // Apply the saved theme before first paint so there is no flash
+      // Apply a saved dark choice before first paint so there is no flash
       try {
-        var t = localStorage.getItem('smartland:theme');
-        if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+        if (localStorage.getItem('smartland:theme') === 'dark') document.documentElement.dataset.theme = 'dark';
       } catch (e) {}
     </script>
   </head>

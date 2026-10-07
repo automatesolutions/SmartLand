@@ -8,11 +8,13 @@
  */
 @theme inline {
   --color-*: initial;
+  --color-black: var(--apple-surface-black);
   --color-canvas: var(--sl-canvas);
   --color-canvas-alt: var(--sl-canvas-alt);
   --color-surface: var(--sl-surface);
   --color-surface-raised: var(--sl-surface-raised);
   --color-tile: var(--sl-tile);
+  --color-tile-2: var(--sl-tile-2);
   --color-on-tile: var(--sl-on-tile);
   --color-on-tile-secondary: var(--sl-on-tile-secondary);
   --color-on-tile-accent: var(--sl-on-tile-accent);
@@ -96,8 +98,8 @@
   --spacing-tap: 2.75rem;
   --spacing-btn-x: 1.375rem;
   --spacing-btn-x-lg: 1.75rem;
-  --spacing-nav: 3.25rem;
-  --spacing-tabbar: 3.0625rem;
+  --spacing-nav: 2.75rem;
+  --spacing-subnav: 3.25rem;
   --spacing-footer: 4rem;
 
   --radius-*: initial;
@@ -178,10 +180,6 @@
   }
   .press:active:not(:disabled) {
     transform: scale(0.95);
-  }
-  /* Footer clears the phone tab bar and home indicator */
-  .pb-tabbar-safe {
-    padding-bottom: calc(var(--spacing-tabbar) + env(safe-area-inset-bottom) + var(--spacing-xl));
   }
   .frosted {
     background: var(--sl-nav);

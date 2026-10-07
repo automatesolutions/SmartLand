@@ -123,6 +123,7 @@ export function CheckPage() {
             <TextField
               label="City, town, or barangay"
               name="location"
+              search
               placeholder="For example, Lipa, Batangas"
               autoComplete="address-level2"
               list="place-suggestions"

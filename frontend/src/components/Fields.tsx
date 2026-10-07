@@ -2,7 +2,7 @@ import { useId, type InputHTMLAttributes, type ReactNode, type TextareaHTMLAttri
 import { CircleAlert } from 'lucide-react'
 
 const control =
-  'w-full rounded-sm border border-hairline bg-surface px-md text-body text-ink placeholder:text-ink-secondary transition-colors duration-200 ease-apple focus-visible:border-focus aria-[invalid=true]:border-critical'
+  'w-full border border-hairline bg-surface px-md text-body text-ink placeholder:text-ink-secondary transition-colors duration-200 ease-apple focus-visible:border-focus aria-[invalid=true]:border-critical'
 
 function FieldError({ id, children }: { id: string; children?: ReactNode }) {
   if (!children) return null
@@ -18,8 +18,9 @@ export function TextField({
   label,
   hint,
   error,
+  search = false,
   ...rest
-}: { label: string; hint?: string; error?: string } & InputHTMLAttributes<HTMLInputElement>) {
+}: { label: string; hint?: string; error?: string; search?: boolean } & InputHTMLAttributes<HTMLInputElement>) {
   const id = useId()
   const describedBy = [hint && `${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ') || undefined
   return (
@@ -32,7 +33,7 @@ export function TextField({
           {hint}
         </p>
       )}
-      <input id={id} aria-invalid={!!error} aria-describedby={describedBy} className={`${control} h-tap`} {...rest} />
+      <input id={id} aria-invalid={!!error} aria-describedby={describedBy} className={`${control} h-tap ${search ? 'rounded-pill px-lg' : 'rounded-sm'}`} {...rest} />
       <FieldError id={`${id}-error`}>{error}</FieldError>
     </div>
   )
@@ -57,7 +58,7 @@ export function TextArea({
       <textarea
         id={id}
         aria-describedby={hint ? `${id}-hint` : undefined}
-        className={`${control} min-h-30 resize-y py-sm`}
+        className={`${control} min-h-30 resize-y rounded-sm py-sm`}
         {...rest}
       />
     </div>
@@ -107,7 +108,7 @@ export function RangeField({
             onChange={(e) => onChange(e.target.value === '' ? NaN : Number(e.target.value))}
             aria-invalid={!!error}
             aria-describedby={describedBy}
-            className={`${control} h-tap w-24 px-sm text-right tabular-nums`}
+            className={`${control} h-tap w-24 rounded-sm px-sm text-right tabular-nums`}
           />
           {unit && <span className="w-8 text-caption text-ink-secondary">{unit}</span>}
         </div>

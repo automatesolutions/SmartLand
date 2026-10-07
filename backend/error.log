@@ -16,3 +16,9 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
 2025-07-27 21:13:22.609 | ERROR    | main:test_analyze:165 - Error in /api/test-analyze: Client error '404 Not Found' for url 'http://localhost:8000/predict'
 For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+2026-10-07 18:54:30.237 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:01.181 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:02.617 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:04.060 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:05.449 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:38.063 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist

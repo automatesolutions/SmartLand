@@ -1,0 +1,9 @@
+.git
+QGIS
+ai-microservice
+**/venv
+**/node_modules
+**/__pycache__
+**/dist
+**/*.log
+**/.env

@@ -77,3 +77,21 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2025-08-09 13:25:20.765 | INFO     | main:test_analyze:164 - Generated test report for Quezon City
 2025-08-09 13:26:21.084 | INFO     | main:test_analyze:141 - Using AI service URL: http://localhost:8002/predict
 2025-08-09 13:26:21.370 | INFO     | main:test_analyze:164 - Generated test report for Cabadbaran City
+2026-10-07 18:54:30.167 | INFO     | main:connect_databases:55 - MongoDB connected
+2026-10-07 18:54:30.237 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 18:54:30.238 | WARNING  | main:connect_databases:65 - Continuing without PostgreSQL - geospatial features will be disabled
+2026-10-07 19:22:01.117 | INFO     | main:connect_databases:55 - MongoDB connected
+2026-10-07 19:22:01.181 | ERROR    | main:connect_databases:64 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:01.181 | WARNING  | main:connect_databases:65 - Continuing without PostgreSQL - geospatial features will be disabled
+2026-10-07 19:22:02.558 | INFO     | main:connect_databases:57 - MongoDB connected
+2026-10-07 19:22:02.617 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:02.618 | WARNING  | main:connect_databases:67 - Continuing without PostgreSQL - geospatial features will be disabled
+2026-10-07 19:22:04.006 | INFO     | main:connect_databases:57 - MongoDB connected
+2026-10-07 19:22:04.060 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:04.061 | WARNING  | main:connect_databases:67 - Continuing without PostgreSQL - geospatial features will be disabled
+2026-10-07 19:22:05.384 | INFO     | main:connect_databases:57 - MongoDB connected
+2026-10-07 19:22:05.449 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:05.450 | WARNING  | main:connect_databases:67 - Continuing without PostgreSQL - geospatial features will be disabled
+2026-10-07 19:22:38.006 | INFO     | main:connect_databases:57 - MongoDB connected
+2026-10-07 19:22:38.063 | ERROR    | main:connect_databases:66 - PostgreSQL connection error: database "smartland_geo" does not exist
+2026-10-07 19:22:38.063 | WARNING  | main:connect_databases:67 - Continuing without PostgreSQL - geospatial features will be disabled

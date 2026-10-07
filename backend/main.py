@@ -16,6 +16,8 @@ import httpx
 
 load_dotenv()
 
+AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://localhost:8002/predict")
+
 app = FastAPI()
 security = HTTPBearer()
 
@@ -102,11 +104,8 @@ async def get_agency(location: str):
 @limiter.limit("100/15minute")  # 100 requests per 15 minutes
 async def analyze(request: Request, body: AnalyzeRequest, user: dict = Depends(authenticate)):
     try:
-        async with httpx.AsyncClient() as client:
-            ai_service_url = "http://localhost:8002/predict"  # Hardcoded for testing
-            logger.info(f"Environment AI_SERVICE_URL: {os.getenv('AI_SERVICE_URL')}")
-            logger.info(f"Using AI service URL: {ai_service_url}")
-            ai_response = await client.post(ai_service_url, json=body.data.dict())
+        async with httpx.AsyncClient(timeout=30) as client:
+            ai_response = await client.post(AI_SERVICE_URL, json=body.data.dict())
             ai_response.raise_for_status()
             ai_data = ai_response.json()
 
@@ -146,10 +145,8 @@ async def health():
 async def test_analyze(body: AnalyzeRequest):
     """Test endpoint without authentication for development"""
     try:
-        async with httpx.AsyncClient() as client:
-            ai_service_url = "http://localhost:8002/predict"  # Hardcoded for testing
-            logger.info(f"Using AI service URL: {ai_service_url}")
-            ai_response = await client.post(ai_service_url, json=body.data.dict())
+        async with httpx.AsyncClient(timeout=30) as client:
+            ai_response = await client.post(AI_SERVICE_URL, json=body.data.dict())
             ai_response.raise_for_status()
             ai_data = ai_response.json()
 
@@ -178,6 +175,22 @@ async def test_analyze(body: AnalyzeRequest):
     except Exception as e:
         logger.error(f"Error in /api/test-analyze: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
+# Serve the built web app when STATIC_DIR points at frontend/dist (set in the Docker image)
+STATIC_DIR = os.getenv("STATIC_DIR")
+if STATIC_DIR and os.path.isdir(STATIC_DIR):
+    from fastapi.responses import FileResponse
+    from fastapi.staticfiles import StaticFiles
+
+    app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
+
+    @app.get("/{path:path}", include_in_schema=False)
+    async def spa(path: str):
+        file = os.path.join(STATIC_DIR, path)
+        if path and os.path.isfile(file) and os.path.abspath(file).startswith(os.path.abspath(STATIC_DIR)):
+            return FileResponse(file)
+        # React Router handles every other path in the browser
+        return FileResponse(os.path.join(STATIC_DIR, "index.html"))
 
 if __name__ == "__main__":
     import uvicorn

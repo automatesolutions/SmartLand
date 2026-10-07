@@ -1,21 +1,18 @@
 import { useRef } from 'react'
-import { ArrowRight, ChartNoAxesColumn, MapPin, SlidersHorizontal, FileText, Tag, TrendingUp } from 'lucide-react'
 import { ButtonLink } from '../components/Button'
-import { GradeBadge } from '../components/Grade'
-import { ParcelMap } from '../components/ParcelMap'
 import { GRADE_ORDER, gradeInfo } from '../lib/format'
 import { useReveal } from '../lib/motion'
 
 const OUTPUTS = [
-  { icon: Tag, title: 'Price per sqm', body: 'An estimate in pesos, plus the total for your lot size.', sample: '₱4,350 / sqm' },
-  { icon: TrendingUp, title: 'Growth score', body: 'From 0 to 100. How strongly the area points to rising prices.', sample: '78 of 100' },
-  { icon: ChartNoAxesColumn, title: 'Investment grade', body: 'A+ to C-, with the reasons behind it and the risks to check.', sample: 'A to B+' },
+  { sample: '₱4,350', title: 'Price per sqm', body: 'An estimate in pesos, plus the total for your lot size.' },
+  { sample: '78', title: 'Growth score', body: 'From 0 to 100. How strongly local conditions point to rising prices.' },
+  { sample: 'A to B+', title: 'Investment grade', body: 'A+ to C-, with the reasons behind it and the risks to check.' },
 ]
 
 const STEPS = [
-  { icon: MapPin, title: 'Enter the location', body: 'Any city, town, or barangay in the Philippines.' },
-  { icon: SlidersHorizontal, title: 'Add what you know', body: 'Roads, flood risk, and how far the mall, school, and hospital are. Sample values help you start.' },
-  { icon: FileText, title: 'Read the report', body: 'See the price, growth score, and grade. Save it to compare with other lots.' },
+  { n: '01', title: 'Enter the location', body: 'Any city, town, or barangay in the Philippines.' },
+  { n: '02', title: 'Add what you know', body: 'Roads, flood risk, and how far the mall, school, and hospital are.' },
+  { n: '03', title: 'Read the report', body: 'See the price, growth score, and grade. Save it to compare lots.' },
 ]
 
 export function HomePage() {
@@ -24,123 +21,131 @@ export function HomePage() {
 
   return (
     <div ref={pageRef}>
-      {/* Hero: light tile */}
-      <section className="bg-canvas">
-        <div className="gutter mx-auto flex max-w-grid flex-col items-center gap-xl pb-xxl pt-xxl text-center sm:pt-section">
-          <div className="flex max-w-reading flex-col items-center gap-md">
-            <p data-reveal className="text-caption font-semibold text-ink-secondary">
-              Land prices across the Philippines
-            </p>
-            <h1 data-reveal className="text-display-sm xs:text-display-md sm:text-display-lg lg:text-hero">
-              Know what land is worth before you buy.
-            </h1>
-            <p data-reveal className="max-w-prose text-body text-ink-secondary sm:text-lead-airy sm:font-light">
-              Get a price per sqm, a growth score, and an investment grade for any city or town.
-            </p>
-            <div data-reveal className="flex w-full flex-col items-stretch gap-sm pt-xs xs:w-auto xs:flex-row xs:items-center">
-              <ButtonLink to="/check" size="large" iconAfter={<ArrowRight size={20} aria-hidden />}>
-                Check a location
-              </ButtonLink>
-              <ButtonLink to="/reports" variant="secondary" size="large">
-                See saved reports
-              </ButtonLink>
-            </div>
+      <section className="flex min-h-[calc(100dvh-var(--spacing-nav))] flex-col bg-canvas">
+        <div className="gutter mx-auto flex w-full max-w-reading flex-col items-center gap-md pt-xxl text-center sm:pt-section">
+          <h1 data-reveal className="text-display-md xs:text-display-lg lg:text-hero">
+            Know what land is worth before you buy.
+          </h1>
+          <p data-reveal className="max-w-prose text-lead font-regular">
+            A price per sqm, a growth score, and a grade for any city or town.
+          </p>
+          <div data-reveal className="flex flex-col items-stretch gap-sm pt-xs xs:flex-row xs:items-center">
+            <ButtonLink to="/check">Check a location</ButtonLink>
+            <ButtonLink to="/reports" variant="secondary">
+              See saved reports
+            </ButtonLink>
           </div>
-          <div data-reveal className="w-full max-w-reading">
-            <ParcelMap />
-          </div>
+        </div>
+        <div className="mt-xl flex min-h-[42vh] flex-1 sm:mt-xxl sm:min-h-[52vh]">
+          <img
+            src="/img/hero-land.jpg"
+            alt="Aerial view of farm lots, houses, and coconut palms on both sides of a provincial road"
+            width={1344}
+            height={576}
+            fetchPriority="high"
+            className="block w-full object-cover"
+          />
         </div>
       </section>
 
-      {/* What you get: dark tile */}
-      <section aria-labelledby="outputs-title" className="bg-tile text-on-tile">
-        <div className="gutter mx-auto flex max-w-grid flex-col gap-xxl py-xxl sm:py-section">
-          <div data-reveal className="mx-auto flex max-w-reading flex-col gap-sm text-center">
-            <h2 id="outputs-title" className="text-display-sm sm:text-display-lg">
-              Three numbers for every lot.
-            </h2>
-            <p className="text-on-tile-secondary sm:text-tagline sm:font-regular">
-              Each report shows the same three numbers, so you can compare lots side by side.
-            </p>
-          </div>
-          <ul className="grid gap-lg md:grid-cols-3">
-            {OUTPUTS.map(({ icon: Icon, title, body, sample }, i) => (
-              <li
-                key={title}
-                data-reveal
-                data-reveal-delay={i * 0.08}
-                className="flex flex-col gap-md rounded-lg border border-tile-hairline p-lg"
-              >
-                <Icon size={28} strokeWidth={1.5} className="text-on-tile-accent" aria-hidden />
-                <div className="flex flex-col gap-xs">
-                  <h3 className="text-tagline font-semibold">{title}</h3>
-                  <p className="text-on-tile-secondary">{body}</p>
-                </div>
-                <p className="mt-auto text-display-sm tabular-nums">{sample}</p>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      {/* How it works: parchment tile */}
-      <section id="how" aria-labelledby="how-title" className="bg-canvas-alt">
-        <div className="gutter mx-auto flex max-w-grid flex-col gap-xxl py-xxl sm:py-section">
-          <h2 id="how-title" data-reveal className="text-center text-display-sm sm:text-display-lg">
-            How it works
+      <section id="outputs" aria-labelledby="outputs-title" className="bg-tile py-xxl text-on-tile sm:py-section">
+        <div className="gutter mx-auto flex max-w-reading flex-col items-center gap-sm text-center">
+          <h2 id="outputs-title" data-reveal className="text-display-md sm:text-display-lg">
+            Three numbers for every lot.
           </h2>
-          <ol className="grid gap-lg md:grid-cols-3">
-            {STEPS.map(({ icon: Icon, title, body }, i) => (
-              <li
-                key={title}
-                data-reveal
-                data-reveal-delay={i * 0.08}
-                className="flex flex-col gap-md rounded-lg border border-hairline bg-surface p-lg"
-              >
-                <div className="flex items-center justify-between">
-                  <Icon size={28} strokeWidth={1.5} className="text-accent" aria-hidden />
-                  <span className="text-caption font-semibold text-ink-secondary">Step {i + 1}</span>
-                </div>
-                <div className="flex flex-col gap-xs">
-                  <h3 className="text-tagline font-semibold">{title}</h3>
-                  <p className="text-ink-secondary">{body}</p>
-                </div>
+          <p data-reveal className="text-lead font-regular text-on-tile-secondary">
+            The same three figures on every report, so lots sit side by side.
+          </p>
+          <div data-reveal className="flex flex-col items-stretch gap-sm pt-md xs:flex-row">
+            <ButtonLink to="/check">Check a location</ButtonLink>
+            <ButtonLink to="/reports" variant="on-tile">
+              See saved reports
+            </ButtonLink>
+          </div>
+        </div>
+        <ul className="gutter mx-auto mt-xxl grid max-w-grid gap-xxl text-center md:grid-cols-3">
+          {OUTPUTS.map((item, i) => (
+            <li key={item.title} data-reveal data-reveal-delay={i * 0.08} className="flex flex-col gap-sm">
+              <p className="text-display-lg tabular-nums lg:text-hero">{item.sample}</p>
+              <h3 className="text-tagline font-semibold">{item.title}</h3>
+              <p className="text-on-tile-secondary">{item.body}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="grid md:grid-cols-2">
+        <div className="bg-canvas-alt py-xxl text-center sm:py-section">
+          <div data-reveal className="gutter mx-auto flex max-w-prose flex-col items-center gap-md">
+            <p className="text-tagline font-semibold">Growth score</p>
+            <p className="text-display-lg lg:text-hero">0 to 100</p>
+            <p className="text-lead font-regular text-ink-secondary">How strongly the area points to rising prices.</p>
+            <ButtonLink to="/check">Check a location</ButtonLink>
+          </div>
+        </div>
+        <div className="bg-tile-2 py-xxl text-center text-on-tile sm:py-section">
+          <div data-reveal className="gutter mx-auto flex max-w-prose flex-col items-center gap-md">
+            <p className="text-tagline font-semibold">Investment grade</p>
+            <p className="text-display-lg lg:text-hero">A+ to C-</p>
+            <p className="text-lead font-regular text-on-tile-secondary">Clear reasons. The risks sit next to the score.</p>
+            <ButtonLink to="/#grades" variant="on-tile">
+              See the grades
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+
+      <section id="how" aria-labelledby="how-title" className="bg-canvas py-xxl sm:py-section">
+        <div className="gutter mx-auto flex max-w-grid flex-col gap-xxl">
+          <div data-reveal className="mx-auto flex max-w-reading flex-col items-center gap-sm text-center">
+            <h2 id="how-title" className="text-display-md sm:text-display-lg">
+              How it works
+            </h2>
+            <p className="text-lead font-regular text-ink-secondary">Three steps. Then a report you can save.</p>
+          </div>
+          <ol className="grid gap-xxl md:grid-cols-3">
+            {STEPS.map((step, i) => (
+              <li key={step.n} data-reveal data-reveal-delay={i * 0.08} className="flex flex-col items-center gap-md text-center">
+                <p className="text-caption font-semibold text-ink-secondary">{step.n}</p>
+                <h3 className="text-tagline font-semibold">{step.title}</h3>
+                <p className="max-w-prose text-ink-secondary">{step.body}</p>
               </li>
             ))}
           </ol>
         </div>
       </section>
 
-      {/* Grades: light tile */}
-      <section aria-labelledby="grades-title" className="bg-canvas">
-        <div className="gutter mx-auto flex max-w-reading flex-col gap-xxl py-xxl sm:py-section">
-          <div data-reveal className="flex flex-col gap-sm text-center">
-            <h2 id="grades-title" className="text-display-sm sm:text-display-lg">
+      <section id="grades" aria-labelledby="grades-title" className="bg-canvas-alt py-xxl sm:py-section">
+        <div className="gutter mx-auto flex max-w-reading flex-col items-center gap-xxl text-center">
+          <div data-reveal className="flex flex-col gap-sm">
+            <h2 id="grades-title" className="text-display-md sm:text-display-lg">
               Four grades. Clear reasons.
             </h2>
-            <p className="text-ink-secondary">Every report explains what pushed the grade up or down.</p>
+            <p className="text-lead font-regular text-ink-secondary">Every report explains what pushed the grade up or down.</p>
           </div>
-          <ul className="flex flex-col">
+          <ul className="grid w-full gap-xxl sm:grid-cols-2">
             {GRADE_ORDER.map((g, i) => {
               const info = gradeInfo(g)
               return (
-                <li
-                  key={g}
-                  data-reveal
-                  className={`flex flex-col gap-xs py-md sm:flex-row sm:items-center sm:gap-lg ${i > 0 ? 'border-t border-hairline' : ''}`}
-                >
-                  <div className="sm:w-56 sm:shrink-0">
-                    <GradeBadge grade={info} />
-                  </div>
+                <li key={g} data-reveal data-reveal-delay={i * 0.06} className="flex flex-col gap-sm">
+                  <p className="text-display-lg lg:text-hero">{info.grade}</p>
+                  <p className="text-tagline font-semibold">{info.label}</p>
                   <p className="text-ink-secondary">{info.summary}</p>
                 </li>
               )
             })}
           </ul>
-          <div data-reveal className="flex flex-col items-center gap-md text-center">
-            <p className="text-tagline font-semibold">Have a lot in mind?</p>
-            <ButtonLink to="/check" size="large" iconAfter={<ArrowRight size={20} aria-hidden />}>
-              Check a location
+        </div>
+      </section>
+
+      <section className="bg-tile py-xxl text-center text-on-tile sm:py-section">
+        <div data-reveal className="gutter mx-auto flex max-w-reading flex-col items-center gap-md">
+          <h2 className="text-display-md sm:text-display-lg">Have a lot in mind?</h2>
+          <p className="text-lead font-regular text-on-tile-secondary">Check a city, town, or barangay. The report takes a few seconds.</p>
+          <div className="flex flex-col items-stretch gap-sm pt-xs xs:flex-row">
+            <ButtonLink to="/check">Check a location</ButtonLink>
+            <ButtonLink to="/reports" variant="on-tile">
+              See saved reports
             </ButtonLink>
           </div>
         </div>
