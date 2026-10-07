@@ -79,7 +79,7 @@ class GeoTrendSync:
     def extract_news_insights(self, news_text: str) -> dict:
         """Extract insights from news text using simple text analysis"""
         if not news_text:
-            return {"sentiment": "neutral", "entities": [], "insights": "No news data available"}
+            return {"sentiment": "neutral", "entities": [], "insights": []}
         
         # Simple keyword analysis
         news_lower = news_text.lower()
