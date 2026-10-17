@@ -47,8 +47,8 @@ export function splitInsights(insights: string | undefined | null): string[] {
     .filter((s) => s.length > 1)
 }
 
-// Matches the warning lines in ai-microservice/main.py generate_insights
-const RISK_WORDS = ['risk', 'weak', 'lacking', 'check', 'low prices']
+// Matches the warning lines in ai-microservice/main.py generate_insights and extract_news_insights
+const RISK_WORDS = ['risk', 'weak', 'lacking', 'check', 'low prices', 'flood', 'landslide', 'few reference']
 
 export function insightTone(text: string): Tone {
   const t = text.toLowerCase()

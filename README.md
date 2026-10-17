@@ -1,16 +1,39 @@
 # SmartLand
 
-SmartLand estimates land prices in the Philippines. Enter a city, town, or barangay and what you know about the area, and you get a price per sqm, a growth score from 0 to 100, and an investment grade from A+ to C-.
+SmartLand estimates land prices in the Philippines. Enter a city, town, or barangay, and SmartLand fills in the details from OpenStreetMap, regional figures, and recent news. You get a price per sqm with a likely range, nearby reference prices, a growth score from 0 to 100, and an investment grade from A+ to C-.
 
 ## How it fits together
 
 | Part | Folder | Port | What it does |
 |---|---|---|---|
-| Web app | `frontend/` | 3001 | React + Vite + Tailwind. Check a location, read the report, save reports on this device |
-| Backend | `backend/` | 3000 | FastAPI gateway. `POST /api/test-analyze` (open) and `POST /api/analyze` (JWT) |
-| AI service | `ai-microservice/` | 8002 | FastAPI. `POST /predict` scores price and growth (`main.py`) |
+| Web app | `frontend/` | 3001 | React + Vite + Tailwind. Check a location, see it on a map, read the report, save, share, print, or download it |
+| Backend | `backend/` | 3000 | FastAPI gateway. Accounts, saved reports, share links, and calls to the AI service |
+| AI service | `ai-microservice/` | 8002 | FastAPI. `GET /locate` finds a place and its factors, `POST /predict` scores it. See its [README](ai-microservice/README.md) |
 
-The web app calls `/api/...` and the Vite dev server forwards it to the backend on port 3000. MongoDB (agency lookup) and PostgreSQL (geo data) are optional: reports still work without them.
+The web app calls `/api/...` and the Vite dev server forwards it to the backend on port 3000.
+
+### Backend API
+
+| Method | Path | Sign-in | What it does |
+|---|---|---|---|
+| GET | `/api/locate?q=` | No | Place, map data, factors, and news for a location |
+| POST | `/api/analyze` | Optional | Report for a location. Looks the place up itself if the request has no `place` |
+| POST | `/api/auth/register`, `/api/auth/login` | No | Returns a JWT that lasts 30 days |
+| GET | `/api/auth/me` | Yes | The signed-in account |
+| GET, PUT, DELETE | `/api/reports`, `/api/reports/{id}` | Yes | Saved reports in the account |
+| POST, DELETE | `/api/reports/{id}/share` | Yes | Turn a public link on or off |
+| GET | `/api/shared/{token}` | No | A shared report, read-only |
+
+Checking a location works without an account. Guests are limited to 100 reports per 15 minutes per IP address, and signed-in people get their own limit.
+
+### Storage
+
+- **Accounts and saved reports**: SQLite, in `backend/smartland.db` by default. Set `DATABASE_PATH` to move it. Passwords are hashed with PBKDF2-SHA256.
+- **Reports on the device**: the web app keeps a copy in `localStorage`. When you sign in, reports saved on the device upload to the account.
+- **PostgreSQL with PostGIS** (optional): gives elevation from the 30 m terrain model in `ph.dem30`. Without it, elevation comes from Open-Meteo.
+- **MongoDB** (optional): an `agencies` collection with `location`, `name`, `phone`, `email`, and `address`. When a document matches the city, the report shows it under "Before you buy".
+
+Set `JWT_SECRET` to a long random value. Without it, the backend makes a temporary secret and everyone is signed out when it restarts.
 
 ## Run it
 
@@ -32,6 +55,12 @@ npm run dev        # http://localhost:3001
 ```
 
 Build for production with `npm run build` in `frontend/`. Output goes to `frontend/dist/`.
+
+## Deploy
+
+`./deploy.ps1` deploys the AI service and the web app to Cloud Run. Set `SMARTLAND_JWT_SECRET` in your shell first, so sign-ins survive new deploys.
+
+Cloud Run's disk is wiped on every deploy and is not shared between instances. The script runs the web app on one instance and keeps the SQLite file in `/tmp`. Accounts and saved reports still reset on each deploy. For lasting accounts, mount a persistent volume and point `DATABASE_PATH` at it, or move `backend/store.py` to Cloud SQL.
 
 ## Design
 

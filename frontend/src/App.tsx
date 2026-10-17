@@ -8,12 +8,16 @@ import { HomePage } from './pages/Home'
 import { CheckPage } from './pages/Check'
 import { ReportPage } from './pages/Report'
 import { ReportsPage } from './pages/Reports'
+import { AccountPage } from './pages/Account'
+import { SharedPage } from './pages/Shared'
 
 const TITLES: [RegExp, string][] = [
   [/^\/$/, 'SmartLand: know what land is worth'],
   [/^\/check/, 'Check a location · SmartLand'],
   [/^\/reports\/.+/, 'Report · SmartLand'],
   [/^\/reports/, 'Saved reports · SmartLand'],
+  [/^\/shared/, 'Shared report · SmartLand'],
+  [/^\/account/, 'Account · SmartLand'],
 ]
 
 function DocumentTitle() {
@@ -46,6 +50,8 @@ export default function App() {
           <Route path="check" element={<CheckPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="reports/:id" element={<ReportPage />} />
+          <Route path="shared/:token" element={<SharedPage />} />
+          <Route path="account" element={<AccountPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

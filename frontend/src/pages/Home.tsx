@@ -4,15 +4,15 @@ import { GRADE_ORDER, gradeInfo } from '../lib/format'
 import { useReveal } from '../lib/motion'
 
 const OUTPUTS = [
-  { sample: '₱4,350', title: 'Price per sqm', body: 'An estimate in pesos, plus the total for your lot size.' },
+  { sample: '₱11,090', title: 'Price per sqm', body: 'An estimate in pesos, plus the total for your lot size.' },
   { sample: '78', title: 'Growth score', body: 'From 0 to 100. How strongly local conditions point to rising prices.' },
   { sample: 'A to B+', title: 'Investment grade', body: 'A+ to C-, with the reasons behind it and the risks to check.' },
 ]
 
 const STEPS = [
   { n: '01', title: 'Enter the location', body: 'Any city, town, or barangay in the Philippines.' },
-  { n: '02', title: 'Add what you know', body: 'Roads, flood risk, and how far the mall, school, and hospital are.' },
-  { n: '03', title: 'Read the report', body: 'See the price, growth score, and grade. Save it to compare lots.' },
+  { n: '02', title: 'Check the details', body: 'We fill in roads, flood risk, and distances from map data. Change anything you know better.' },
+  { n: '03', title: 'Read the report', body: 'See the price, nearby reference prices, and the grade. Save, share, or download it.' },
 ]
 
 export function HomePage() {

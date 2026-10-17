@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { LandPlot, Moon, Sun } from 'lucide-react'
+import { LandPlot, Menu, Moon, Sun, X } from 'lucide-react'
 import { useTheme, type ThemeChoice } from '../lib/theme'
+import { useUser } from '../lib/auth'
 import { ButtonLink } from './Button'
 
 const THEME_LABEL: Record<ThemeChoice, string> = {
@@ -30,9 +31,33 @@ const navLink = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'text-on-tile' : 'text-on-tile-secondary hover:text-on-tile'
   }`
 
+const trayLink = ({ isActive }: { isActive: boolean }) =>
+  `flex min-h-tap items-center border-b border-tile-hairline text-tagline font-semibold ${
+    isActive ? 'text-on-tile' : 'text-on-tile-secondary hover:text-on-tile'
+  }`
+
 function GlobalNav() {
+  const user = useUser()
+  const { pathname } = useLocation()
+  // The tray belongs to the page it was opened on, so navigating closes it
+  const [openOn, setOpenOn] = useState<string | null>(null)
+  const open = openOn === pathname
+  const setOpen = (next: boolean) => setOpenOn(next ? pathname : null)
+  const links = [
+    { to: '/check', label: 'Check' },
+    { to: '/reports', label: 'Saved' },
+    { to: '/account', label: user ? 'Account' : 'Sign in' },
+  ]
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpenOn(null)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
+
   return (
-    <header className="sticky top-0 z-50 bg-black pt-[env(safe-area-inset-top)]">
+    <header className="sticky top-0 z-50 bg-black pt-[env(safe-area-inset-top)] print:hidden">
       <nav aria-label="Main" className="gutter mx-auto flex h-nav max-w-grid items-center justify-between">
         <Link
           to="/"
@@ -42,29 +67,58 @@ function GlobalNav() {
           SmartLand
         </Link>
         <div className="flex items-center">
-          <NavLink to="/check" className={navLink}>
-            Check
-          </NavLink>
-          <NavLink to="/reports" className={navLink}>
-            Saved
-          </NavLink>
+          {/* Full link row from 834px, per DESIGN.md */}
+          <div className="hidden items-center md:flex">
+            {links.map((l) => (
+              <NavLink key={l.to} to={l.to} className={navLink}>
+                {l.label}
+              </NavLink>
+            ))}
+          </div>
           <ThemeButton />
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
+            aria-expanded={open}
+            aria-controls="nav-tray"
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            className="press inline-flex size-tap items-center justify-center rounded-pill text-on-tile md:hidden"
+          >
+            {open ? <X size={18} strokeWidth={1.75} aria-hidden /> : <Menu size={18} strokeWidth={1.75} aria-hidden />}
+          </button>
         </div>
       </nav>
+      {open && (
+        <div id="nav-tray" className="gutter border-t border-tile-hairline bg-black pb-lg md:hidden">
+          <ul className="mx-auto max-w-grid">
+            {links.map((l) => (
+              <li key={l.to}>
+                <NavLink to={l.to} className={trayLink}>
+                  {l.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </header>
   )
 }
 
+const SUBNAV_TITLES: [RegExp, string][] = [
+  [/^\/reports\/.+/, 'Report'],
+  [/^\/reports/, 'Saved reports'],
+  [/^\/shared/, 'Shared report'],
+  [/^\/account/, 'Account'],
+  [/^\/check/, 'Check a location'],
+]
+
 function SubNav() {
   const { pathname } = useLocation()
   if (pathname === '/') return null
-  const title = pathname.startsWith('/reports/')
-    ? 'Report'
-    : pathname.startsWith('/reports')
-      ? 'Saved reports'
-      : 'Check a location'
+  const title = SUBNAV_TITLES.find(([re]) => re.test(pathname))?.[1] ?? 'SmartLand'
   return (
-    <div className="frosted sticky top-[calc(var(--spacing-nav)+env(safe-area-inset-top))] z-40">
+    <div className="frosted print:hidden sticky top-[calc(var(--spacing-nav)+env(safe-area-inset-top))] z-40">
       <div className="gutter mx-auto flex h-subnav max-w-grid items-center justify-between gap-sm">
         <p className="truncate text-tagline font-semibold">{title}</p>
         {pathname !== '/check' && (
@@ -85,6 +139,7 @@ const FOOTER = [
     links: [
       { to: '/check', label: 'Check a location' },
       { to: '/reports', label: 'Saved reports' },
+      { to: '/account', label: 'Account' },
       { to: '/#how', label: 'How it works' },
     ],
   },
@@ -100,11 +155,11 @@ const FOOTER = [
 
 function Footer() {
   return (
-    <footer className="bg-canvas-alt pb-[max(4rem,env(safe-area-inset-bottom))] pt-footer text-ink-secondary">
+    <footer className="print:hidden bg-canvas-alt pb-[max(4rem,env(safe-area-inset-bottom))] pt-footer text-ink-secondary">
       <div className="gutter mx-auto flex max-w-reading flex-col gap-xl">
         <p className="text-fine-print">
-          SmartLand estimates come from a scoring model that uses the numbers you enter. They are not an appraisal.
-          Check with a licensed appraiser and the local assessor before you buy.
+          SmartLand estimates come from reference prices for nearby areas, OpenStreetMap, regional figures, and news.
+          They are not an appraisal. Check with a licensed appraiser and the local assessor before you buy.
         </p>
         <div className="grid gap-xl sm:grid-cols-2">
           {FOOTER.map((col) => (
@@ -124,7 +179,7 @@ function Footer() {
         </div>
         <div className="flex flex-col gap-xs border-t border-hairline pt-lg text-fine-print text-ink-disabled xs:flex-row xs:justify-between">
           <p>Copyright © {YEAR} SmartLand. All rights reserved. Prices in Philippine pesos.</p>
-          <p>Icons by Lucide</p>
+          <p>Map data © OpenStreetMap contributors · Icons by Lucide</p>
         </div>
       </div>
     </footer>

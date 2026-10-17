@@ -69,6 +69,7 @@ export function TextArea({
 export function RangeField({
   label,
   hint,
+  note,
   value,
   min,
   max,
@@ -79,6 +80,8 @@ export function RangeField({
 }: {
   label: string
   hint: string
+  /** Where the value came from, shown under the hint */
+  note?: string
   value: number
   min: number
   max: number
@@ -115,6 +118,7 @@ export function RangeField({
       </div>
       <p id={`${id}-hint`} className="text-caption text-ink-secondary">
         {hint}
+        {note && <span className="block font-semibold text-ink">{note}</span>}
       </p>
       <input
         type="range"
