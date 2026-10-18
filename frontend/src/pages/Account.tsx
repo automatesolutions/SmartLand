@@ -1,5 +1,5 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { LoaderCircle, LogOut, RotateCcw, UserRound } from 'lucide-react'
 import { ApiError } from '../lib/api'
 import { signIn, signOut, useUser } from '../lib/auth'
@@ -8,6 +8,8 @@ import { useReveal } from '../lib/motion'
 import { Button, ButtonLink } from '../components/Button'
 import { TextField } from '../components/Fields'
 import { Banner } from '../components/States'
+import { GoogleSignIn } from '../components/GoogleSignIn'
+import { useGoogleAvailable } from '../lib/google'
 
 type Mode = 'login' | 'register'
 
@@ -43,6 +45,14 @@ function SignedIn() {
       )}
       <div className="flex flex-col gap-sm xs:flex-row">
         <ButtonLink to="/reports">Open saved reports</ButtonLink>
+        <ButtonLink to="/listings/mine" variant="secondary">
+          Your listings
+        </ButtonLink>
+        {user.is_admin && (
+          <ButtonLink to="/reviews" variant="secondary">
+            Review documents
+          </ButtonLink>
+        )}
         <Button variant="plain" onClick={signOut} icon={<LogOut size={18} aria-hidden />}>
           Sign out
         </Button>
@@ -57,6 +67,8 @@ function SignedIn() {
 export function AccountPage() {
   const user = useUser()
   const navigate = useNavigate()
+  // Pages that need an account (such as posting a listing) send people here and get them back
+  const from = (useLocation().state as { from?: string } | null)?.from
   const [mode, setMode] = useState<Mode>('login')
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -65,6 +77,7 @@ export function AccountPage() {
   const [failure, setFailure] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const pageRef = useRef<HTMLDivElement>(null)
+  const googleAvailable = useGoogleAvailable()
   useReveal(pageRef, [Boolean(user)])
 
   async function onSubmit(e: FormEvent) {
@@ -81,7 +94,7 @@ export function AccountPage() {
     setFailure(null)
     try {
       await signIn(mode, email, password, mode === 'register' ? name : undefined)
-      navigate('/reports')
+      navigate(from ?? '/reports')
     } catch (err) {
       const kind = err instanceof ApiError ? err.kind : 'server'
       setFailure(
@@ -122,6 +135,24 @@ export function AccountPage() {
         {user ? (
           <SignedIn />
         ) : (
+          <>
+            {googleAvailable !== false && (
+              <>
+                <section data-reveal aria-label="Sign in with Google" className="flex flex-col gap-sm rounded-lg border border-hairline bg-surface p-md sm:p-lg">
+                  <GoogleSignIn oneTap onSignedIn={() => navigate(from ?? '/reports')} />
+                  <p className="text-caption text-ink-secondary">
+                    Use your Gmail or any Google account. We get your name and email, nothing else. If you already have a SmartLand account with the same email,
+                    it signs you into that one.
+                  </p>
+                </section>
+                <p
+                  data-reveal
+                  className="flex items-center gap-sm text-caption text-ink-secondary before:h-px before:flex-1 before:bg-hairline after:h-px after:flex-1 after:bg-hairline"
+                >
+                  or use your email
+                </p>
+              </>
+            )}
           <form
             onSubmit={onSubmit}
             noValidate
@@ -192,6 +223,7 @@ export function AccountPage() {
               <p className="text-caption text-ink-secondary">Reports already saved on this device move into your new account.</p>
             )}
           </form>
+          </>
         )}
       </div>
     </div>

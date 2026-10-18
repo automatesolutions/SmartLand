@@ -65,11 +65,12 @@ export function TextArea({
   )
 }
 
-/** Slider + number box for one model input */
+/** Slider + number box for one model input, laid out as a row in a list */
 export function RangeField({
   label,
   hint,
   note,
+  icon,
   value,
   min,
   max,
@@ -80,8 +81,9 @@ export function RangeField({
 }: {
   label: string
   hint: string
-  /** Where the value came from, shown under the hint */
+  /** Where the value came from, shown as a chip under the slider */
   note?: string
+  icon?: ReactNode
   value: number
   min: number
   max: number
@@ -92,14 +94,24 @@ export function RangeField({
 }) {
   const id = useId()
   const fill = `${((value - min) / (max - min)) * 100}%`
-  const describedBy = [`${id}-hint`, error && `${id}-error`].filter(Boolean).join(' ')
+  const describedBy = [`${id}-hint`, note && `${id}-note`, error && `${id}-error`].filter(Boolean).join(' ')
   return (
-    <div className="flex flex-col gap-xxs">
-      <div className="flex items-center justify-between gap-md">
-        <label htmlFor={`${id}-num`} className="min-w-0 font-semibold">
-          {label}
-        </label>
-        <div className="flex shrink-0 items-center gap-xxs">
+    <div className="flex flex-col gap-xxs border-b border-hairline py-md first:pt-0 last:border-b-0 last:pb-0">
+      <div className="flex items-center gap-sm">
+        {icon && (
+          <span aria-hidden className="flex size-10 shrink-0 items-center justify-center rounded-pill bg-surface-raised text-ink-secondary">
+            {icon}
+          </span>
+        )}
+        <div className="flex min-w-0 flex-1 flex-col">
+          <label htmlFor={`${id}-num`} className="font-semibold">
+            {label}
+          </label>
+          <p id={`${id}-hint`} className="text-caption text-ink-secondary">
+            {hint}
+          </p>
+        </div>
+        <div className="flex shrink-0 items-baseline gap-xxs">
           <input
             id={`${id}-num`}
             type="number"
@@ -111,15 +123,11 @@ export function RangeField({
             onChange={(e) => onChange(e.target.value === '' ? NaN : Number(e.target.value))}
             aria-invalid={!!error}
             aria-describedby={describedBy}
-            className={`${control} h-tap w-24 rounded-sm px-sm text-right tabular-nums`}
+            className="h-tap w-20 rounded-sm border border-transparent bg-surface-raised px-xs text-right text-tagline font-semibold tabular-nums text-ink transition-colors duration-200 ease-apple hover:border-hairline focus-visible:border-focus aria-[invalid=true]:border-critical"
           />
-          {unit && <span className="w-8 text-caption text-ink-secondary">{unit}</span>}
+          <span className="w-6 text-caption text-ink-secondary">{unit}</span>
         </div>
       </div>
-      <p id={`${id}-hint`} className="text-caption text-ink-secondary">
-        {hint}
-        {note && <span className="block font-semibold text-ink">{note}</span>}
-      </p>
       <input
         type="range"
         min={min}
@@ -128,10 +136,15 @@ export function RangeField({
         value={Number.isNaN(value) ? min : value}
         onChange={(e) => onChange(Number(e.target.value))}
         aria-label={label}
-        aria-describedby={`${id}-hint`}
+        aria-describedby={describedBy}
         className="range"
         style={{ ['--fill' as string]: fill }}
       />
+      {note && (
+        <p id={`${id}-note`} className="-mt-xxs self-start rounded-pill bg-surface-raised px-sm py-xxs text-fine-print text-ink-secondary">
+          {note}
+        </p>
+      )}
       <FieldError id={`${id}-error`}>{error}</FieldError>
     </div>
   )

@@ -4,12 +4,11 @@ import { FileDown, LinkIcon, Printer } from 'lucide-react'
 import { api, ApiError, errorCopy } from '../lib/api'
 import type { Report } from '../lib/reports'
 import { downloadCsv, printReport } from '../lib/export'
-import { formatDate, parseGrade } from '../lib/format'
+import { formatDate } from '../lib/format'
 import { useReveal } from '../lib/motion'
 import { Button, ButtonLink } from '../components/Button'
-import { GradeBadge } from '../components/Grade'
 import { EmptyState, Skeleton } from '../components/States'
-import { ReportBody } from '../components/ReportBody'
+import { ReportBody, ReportHero } from '../components/ReportBody'
 
 /** Read-only view of a report someone shared with a link */
 export function SharedPage() {
@@ -59,16 +58,10 @@ export function SharedPage() {
 
   return (
     <div ref={pageRef}>
-      <div className="bg-canvas-alt">
-        <div className="gutter mx-auto flex max-w-reading flex-col gap-lg pb-xxl pt-xl sm:pb-section">
-          <div data-reveal className="flex flex-col gap-sm">
-            <p className="text-caption text-ink-secondary">Shared report · {formatDate(report.createdAt)}</p>
-            <h1 className="text-display-md sm:text-display-lg">{report.result.location}</h1>
-            <div>
-              <GradeBadge grade={parseGrade(report.result.category)} size="large" />
-            </div>
-          </div>
-          <div data-reveal className="flex flex-col gap-sm xs:flex-row xs:flex-wrap print:hidden">
+      <ReportHero report={report} eyebrow={`Shared report · ${formatDate(report.createdAt)}`} />
+      <div className="border-b border-hairline bg-canvas-alt print:hidden">
+        <div className="gutter mx-auto flex max-w-reading flex-col gap-lg py-lg">
+          <div className="flex flex-col gap-sm xs:flex-row xs:flex-wrap">
             <ButtonLink to="/check" state={{ input: report.input }}>
               Check it with your own values
             </ButtonLink>

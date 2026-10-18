@@ -94,16 +94,29 @@ def composite_scores(f: dict) -> dict:
 
 
 @app.get("/locate")
-async def locate(q: str = Query(min_length=2, max_length=200)):
-    """Finds a place and fills in the scoring factors from map, elevation, regional, and news data"""
-    place = await geocoder.geocode(q)
+async def locate(
+    q: str | None = Query(default=None, min_length=2, max_length=200),
+    # A spot pinned on the map. The bounds box the Philippines.
+    lat: float | None = Query(default=None, ge=4.2, le=21.5),
+    lon: float | None = Query(default=None, ge=116.0, le=127.0),
+):
+    """Finds a place by name or by a pinned point, and fills in the scoring factors
+    from map, elevation, regional, and news data"""
+    if lat is not None and lon is not None:
+        place = await geocoder.reverse(lat, lon)
+    elif q:
+        place = await geocoder.geocode(q)
+    else:
+        raise HTTPException(status_code=422, detail="Send a place name, or lat and lon")
     if not place:
         raise HTTPException(status_code=404, detail="Place not found")
 
     lat, lon = place["lat"], place["lon"]
     news_place = place.get("locality") or place["name"]
     osm, elev, articles = await asyncio.gather(
-        osm_collector.collect(lat, lon),
+        # Public Overpass mirrors often queue for 15 to 25 s. Past this budget the
+        # factors use estimates, and the survey finishes in the background for the report.
+        osm_collector.collect(lat, lon, budget=15),
         geocoder.elevation(lat, lon),
         news_collector.headlines(news_place, place.get("province")),
     )
@@ -147,6 +160,59 @@ async def locate(q: str = Query(min_length=2, max_length=200)):
         "osm_counts": osm["counts"] if osm else None,
         "news": {"articles": articles, "analysis": extract_news_insights(headline_text)},
     }
+
+
+# Searches to try, in order, for each office. Assessor and planning offices
+# are usually inside the city or municipal hall, which is what OSM maps.
+OFFICE_SEARCHES = {
+    "assessor": ["{town} City Hall", "{town} Municipal Hall"],
+    "bir": ["BIR {town}", "Bureau of Internal Revenue {town}"],
+    "registry": ["Registry of Deeds {province}", "Registry of Deeds {town}"],
+    "planning": ["{town} City Hall", "{town} Municipal Hall"],
+}
+
+
+@app.get("/offices")
+async def offices(
+    town: str = Query(min_length=2, max_length=100),
+    province: str | None = Query(default=None, max_length=100),
+    lat: float = Query(ge=4.2, le=21.5),
+    lon: float = Query(ge=116.0, le=127.0),
+):
+    """Finds the offices from the report's "Before you buy" list on the map.
+    An office that isn't on OpenStreetMap comes back as null."""
+    found: dict[str, dict | None] = {}
+    for kind, searches in OFFICE_SEARCHES.items():
+        hit = None
+        for template in searches:
+            query = template.format(town=town, province=province or town)
+            # Provincial registries can sit in the capital, farther from the lot
+            hit = await geocoder.search_near(query, lat, lon, span=0.8 if kind == "registry" else 0.4)
+            if hit:
+                break
+        found[kind] = hit
+    return found
+
+
+@app.get("/reverse")
+async def reverse(lat: float = Query(ge=4.2, le=21.5), lon: float = Query(ge=116.0, le=127.0)):
+    """Names a pinned spot (barangay, town, province) without measuring around it"""
+    place = await geocoder.reverse(lat, lon)
+    if not place:
+        raise HTTPException(status_code=404, detail="Place not found")
+    return place
+
+
+@app.get("/nearby")
+async def nearby(lat: float = Query(ge=4.2, le=21.5), lon: float = Query(ge=116.0, le=127.0)):
+    """Schools, hospitals, shops, food, resorts, car rentals, and computer shops
+    around a point, from OpenStreetMap and the local Overture copy. `partial` is
+    true when OpenStreetMap wasn't back yet; ask again shortly for the full list.
+    503 when neither source can answer."""
+    result = await osm_collector.nearby(lat, lon)
+    if result is None:
+        raise HTTPException(status_code=503, detail="Map data unavailable")
+    return result
 
 
 class PredictionRequest(BaseModel):

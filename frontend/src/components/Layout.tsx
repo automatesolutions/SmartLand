@@ -111,6 +111,11 @@ const SUBNAV_TITLES: [RegExp, string][] = [
   [/^\/shared/, 'Shared report'],
   [/^\/account/, 'Account'],
   [/^\/check/, 'Check a location'],
+  [/^\/listings\/new/, 'Post a listing'],
+  [/^\/listings\/mine/, 'Your listings'],
+  [/^\/listings\//, 'Listings'],
+  [/^\/listing\//, 'Listing'],
+  [/^\/reviews/, 'Document reviews'],
 ]
 
 function SubNav() {

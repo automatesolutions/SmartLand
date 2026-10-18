@@ -1,5 +1,6 @@
 import { useSyncExternalStore } from 'react'
-import { configureAuth, signInRequest, type User } from './api'
+import { api, configureAuth, googleSignInRequest, signInRequest, type User } from './api'
+import { stopGoogleAutoSignIn } from './google'
 
 // The session lives in localStorage so it survives reloads. Reads are guarded
 // because storage can be blocked; the person then stays signed in for this visit.
@@ -63,6 +64,26 @@ export async function signIn(mode: 'login' | 'register', email: string, password
   return user
 }
 
+export async function signInWithGoogle(credential: string) {
+  const { token, user } = await googleSignInRequest(credential)
+  setSession({ token, user })
+  return user
+}
+
 export function signOut() {
   setSession(null)
+  // Otherwise One Tap would sign the person straight back in
+  stopGoogleAutoSignIn()
+}
+
+// Refresh the saved profile once per visit, so changes such as a new reviewer
+// role show without signing in again. A 401 signs out through configureAuth.
+if (session) {
+  const token = session.token
+  api
+    .me()
+    .then((user) => {
+      if (session?.token === token) setSession({ token, user })
+    })
+    .catch(() => {})
 }

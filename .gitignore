@@ -1,2 +1,5 @@
 backend/smartland.db*
 __pycache__/
+# Built by ai-microservice/etl/build_places.py
+ai-microservice/data/places_ph.sqlite*
+backend/uploads/

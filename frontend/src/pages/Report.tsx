@@ -17,12 +17,11 @@ import {
 import { deleteReport, findReport, saveReport, setShared, useSavedReports, type Report } from '../lib/reports'
 import { useUser } from '../lib/auth'
 import { downloadCsv, printReport } from '../lib/export'
-import { formatDate, parseGrade } from '../lib/format'
+import { formatDate } from '../lib/format'
 import { useReveal } from '../lib/motion'
 import { Button, ButtonLink } from '../components/Button'
-import { GradeBadge } from '../components/Grade'
 import { Banner, EmptyState } from '../components/States'
-import { ReportBody } from '../components/ReportBody'
+import { ReportBody, ReportHero } from '../components/ReportBody'
 
 type Notice = 'saved-device' | 'saved-account' | 'save-failed' | 'share-failed' | 'delete-failed' | 'copied' | null
 
@@ -120,7 +119,6 @@ export function ReportPage() {
 
   const { report, saved } = found
   const { result, input } = report
-  const grade = parseGrade(result.category)
 
   async function onSave() {
     setSaving(true)
@@ -136,26 +134,24 @@ export function ReportPage() {
 
   return (
     <div ref={pageRef}>
-      {/* Header band */}
-      <div className="bg-canvas-alt">
-        <div className="gutter mx-auto flex max-w-reading flex-col gap-lg pb-xxl pt-lg sm:pb-section">
+      <ReportHero
+        report={report}
+        eyebrow={`Report · ${formatDate(report.createdAt)}`}
+        back={
           <Link
             to={saved ? '/reports' : '/check'}
             state={saved ? undefined : { input }}
-            className="press -ml-xs inline-flex min-h-tap items-center gap-xxs self-start px-xs text-accent print:hidden"
+            className="press -ml-xs inline-flex min-h-tap items-center gap-xxs self-start px-xs text-on-tile-accent print:hidden"
           >
             <ChevronLeft size={20} aria-hidden />
             {saved ? 'Saved reports' : 'Back to the form'}
           </Link>
+        }
+      />
 
-          <div data-reveal className="flex flex-col gap-sm">
-            <p className="text-caption text-ink-secondary">Report · {formatDate(report.createdAt)}</p>
-            <h1 className="text-display-md sm:text-display-lg">{result.location}</h1>
-            <div>
-              <GradeBadge grade={grade} size="large" />
-            </div>
-          </div>
-
+      {/* Actions */}
+      <div className="border-b border-hairline bg-canvas-alt print:hidden">
+        <div className="gutter mx-auto flex max-w-reading flex-col gap-md py-lg">
           {notice === 'saved-account' && (
             <Banner
               tone="positive"
@@ -212,7 +208,7 @@ export function ReportPage() {
             </p>
           )}
 
-          <div data-reveal className="flex flex-col gap-sm xs:flex-row xs:flex-wrap print:hidden">
+          <div className="flex flex-col gap-sm xs:flex-row xs:flex-wrap">
             {saved ? (
               <Button variant="secondary" icon={<BookmarkCheck size={20} aria-hidden />} disabled>
                 Saved
@@ -233,7 +229,7 @@ export function ReportPage() {
             </Button>
           </div>
 
-          <div className="print:hidden">
+          <div>
             {user && saved ? (
               <SharePanel report={report} onNotice={setNotice} />
             ) : (
