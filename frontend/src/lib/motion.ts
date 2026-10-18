@@ -9,6 +9,29 @@ gsap.registerPlugin(ScrollTrigger, CustomEase)
 CustomEase.create('apple', '0.25,0.1,0.25,1')
 
 /**
+ * Holds the CSS animations inside `scope` (rings, growing bars) until it
+ * scrolls into view, so people see them play instead of finding them done.
+ */
+export function usePlayOnView(scope: RefObject<HTMLElement | null>) {
+  useLayoutEffect(() => {
+    const node = scope.current
+    if (!node || typeof IntersectionObserver === 'undefined') return
+    node.setAttribute('data-play', 'off')
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          node.setAttribute('data-play', 'on')
+          io.disconnect()
+        }
+      },
+      { threshold: 0.35 },
+    )
+    io.observe(node)
+    return () => io.disconnect()
+  }, [scope])
+}
+
+/**
  * Fades up every [data-reveal] element inside `scope` once, as it scrolls in.
  * Does nothing when the person prefers reduced motion.
  */

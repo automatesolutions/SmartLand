@@ -611,7 +611,17 @@ Each has a `-soft` background at 12% alpha for banners and badges.
 
 ## Spacing, radius, shadow
 
-Use the source scales as-is: spacing `4 8 12 17 24 32 48 80`, radius `0 5 8 11 18 pill`. Cards are `{rounded.lg}` with a 1px hairline and no shadow. The product shadow is not used, because SmartLand has no product photography.
+Use the source scales as-is: spacing `4 8 12 17 24 32 48 80`, radius `0 5 8 11 18 pill`. Cards are `{rounded.lg}` with a 1px hairline and no shadow.
+
+**Maps are SmartLand's product imagery [ext].** The map is the one thing on a report that plays the role of a product photo, so a map on a dark tile may carry the source's product shadow (`shadow-product`, `rgba(0,0,0,0.22) 3px 5px 30px`). Nothing else gets a shadow. Overlays on a full-height map (search, live estimate) use the frosted treatment from the sub-nav.
+
+## Figures and data [ext]
+
+- `figure` type (72px / 600 / 1.0 / -1.44px) is for one headline number per screen, such as the price per sqm. It steps down to `display-lg` below 641px.
+- Score rings show 0 to 100 or 0 to 10 scores. Ring colour follows the status colours and always sits next to the number and a label.
+- Charts use `ink` for "this lot" and `ink-secondary` for context. Accent blue stays reserved for things you can click, plus the map pin you can drag.
+- Status colours on a dark tile use the dark-mode hexes (`positive-on-tile` and friends) in both themes, so they pass contrast on black.
+- Numbers count up once when they first appear, over 0.9s, and update in place when inputs change. Reduced motion shows the final number at once.
 
 Page gutters: 16px on phones, 24px from 641px, 32px from 1069px. Content locks at 980px for reading pages and 1440px for grids. Respect `env(safe-area-inset-*)` on all edges.
 

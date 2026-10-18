@@ -1,0 +1,6268 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "osm3s": {
+    "timestamp_osm_base": "2026-10-18T05:23:51Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 606882062,
+  "lat": 13.9505231,
+  "lon": 121.1331643,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Balue's Lomi House"
+  }
+},
+{
+  "type": "node",
+  "id": 723886490,
+  "lat": 13.9604252,
+  "lon": 121.1462063,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Southern Tagalog Arterial Road",
+    "amenity": "fast_food",
+    "brand": "Chowking",
+    "brand:wikidata": "Q1076816",
+    "cuisine": "asian",
+    "level": "0",
+    "name": "Chowking",
+    "payment:cash": "yes",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 911903494,
+  "lat": 13.9451044,
+  "lon": 121.1605725,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "San Nicolas Street",
+    "name": "Darling Home Sweethome",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 911966773,
+  "lat": 13.9433240,
+  "lon": 121.1566381,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Benoks"
+  }
+},
+{
+  "type": "node",
+  "id": 911976546,
+  "lat": 13.9412811,
+  "lon": 121.1624708,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "alt_name": "Dunkin' Donuts",
+    "amenity": "fast_food",
+    "brand": "Dunkin'",
+    "brand:website": "http://dunkindonuts.ph",
+    "brand:wikidata": "Q847743",
+    "brand:wikipedia": "en:Dunkin' Donuts",
+    "check_date": "2025-03-09",
+    "cuisine": "donut;coffee_shop",
+    "name": "Dunkin'",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 912014715,
+  "lat": 13.9458209,
+  "lon": 121.1600798,
+  "tags": {
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 912017644,
+  "lat": 13.9416890,
+  "lon": 121.1635675,
+  "tags": {
+    "addr2:street": "T. M. Kalaw Street",
+    "addr:city": "Lipa",
+    "addr:neighbourhood": "Poblacion",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "brand": "Uncle John's",
+    "brand:facebook": "UncleJohnsPH",
+    "brand:instagram": "unclejohnsph",
+    "brand:website": "https://ministop.com.ph",
+    "brand:wikidata": "Q115917776",
+    "brand:wikipedia": "en:Ministop",
+    "check_date": "2025-04-17",
+    "name": "Uncle John's",
+    "name:en": "Uncle John's",
+    "old_name": "Ministop",
+    "opening_hours": "24/7",
+    "shop": "convenience",
+    "website": "https://unclejohns.ph"
+  }
+},
+{
+  "type": "node",
+  "id": 912925552,
+  "lat": 13.9438506,
+  "lon": 121.1595482,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Renfel Lomi"
+  }
+},
+{
+  "type": "node",
+  "id": 912925556,
+  "lat": 13.9436691,
+  "lon": 121.1591446,
+  "tags": {
+    "amenity": "restaurant"
+  }
+},
+{
+  "type": "node",
+  "id": 938548313,
+  "lat": 13.9412393,
+  "lon": 121.1473092,
+  "tags": {
+    "branch": "La Salle Lipa",
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "name": "7-Eleven",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 998995978,
+  "lat": 13.9409995,
+  "lon": 121.1622832,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:housename": "Madre Laura Centrum",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "brand": "Greenwich",
+    "brand:wikidata": "Q2691308",
+    "brand:wikipedia": "en:Greenwich Pizza",
+    "check_date": "2025-03-09",
+    "cuisine": "pizza",
+    "level": "0",
+    "name": "Greenwich",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 1516479719,
+  "lat": 13.9602964,
+  "lon": 121.1463537,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Southern Tagalog Arterial Road",
+    "brand": "Treats",
+    "brand:wikidata": "Q131626530",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "level": "0",
+    "name": "Treats",
+    "payment:cash": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 1545109745,
+  "lat": 13.9378222,
+  "lon": 121.2144076,
+  "tags": {
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 1963958787,
+  "lat": 13.9362799,
+  "lon": 121.1575214,
+  "tags": {
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 2345559836,
+  "lat": 13.9557296,
+  "lon": 121.1653290,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Hap Chan"
+  }
+},
+{
+  "type": "node",
+  "id": 2346785638,
+  "lat": 13.9424419,
+  "lon": 121.1528292,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:housename": "Big Ben Complex",
+    "addr:quarter": "Mataas na Lupa",
+    "addr:street": "Ayala Highway",
+    "brand": "7-Eleven",
+    "brand:website": "https://7-eleven.com.ph",
+    "brand:wikidata": "Q259340",
+    "name": "7-Eleven",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 2451400221,
+  "lat": 13.9412430,
+  "lon": 121.1461362,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Lomi King"
+  }
+},
+{
+  "type": "node",
+  "id": 3093702390,
+  "lat": 13.9418444,
+  "lon": 121.1638412,
+  "tags": {
+    "addr2:street": "Katipunan Street",
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "branch": "Lipa Cathedral",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia:es": "McDonald's",
+    "check_date": "2025-04-17",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "internet_access": "no",
+    "name": "McDonald's",
+    "name:ar": "مكدونالدز",
+    "name:en": "McDonald's",
+    "name:es": "McDonald's",
+    "name:ko": "디몰 맥도날드",
+    "name:ru": "Макдональдс",
+    "smoking": "outside",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3437329212,
+  "lat": 13.8775530,
+  "lon": 121.2140291,
+  "tags": {
+    "addr:city": "Padre Garcia",
+    "addr:postcode": "4224",
+    "addr:street": "J. P. Rizal Street",
+    "brand": "Uncle John's",
+    "brand:website": "https://www.ministop.com.ph/",
+    "brand:wikidata": "Q115917776",
+    "brand:wikipedia": "en:Ministop",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "name": "Uncle John's",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3447998505,
+  "lat": 13.9614731,
+  "lon": 121.1896050,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Sandtrap Lounge",
+    "opening_hours": "06:00-19:00"
+  }
+},
+{
+  "type": "node",
+  "id": 3451509755,
+  "lat": 13.9669095,
+  "lon": 121.1806182,
+  "tags": {
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451516770,
+  "lat": 13.9654092,
+  "lon": 121.1806924,
+  "tags": {
+    "name": "7-G CA Sari-Sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451519448,
+  "lat": 13.9713796,
+  "lon": 121.1796075,
+  "tags": {
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451519449,
+  "lat": 13.9701225,
+  "lon": 121.1799664,
+  "tags": {
+    "name": "Connie's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451519451,
+  "lat": 13.9693425,
+  "lon": 121.1803052,
+  "tags": {
+    "name": "Malou's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451526659,
+  "lat": 13.9612371,
+  "lon": 121.1895326,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "korean",
+    "name": "Arirang"
+  }
+},
+{
+  "type": "node",
+  "id": 3451528508,
+  "lat": 13.9693925,
+  "lon": 121.1800839,
+  "tags": {
+    "name": "Roca Mora Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451528918,
+  "lat": 13.9676709,
+  "lon": 121.1806789,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Mely's Eatery"
+  }
+},
+{
+  "type": "node",
+  "id": 3451528919,
+  "lat": 13.9678505,
+  "lon": 121.1804187,
+  "tags": {
+    "name": "Merly's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451528920,
+  "lat": 13.9688788,
+  "lon": 121.1803273,
+  "tags": {
+    "name": "Jeny's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451528922,
+  "lat": 13.9689627,
+  "lon": 121.1809181,
+  "tags": {
+    "name": "Norma's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451528923,
+  "lat": 13.9690488,
+  "lon": 121.1810838,
+  "tags": {
+    "name": "Perla's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451529361,
+  "lat": 13.9652382,
+  "lon": 121.1800269,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Little Sam Trading and Kitchenette"
+  }
+},
+{
+  "type": "node",
+  "id": 3451577975,
+  "lat": 13.9674366,
+  "lon": 121.1856184,
+  "tags": {
+    "addr:housenumber": "133",
+    "addr:street": "Alaminos-Lipa City Road",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451577976,
+  "lat": 13.9675539,
+  "lon": 121.1858712,
+  "tags": {
+    "addr:housenumber": "188",
+    "addr:street": "Alaminos-Lipa City Road",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451579651,
+  "lat": 13.9679104,
+  "lon": 121.1868185,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Sam's Canteen"
+  }
+},
+{
+  "type": "node",
+  "id": 3451584386,
+  "lat": 13.9667321,
+  "lon": 121.1832934,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "filipino",
+    "name": "Lino Batangas Goto"
+  }
+},
+{
+  "type": "node",
+  "id": 3451584688,
+  "lat": 13.9664246,
+  "lon": 121.1824040,
+  "tags": {
+    "name": "Jade Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 3451760937,
+  "lat": 13.9610052,
+  "lon": 121.1654823,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "Uncle John's",
+    "brand:facebook": "UncleJohnsPH",
+    "brand:instagram": "unclejohnsph",
+    "brand:website": "https://ministop.com.ph",
+    "brand:wikidata": "Q115917776",
+    "brand:wikipedia": "en:Ministop",
+    "name": "Uncle John's",
+    "name:en": "Uncle John's",
+    "old_name": "Ministop",
+    "opening_hours": "24/7",
+    "shop": "convenience",
+    "website": "https://unclejohns.ph"
+  }
+},
+{
+  "type": "node",
+  "id": 3451926704,
+  "lat": 13.9407055,
+  "lon": 121.1604830,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "addr:street:corner": "Jose P. Rizal",
+    "amenity": "fast_food",
+    "brand": "Mister Donut",
+    "brand:en": "Mister Donut",
+    "brand:wikidata": "Q1065819",
+    "cuisine": "donut",
+    "name": "Mister Donut",
+    "name:en": "Mister Donut",
+    "takeaway": "only"
+  }
+},
+{
+  "type": "node",
+  "id": 3451933402,
+  "lat": 13.9407317,
+  "lon": 121.1606335,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "addr:street:corner": "Kap. Simeon Luz",
+    "amenity": "fast_food",
+    "cuisine": "regional",
+    "name": "Lugaw Queen"
+  }
+},
+{
+  "type": "node",
+  "id": 3453081285,
+  "lat": 13.9654891,
+  "lon": 121.1806551,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "regional",
+    "name": "Penny Lomi House"
+  }
+},
+{
+  "type": "node",
+  "id": 3665608877,
+  "lat": 13.9416572,
+  "lon": 121.1603702,
+  "tags": {
+    "addr:street": "Kapitan Luz Street",
+    "amenity": "fast_food",
+    "cuisine": "noodle",
+    "description": "Local noodle house serving lomi",
+    "name": "Renfel Fastfood",
+    "opening_hours": "Mo-Su 07:00-20:00"
+  }
+},
+{
+  "type": "node",
+  "id": 3686409110,
+  "lat": 13.9616074,
+  "lon": 121.1689920,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "amenity": "fast_food",
+    "brand": "Jollibee",
+    "brand:website": "https://www.jollibee.com.ph/",
+    "brand:wikidata": "Q37614",
+    "brand:wikipedia": "en:Jollibee",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "name": "Jollibee",
+    "name:en": "Jollibee",
+    "payment:cash": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 3736816679,
+  "lat": 14.0085277,
+  "lon": 121.1656251,
+  "tags": {
+    "addr:city": "Malvar",
+    "addr:postcode": "4233",
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "brand:wikipedia": "en:7-Eleven",
+    "brand:wikipedia:es": "7-Eleven",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "internet_access": "wlan",
+    "name": "7-Eleven",
+    "name:ar": "7-إلفن",
+    "name:en": "7-Eleven",
+    "name:es": "7-Eleven",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 4180971416,
+  "lat": 13.9444025,
+  "lon": 121.1536324,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "burger",
+    "name": "Army Navy"
+  }
+},
+{
+  "type": "node",
+  "id": 4180971418,
+  "lat": 13.9420261,
+  "lon": 121.1375294,
+  "tags": {
+    "addr:street": "President Jose P. Laurel Highway",
+    "air_conditioning": "yes",
+    "brand": "Uncle John's",
+    "brand:facebook": "UncleJohnsPH",
+    "brand:instagram": "unclejohnsph",
+    "brand:wikidata": "Q115917776",
+    "level": "0",
+    "name": "Uncle John's",
+    "name:en": "Uncle John's",
+    "old_name": "Ministop",
+    "shop": "convenience",
+    "website": "https://unclejohns.ph"
+  }
+},
+{
+  "type": "node",
+  "id": 4180993017,
+  "lat": 13.9542882,
+  "lon": 121.1638014,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia": "en:McDonald's",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "name": "McDonald's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4180993018,
+  "lat": 13.9542233,
+  "lon": 121.1636881,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Pizza Hut",
+    "brand:wikidata": "Q191615",
+    "cuisine": "pizza",
+    "name": "Pizza Hut"
+  }
+},
+{
+  "type": "node",
+  "id": 4180993021,
+  "lat": 13.9547924,
+  "lon": 121.1629115,
+  "tags": {
+    "name": "SM Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 4180993022,
+  "lat": 13.9551635,
+  "lon": 121.1630933,
+  "tags": {
+    "name": "The SM Store",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 4181067680,
+  "lat": 13.9422699,
+  "lon": 121.1508442,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "amenity": "fast_food",
+    "brand": "Jollibee",
+    "brand:website": "https://www.jollibee.com.ph/",
+    "brand:wikidata": "Q37614",
+    "brand:wikipedia": "en:Jollibee",
+    "check_date": "2025-07-05",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "name": "Jollibee",
+    "name:en": "Jollibee",
+    "payment:cash": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4181067681,
+  "lat": 13.9426029,
+  "lon": 121.1508255,
+  "tags": {
+    "alt_name": "Kentucky Fried Chicken",
+    "amenity": "fast_food",
+    "brand": "KFC",
+    "brand:wikidata": "Q524757",
+    "brand:wikipedia": "en:KFC",
+    "check_date": "2025-07-05",
+    "cuisine": "chicken",
+    "level": "0",
+    "name": "KFC",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4181067684,
+  "lat": 13.9425381,
+  "lon": 121.1510813,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Pizza Hut",
+    "brand:wikidata": "Q191615",
+    "brand:wikipedia": "en:Pizza Hut",
+    "check_date": "2025-07-05",
+    "cuisine": "pizza",
+    "level": "0",
+    "name": "Pizza Hut"
+  }
+},
+{
+  "type": "node",
+  "id": 4181067685,
+  "lat": 13.9431111,
+  "lon": 121.1506003,
+  "tags": {
+    "check_date": "2025-07-05",
+    "level": "0-1",
+    "name": "Robinson's Department Store",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 4182782389,
+  "lat": 13.9410182,
+  "lon": 121.1610064,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Rizal Street",
+    "name": "J&C Lucky 99",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 4185405202,
+  "lat": 13.9404299,
+  "lon": 121.1604616,
+  "tags": {
+    "name": "Agring-Agree Mart",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 4185405211,
+  "lat": 13.9351274,
+  "lon": 121.1650487,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Lipa Grill Restaurant"
+  }
+},
+{
+  "type": "node",
+  "id": 4195381507,
+  "lat": 13.9446312,
+  "lon": 121.1536618,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Pancake House"
+  }
+},
+{
+  "type": "node",
+  "id": 4292655508,
+  "lat": 13.9457595,
+  "lon": 121.1619032,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "T. M. Kalaw Street",
+    "air_conditioning": "yes",
+    "brand": "7-Eleven",
+    "brand:facebook": "https://www.facebook.com/711philippines",
+    "brand:website": "https://www.7-eleven.com.ph/",
+    "brand:wikidata": "Q259340",
+    "level": "0",
+    "name": "7-Eleven",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "shop": "convenience",
+    "smoking": "no",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4496725993,
+  "lat": 13.9438337,
+  "lon": 121.1341492,
+  "tags": {
+    "name": "Ben and Auring Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 4535253790,
+  "lat": 13.9795389,
+  "lon": 121.1679765,
+  "tags": {
+    "addr:street": "President Jose P. Laurel Highway",
+    "name": "K2 TRADING",
+    "name:en": "K2 TRADING",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 4579551253,
+  "lat": 13.9543436,
+  "lon": 121.1638919,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Chowking",
+    "brand:wikidata": "Q1076816",
+    "brand:wikipedia": "en:Chowking",
+    "cuisine": "asian",
+    "name": "Chowking",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 4590591390,
+  "lat": 13.9410135,
+  "lon": 121.1483967,
+  "tags": {
+    "addr:street": "Yakal Street",
+    "amenity": "restaurant",
+    "name": "The Yard",
+    "name:en": "The Yard"
+  }
+},
+{
+  "type": "node",
+  "id": 4625789989,
+  "lat": 13.9492253,
+  "lon": 121.1580684,
+  "tags": {
+    "addr:postcode": "4217",
+    "addr:quarter": "Balintawak",
+    "addr:street": "Ayala Highway",
+    "amenity": "restaurant",
+    "cuisine": "steak_house;pasta;pizza;filipino",
+    "name": "Batangas Pizza and Steak House",
+    "opening_hours": "Mo-Su 11:00-00:00",
+    "website": "https://m.facebook.com/batangaspizzaandsteakhouse/"
+  }
+},
+{
+  "type": "node",
+  "id": 4740853221,
+  "lat": 13.9412804,
+  "lon": 121.1524304,
+  "tags": {
+    "addr:housenumber": "116",
+    "addr:postcode": "4217",
+    "addr:street": "B. Morada Street",
+    "name": "Mark & Harold Store",
+    "name:en": "Mark & Harold Store",
+    "opening_hours": "Mo-Su 07:00-22:30",
+    "operator": "Mark Anthony Cabrera",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 4754418021,
+  "lat": 13.9322687,
+  "lon": 121.1135732,
+  "tags": {
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "name:en": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 4947861621,
+  "lat": 13.9420128,
+  "lon": 121.1651595,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "check_date": "2025-04-17",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 5007471222,
+  "lat": 13.9300598,
+  "lon": 121.1677291,
+  "tags": {
+    "addr:housenumber": "231",
+    "addr:postcode": "4217",
+    "addr:street": "Lipa-Rosario Road",
+    "email": "luckylord0502@gmail.com",
+    "name": "Lucky Lord Store",
+    "name:en": "Lucky Lord Store",
+    "opening_hours": "Mo-Su 06:00-20:00",
+    "operator": "Sanny Macasaet",
+    "phone": "(+63) 917 500 7157",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 5892049986,
+  "lat": 13.9444004,
+  "lon": 121.1322917,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "D & G Lomi House"
+  }
+},
+{
+  "type": "node",
+  "id": 5892049991,
+  "lat": 13.9351461,
+  "lon": 121.1178873,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Orbit’s"
+  }
+},
+{
+  "type": "node",
+  "id": 5892049992,
+  "lat": 13.9422483,
+  "lon": 121.1526829,
+  "tags": {
+    "alt_name": "J.Co Donuts and Coffee",
+    "amenity": "fast_food",
+    "branch": "Dounts and Coffee",
+    "brand": "J.Co Donuts'",
+    "brand:wikidata": "Q4260444",
+    "cuisine": "donut;coffee_shop",
+    "name": "J.Co",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 6110400885,
+  "lat": 13.9333940,
+  "lon": 121.1519393,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Tessie’s Goto & Bulalo"
+  }
+},
+{
+  "type": "node",
+  "id": 6110411085,
+  "lat": 13.9420411,
+  "lon": 121.1601607,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "Kapitan Luz Street",
+    "air_conditioning": "no",
+    "amenity": "fast_food",
+    "check_date": "2025-03-09",
+    "cuisine": "regional;noodles;panciteria;lomi",
+    "drive_through": "no",
+    "level": "0",
+    "mapillary": "712040793712637",
+    "name": "Lipa City Panciteria",
+    "start_date": "1968"
+  }
+},
+{
+  "type": "node",
+  "id": 6214999285,
+  "lat": 13.9400127,
+  "lon": 121.1641521,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino;lomi",
+    "name": "Ronie Lomi Haus"
+  }
+},
+{
+  "type": "node",
+  "id": 6454106686,
+  "lat": 13.9414782,
+  "lon": 121.1629416,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "branch": "Lipa Proper",
+    "brand": "7-Eleven",
+    "brand:website": "https://7-eleven.com.ph",
+    "brand:wikidata": "Q259340",
+    "brand:wikipedia": "en:7-Eleven",
+    "brand:wikipedia:es": "7-Eleven",
+    "check_date": "2025-03-09",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "internet_access": "wlan",
+    "name": "7-Eleven",
+    "name:ar": "7-إلفن",
+    "name:en": "7-Eleven",
+    "name:es": "7-Eleven",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "ref:branch": "138",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 6460969283,
+  "lat": 13.9443033,
+  "lon": 121.1509083,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "check_date": "2025-07-05",
+    "level": "0",
+    "name": "Giligan's"
+  }
+},
+{
+  "type": "node",
+  "id": 6633352929,
+  "lat": 13.9979443,
+  "lon": 121.1544953,
+  "tags": {
+    "addr:city": "Malvar",
+    "addr:postcode": "4233",
+    "addr:street": "Southern Tagalog Arterial Road",
+    "brand": "Treats",
+    "brand:wikidata": "Q131626530",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "level": "0",
+    "name": "Treats",
+    "payment:cash": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 6779063886,
+  "lat": 13.9442408,
+  "lon": 121.1664141,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "General Luna Street",
+    "branch": "Sabang Lipa",
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "brand:wikipedia": "en:7-Eleven",
+    "brand:wikipedia:es": "7-Eleven",
+    "check_date": "2025-02-02",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "internet_access": "wlan",
+    "name": "7-Eleven",
+    "name:ar": "7-إلفن",
+    "name:en": "7-Eleven",
+    "name:es": "7-Eleven",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "ref:branch": "1762",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 6896918296,
+  "lat": 13.9452288,
+  "lon": 121.1308864,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "FatGrill"
+  }
+},
+{
+  "type": "node",
+  "id": 6896918686,
+  "lat": 13.9438044,
+  "lon": 121.1280189,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Tapa ng Ina Mo"
+  }
+},
+{
+  "type": "node",
+  "id": 7045921350,
+  "lat": 13.9428557,
+  "lon": 121.1344519,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "addr:subdistrict": "Tambo",
+    "amenity": "restaurant",
+    "branch": "Lipa Town Center",
+    "brand": "Max's Restaurant",
+    "brand:wikidata": "Q6794477",
+    "cuisine": "asian",
+    "name": "Max's Restaurant"
+  }
+},
+{
+  "type": "node",
+  "id": 7045921351,
+  "lat": 13.9425821,
+  "lon": 121.1335099,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Jose P. Laurel Highway",
+    "addr:subdistrict": "Tambo",
+    "amenity": "restaurant",
+    "cuisine": "asian",
+    "name": "Yakimix",
+    "phone": "+63 43 404 7861",
+    "reservation": "required",
+    "smoking": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 7555170886,
+  "lat": 13.9548495,
+  "lon": 121.1598231,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Sea Food"
+  }
+},
+{
+  "type": "node",
+  "id": 7836902085,
+  "lat": 13.8636552,
+  "lon": 121.1888234,
+  "tags": {
+    "name": "Tampayak MPC Santa Cruz Rosario",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8323388469,
+  "lat": 13.9397232,
+  "lon": 121.1569899,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Kanin Gaming"
+  }
+},
+{
+  "type": "node",
+  "id": 8323621106,
+  "lat": 13.9549141,
+  "lon": 121.1631025,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Jollibee",
+    "brand:wikidata": "Q37614",
+    "brand:wikipedia": "en:Jollibee",
+    "cuisine": "burger",
+    "name": "Jollibee",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8323666912,
+  "lat": 13.9539705,
+  "lon": 121.1632971,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Greenwich",
+    "brand:wikidata": "Q2691308",
+    "brand:wikipedia": "en:Greenwich Pizza",
+    "cuisine": "pizza",
+    "name": "Greenwich",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8323677987,
+  "lat": 13.9543733,
+  "lon": 121.1593092,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Bianca Bakery"
+  }
+},
+{
+  "type": "node",
+  "id": 8323702453,
+  "lat": 13.9552390,
+  "lon": 121.1635115,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "The Shawarma Shack"
+  }
+},
+{
+  "type": "node",
+  "id": 8324663835,
+  "lat": 13.9526218,
+  "lon": 121.1347475,
+  "tags": {
+    "name": "Budomo Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8340257847,
+  "lat": 13.9568773,
+  "lon": 121.1147482,
+  "tags": {
+    "addr:city": "Mataasnakahoy",
+    "addr:street": "Mandigma Street",
+    "branch": "Mandigma, Mataasnakahoy",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8340332751,
+  "lat": 13.9543857,
+  "lon": 121.1639505,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "japanese",
+    "name": "Botejyu"
+  }
+},
+{
+  "type": "node",
+  "id": 8340383726,
+  "lat": 13.9547819,
+  "lon": 121.1632069,
+  "tags": {
+    "name": "Casio",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 8340435837,
+  "lat": 13.9439622,
+  "lon": 121.1541723,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "chinese",
+    "name": "Chinese KongFu Kitchen"
+  }
+},
+{
+  "type": "node",
+  "id": 8340436908,
+  "lat": 13.9456929,
+  "lon": 121.1550941,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Krispy Kreme",
+    "brand:wikidata": "Q1192805",
+    "brand:wikipedia": "en:Krispy Kreme",
+    "cuisine": "donut",
+    "name": "Krispy Kreme",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8340443635,
+  "lat": 13.9453754,
+  "lon": 121.1548871,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "japanese",
+    "level": "0",
+    "name": "Ebisutei"
+  }
+},
+{
+  "type": "node",
+  "id": 8340451877,
+  "lat": 13.9457546,
+  "lon": 121.1551371,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Yellow Cab Pizza",
+    "brand:wikidata": "Q8051689",
+    "brand:wikipedia": "en:Yellow Cab Pizza",
+    "cuisine": "pizza",
+    "name": "Yellow Cab Pizza",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8340456337,
+  "lat": 13.9454150,
+  "lon": 121.1549255,
+  "tags": {
+    "amenity": "restaurant",
+    "level": "0",
+    "name": "Dolce Milano"
+  }
+},
+{
+  "type": "node",
+  "id": 8340501766,
+  "lat": 13.9431307,
+  "lon": 121.1332664,
+  "tags": {
+    "branch": "Lipa Town Center",
+    "brand": "Robinsons Supermarket",
+    "brand:wikidata": "Q7353143",
+    "name": "Robinsons Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 8340512774,
+  "lat": 13.9436331,
+  "lon": 121.1535628,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chicken",
+    "name": "Chick & Juicy"
+  }
+},
+{
+  "type": "node",
+  "id": 8340530873,
+  "lat": 13.9432128,
+  "lon": 121.1336630,
+  "tags": {
+    "amenity": "restaurant",
+    "branch": "Lipa Town Center",
+    "brand": "Bonchon Chicken",
+    "brand:wikidata": "Q4941248",
+    "cuisine": "chicken;korean;sushi",
+    "name": "Bonchon Chicken"
+  }
+},
+{
+  "type": "node",
+  "id": 8340537026,
+  "lat": 13.9440210,
+  "lon": 121.1531957,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Uno Kitchenette"
+  }
+},
+{
+  "type": "node",
+  "id": 8340537045,
+  "lat": 13.9426989,
+  "lon": 121.1529891,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Ayala Highway",
+    "amenity": "restaurant",
+    "cuisine": "chinese",
+    "name": "Kongfu Haoyoulao Chinese Kong Fu Kitchen",
+    "phone": "+63 956 057 7726"
+  }
+},
+{
+  "type": "node",
+  "id": 8340538192,
+  "lat": 13.9440310,
+  "lon": 121.1534574,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "Ayala Highway",
+    "amenity": "fast_food",
+    "branch": "Ayala Branch",
+    "cuisine": "barbecue",
+    "mapillary": "149675441238119",
+    "name": "Dangloy's Barbeque"
+  }
+},
+{
+  "type": "node",
+  "id": 8340541129,
+  "lat": 13.9443442,
+  "lon": 121.1530427,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "San Carlos Drive",
+    "amenity": "fast_food",
+    "cuisine": "regional",
+    "mapillary": "186347367445174",
+    "name": "Coring Eatery"
+  }
+},
+{
+  "type": "node",
+  "id": 8340552934,
+  "lat": 13.9424344,
+  "lon": 121.1535168,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:neighbourhood": "Mataas na Lupa",
+    "addr:street": "J. M. Katigbak Street",
+    "name": "Super 8",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 8340574708,
+  "lat": 13.9413030,
+  "lon": 121.1522799,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Nunkin's Diner"
+  }
+},
+{
+  "type": "node",
+  "id": 8340636314,
+  "lat": 13.9425843,
+  "lon": 121.1516669,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Baby's Food Haus"
+  }
+},
+{
+  "type": "node",
+  "id": 8340792255,
+  "lat": 13.9409619,
+  "lon": 121.1489263,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Burni Gastro Lounge"
+  }
+},
+{
+  "type": "node",
+  "id": 8340798513,
+  "lat": 13.9406335,
+  "lon": 121.1488696,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "Calda Pizza"
+  }
+},
+{
+  "type": "node",
+  "id": 8340824006,
+  "lat": 13.9410418,
+  "lon": 121.1488958,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Racen's"
+  }
+},
+{
+  "type": "node",
+  "id": 8340827553,
+  "lat": 13.9410001,
+  "lon": 121.1489117,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Baba's Mediterranean Grill"
+  }
+},
+{
+  "type": "node",
+  "id": 8340830077,
+  "lat": 13.9412753,
+  "lon": 121.1480782,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Jade Eatery & Boarding House"
+  }
+},
+{
+  "type": "node",
+  "id": 8340833244,
+  "lat": 13.9413087,
+  "lon": 121.1483135,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Casa Reynante's"
+  }
+},
+{
+  "type": "node",
+  "id": 8340837167,
+  "lat": 13.9410457,
+  "lon": 121.1486923,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "korean",
+    "name": "Muk Bang",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 8340840171,
+  "lat": 13.9413061,
+  "lon": 121.1488277,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Kertong's Crispy Sisig"
+  }
+},
+{
+  "type": "node",
+  "id": 8340854326,
+  "lat": 13.9412866,
+  "lon": 121.1479273,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Potato Corner",
+    "brand:wikidata": "Q60741625",
+    "cuisine": "fries",
+    "name": "Potato Corner",
+    "shop": "kiosk",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8340858359,
+  "lat": 13.9412088,
+  "lon": 121.1475417,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Above Sea Level"
+  }
+},
+{
+  "type": "node",
+  "id": 8340859517,
+  "lat": 13.9411993,
+  "lon": 121.1476498,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Angelris Food Cart"
+  }
+},
+{
+  "type": "node",
+  "id": 8340892570,
+  "lat": 13.9414360,
+  "lon": 121.1450756,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Taco Del Rey"
+  }
+},
+{
+  "type": "node",
+  "id": 8340932921,
+  "lat": 13.9411593,
+  "lon": 121.1449932,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Tambalachus ang Dating Japongs"
+  }
+},
+{
+  "type": "node",
+  "id": 8340991224,
+  "lat": 13.9420181,
+  "lon": 121.1518669,
+  "tags": {
+    "amenity": "fast_food",
+    "branch": "Lipa Uptown",
+    "brand": "Greenwich",
+    "brand:wikidata": "Q2691308",
+    "brand:wikipedia": "en:Greenwich Pizza",
+    "check_date": "2025-07-05",
+    "cuisine": "pizza",
+    "name": "Greenwich",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 8341279987,
+  "lat": 13.9502720,
+  "lon": 121.1506655,
+  "tags": {
+    "name": "Rich's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8341280605,
+  "lat": 13.9524065,
+  "lon": 121.1492118,
+  "tags": {
+    "name": "Princess Precious Shop",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8341280606,
+  "lat": 13.9537249,
+  "lon": 121.1484138,
+  "tags": {
+    "name": "Bechai's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8693791988,
+  "lat": 13.9435539,
+  "lon": 121.1506198,
+  "tags": {
+    "air_conditioning": "yes",
+    "brand": "Robinsons Supermarket",
+    "brand:facebook": "https://www.facebook.com/RobinsonsSupermarketOfficial",
+    "brand:website": "https://www.robinsonssupermarket.com.ph/",
+    "brand:wikidata": "Q7353143",
+    "brand:wikipedia": "en:Robinsons Supermarket",
+    "check_date": "2025-07-05",
+    "level": "0",
+    "name": "Robinsons Supermarket",
+    "opening_hours": "Mo-Su 07:00-22:00",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 8730212072,
+  "lat": 13.9415056,
+  "lon": 121.1630277,
+  "tags": {
+    "check_date": "2025-03-05",
+    "name": "J&C Lucky 99",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 8819168111,
+  "lat": 13.8783875,
+  "lon": 121.1038511,
+  "tags": {
+    "addr:city": "San Jose",
+    "addr:street": "Chief Justice Q. C. Makalintal Avenue",
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "brand:wikipedia": "en:7-Eleven",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8819168116,
+  "lat": 13.8785152,
+  "lon": 121.1046214,
+  "tags": {
+    "name": "Mila Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8819189723,
+  "lat": 13.8777134,
+  "lon": 121.0993835,
+  "tags": {
+    "name": "Julius Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8819189724,
+  "lat": 13.8785239,
+  "lon": 121.1002882,
+  "tags": {
+    "name": "Jenoseph Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 8819189753,
+  "lat": 13.8784645,
+  "lon": 121.1019332,
+  "tags": {
+    "name": "Madlangbayan Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9093503105,
+  "lat": 13.8774174,
+  "lon": 121.2142403,
+  "tags": {
+    "name": "Laylo's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9093503156,
+  "lat": 13.8770639,
+  "lon": 121.2110404,
+  "tags": {
+    "name": "Velasco Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9093503232,
+  "lat": 13.8775190,
+  "lon": 121.2136813,
+  "tags": {
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "brand:wikipedia": "en:7-Eleven",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9093503235,
+  "lat": 13.8774838,
+  "lon": 121.2138038,
+  "tags": {
+    "name": "Sandoval Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9821601790,
+  "lat": 13.9426009,
+  "lon": 121.1518424,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "bar": "no",
+    "cuisine": "filipino",
+    "delivery": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 9894290818,
+  "lat": 13.8640592,
+  "lon": 121.2068336,
+  "tags": {
+    "name:en": "Yolanda Sudoy",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9894302017,
+  "lat": 13.8638104,
+  "lon": 121.2072063,
+  "tags": {
+    "name:en": "Ma Eden Bandala",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9894302217,
+  "lat": 13.8640450,
+  "lon": 121.2072136,
+  "tags": {
+    "name:en": "Bernadette Mendoza",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9894320717,
+  "lat": 13.8643576,
+  "lon": 121.2041466,
+  "tags": {
+    "name:en": "Ritalin Gonzalez",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9894331117,
+  "lat": 13.8685057,
+  "lon": 121.2086302,
+  "tags": {
+    "name:en": "Gandara Sopistikada",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9894335217,
+  "lat": 13.8688794,
+  "lon": 121.2074254,
+  "tags": {
+    "name:en": "Nellybeth Baroja",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 9938355417,
+  "lat": 13.8658352,
+  "lon": 121.2067975,
+  "tags": {
+    "name:en": "Gina Mombahay and Nellybeth Baroja",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 10147674718,
+  "lat": 13.9645641,
+  "lon": 121.1642432,
+  "tags": {
+    "amenity": "fast_food",
+    "name": "Arthurs BBQ"
+  }
+},
+{
+  "type": "node",
+  "id": 10259672909,
+  "lat": 13.8773720,
+  "lon": 121.2130400,
+  "tags": {
+    "addr:postcode": "4224",
+    "addr:street": "J. P. Rizal Street",
+    "email": "marketprice.supermart1@gmail.com",
+    "internet_access": "wlan",
+    "name": "MARKETPRICE SUPERMART",
+    "opening_hours": "Mo-Su 05:00-18:00",
+    "phone": "(043) 741-0361",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 10494560671,
+  "lat": 13.9413257,
+  "lon": 121.1506856,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:housenumber": "140",
+    "addr:postcode": "4217",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "cuisine": "pizza;coffee_shop;italian;chicken;french;ice_cream;dessert;pasta;regional;pancake",
+    "diet:healthy": "yes",
+    "name": "TheSquare Lipa",
+    "opening_hours": "Mo-Su 08:00-22:00"
+  }
+},
+{
+  "type": "node",
+  "id": 10656450682,
+  "lat": 13.9401737,
+  "lon": 121.1242039,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "FamilyMart",
+    "brand:wikidata": "Q1191685",
+    "mapillary": "1499351847223365",
+    "name": "FamilyMart",
+    "shop": "convenience",
+    "source": "interpolation"
+  }
+},
+{
+  "type": "node",
+  "id": 10656482368,
+  "lat": 13.9453456,
+  "lon": 121.1308155,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "mapillary": "566061992131176",
+    "name": "Fat Grill",
+    "source": "interpolation"
+  }
+},
+{
+  "type": "node",
+  "id": 10656484865,
+  "lat": 13.9425108,
+  "lon": 121.1265951,
+  "tags": {
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "Treats",
+    "mapillary": "718583559965754",
+    "name": "Treats",
+    "operator": "Petron",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 10656484872,
+  "lat": 13.9448400,
+  "lon": 121.1319682,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "mapillary": "189856980316540",
+    "name": "PeBu Steak House"
+  }
+},
+{
+  "type": "node",
+  "id": 10656507213,
+  "lat": 13.9423858,
+  "lon": 121.1375431,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Domino's",
+    "brand:wikidata": "Q839466",
+    "cuisine": "pizza",
+    "mapillary": "708078024175239",
+    "name": "Domino's",
+    "source": "interpolation",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 10656507215,
+  "lat": 13.9421221,
+  "lon": 121.1371976,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "brand:wikipedia": "en:Alfamart",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 10656759336,
+  "lat": 13.9440752,
+  "lon": 121.1534820,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "Ayala Highway",
+    "amenity": "fast_food",
+    "brand": "Andok's",
+    "brand:wikidata": "Q62267166",
+    "cuisine": "chicken",
+    "mapillary": "1862481174138465",
+    "name": "Andok's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 10656759338,
+  "lat": 13.9441677,
+  "lon": 121.1535452,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "Ayala Highway",
+    "amenity": "fast_food",
+    "mapillary": "581033533872673",
+    "name": "R. Lapid's Chicharon & Barbecue",
+    "source": "interpolation"
+  }
+},
+{
+  "type": "node",
+  "id": 10656804169,
+  "lat": 13.9442224,
+  "lon": 121.1530711,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "San Carlos Drive",
+    "amenity": "fast_food",
+    "mapillary": "917270482842842",
+    "name": "Gilid's",
+    "source": "interpolation"
+  }
+},
+{
+  "type": "node",
+  "id": 10964186191,
+  "lat": 13.8784455,
+  "lon": 121.1017568,
+  "tags": {
+    "name": "GK Minimart",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 11265653879,
+  "lat": 13.9515294,
+  "lon": 121.1600584,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Japslyn Black Guisado"
+  }
+},
+{
+  "type": "node",
+  "id": 11265653886,
+  "lat": 13.9515195,
+  "lon": 121.1600329,
+  "tags": {
+    "name": "ELR Marble",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11265997971,
+  "lat": 13.9424339,
+  "lon": 121.1674575,
+  "tags": {
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11266546548,
+  "lat": 13.9427668,
+  "lon": 121.1670263,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-03-05",
+    "cuisine": "filipino"
+  }
+},
+{
+  "type": "node",
+  "id": 11266572620,
+  "lat": 13.9427539,
+  "lon": 121.1669810,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-03-05",
+    "cuisine": "filipino",
+    "name": "Gotohan Sa Bonifacio"
+  }
+},
+{
+  "type": "node",
+  "id": 11266638267,
+  "lat": 13.9396886,
+  "lon": 121.1697310,
+  "tags": {
+    "check_date": "2025-01-26",
+    "name": "M and R Minimart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11266684720,
+  "lat": 13.9402107,
+  "lon": 121.1695138,
+  "tags": {
+    "addr:city": "Lipa City",
+    "addr:district": "Poblacion 10",
+    "addr:housenumber": "562",
+    "addr:postcode": "4217",
+    "addr:street": "B. Reyes Street",
+    "air_conditioning": "no",
+    "amenity": "fast_food",
+    "bar": "no",
+    "check_date": "2025-01-26",
+    "cuisine": "regional",
+    "food:noodles": "yes",
+    "name": "Kuya Mer Panciteria",
+    "phone": "+639050749219",
+    "takeaway": "yes",
+    "toilets": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 11267888464,
+  "lat": 13.9422809,
+  "lon": 121.1689597,
+  "tags": {
+    "addr:city": "Lipa City",
+    "addr:country": "PH",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "check_date": "2025-01-26",
+    "level": "0",
+    "name": "DM General Merchandise",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11267888512,
+  "lat": 13.9421561,
+  "lon": 121.1690060,
+  "tags": {
+    "addr:city": "Lipa City",
+    "addr:country": "PH",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "check_date": "2025-01-26",
+    "name": "Agnes Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11269422035,
+  "lat": 13.9430346,
+  "lon": 121.1678423,
+  "tags": {
+    "check_date": "2025-01-19",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11269422041,
+  "lat": 13.9432318,
+  "lon": 121.1684205,
+  "tags": {
+    "check_date": "2025-01-26",
+    "name": "Charlie’s Angel",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 11311284873,
+  "lat": 13.9505614,
+  "lon": 121.1815498,
+  "tags": {
+    "addr:city": "Lipa City",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "D. P. Laygo Street",
+    "air_conditioning": "yes",
+    "contact:facebook": "https://web.facebook.com/foodpeckergs/?_rdc=1&_rdr",
+    "name": "Foodpecker Grocery Store",
+    "opening_hours": "Su-Th 05:30-21:00, Fr 05:30-18:00, Sat 18:00-22:00",
+    "payment:cash": "yes",
+    "payment:gcash": "yes",
+    "phone": "(+63) 995 155 5334",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 11428277582,
+  "lat": 13.9593203,
+  "lon": 121.1505878,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "amenity": "fast_food",
+    "contact:facebook": "treatsinatub",
+    "cuisine": "sushi",
+    "diet:seafood": "yes",
+    "name": "Treats In A Tub",
+    "opening_hours": "Mo-Su 09:00-21:00"
+  }
+},
+{
+  "type": "node",
+  "id": 12002905706,
+  "lat": 13.9548585,
+  "lon": 121.1844012,
+  "tags": {
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 12002910269,
+  "lat": 13.9463836,
+  "lon": 121.1962713,
+  "tags": {
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 12145060301,
+  "lat": 13.8831255,
+  "lon": 121.1005939,
+  "tags": {
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12145119802,
+  "lat": 13.9840864,
+  "lon": 121.1680874,
+  "tags": {
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12171904889,
+  "lat": 13.9423431,
+  "lon": 121.1783778,
+  "tags": {
+    "addr:barangay": "Latag",
+    "addr:city": "Lipa",
+    "addr:lot": "2-1",
+    "addr:neighbourhood": "Sentrina",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "B. Reyes Street",
+    "check_date": "2025-07-10",
+    "level": "0",
+    "mobile": "(+63) 927 892 9222",
+    "name": "S2K's Rice & Pet Food Store (Extended)",
+    "opening_hours": "05:30-23:30",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "shop": "convenience",
+    "source": "local knowledge"
+  }
+},
+{
+  "type": "node",
+  "id": 12171904894,
+  "lat": 13.9422166,
+  "lon": 121.1776398,
+  "tags": {
+    "addr:barangay": "Latag",
+    "addr:city": "Lipa",
+    "addr:lot": "9",
+    "addr:neighbourhood": "Sentrina",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "B. Reyes Street",
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "check_date": "2025-07-10",
+    "check_date:smoking": "2025-01-10",
+    "covered": "yes",
+    "cuisine": "barbecue;filipino;silog",
+    "delivery": "yes",
+    "fuel": "charcoal",
+    "indoor_seating": "yes",
+    "mobile": "(+63) 916 489 3105;(+63) 995 881 1313",
+    "name": "Kuya Choi's Barbecue Grill",
+    "opening_hours": "Mo-Su 12:00-21:30",
+    "outdoor_seating": "yes",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "payment:gcash": "yes",
+    "smoking": "outside",
+    "source": "local knowledge",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12172503868,
+  "lat": 13.9423364,
+  "lon": 121.1783281,
+  "tags": {
+    "addr:barangay": "Latag",
+    "addr:city": "Lipa",
+    "addr:lot": "3-1",
+    "addr:neighbourhood": "Sentrina",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "B. Reyes Street",
+    "check_date": "2025-07-10",
+    "level": "0",
+    "mobile": "(+63) 927 892 9222",
+    "name": "S2K's Rice & Pet Food Store",
+    "opening_hours": "05:30-23:30",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "shop": "convenience",
+    "source": "local knowledge",
+    "wheelchair": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 12172806214,
+  "lat": 13.9408509,
+  "lon": 121.1730025,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-01-26",
+    "cuisine": "noodle;asian",
+    "name": "Lomi House",
+    "opening_hours": "08:00-20:00"
+  }
+},
+{
+  "type": "node",
+  "id": 12174672535,
+  "lat": 13.9420669,
+  "lon": 121.1646294,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "check_date": "2025-04-17",
+    "cuisine": "chicken",
+    "name": "Five Star"
+  }
+},
+{
+  "type": "node",
+  "id": 12174672555,
+  "lat": 13.9421089,
+  "lon": 121.1647365,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "restaurant",
+    "check_date": "2025-04-17",
+    "cuisine": "noodle",
+    "name": "Dolora's Pansit Malabon"
+  }
+},
+{
+  "type": "node",
+  "id": 12174672854,
+  "lat": 13.9417937,
+  "lon": 121.1644900,
+  "tags": {
+    "amenity": "fast_food",
+    "branch": "Lipa Cathedral",
+    "brand": "Chooks to Go",
+    "brand:wikidata": "Q17065023",
+    "check_date": "2025-04-17",
+    "cuisine": "chicken",
+    "name": "Chooks to Go",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12174672856,
+  "lat": 13.9417193,
+  "lon": 121.1645109,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Angel's Burger",
+    "brand:wikidata": "Q62267228",
+    "check_date": "2025-04-17",
+    "cuisine": "burger",
+    "name": "Angel's Burger",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12175501300,
+  "lat": 13.9419123,
+  "lon": 121.1651315,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "restaurant",
+    "check_date": "2025-03-05",
+    "cuisine": "filipino",
+    "description": "Karinderya - Tinola, Adobo, Manok, Baboy",
+    "name": "Lowla's Restaurant",
+    "opening_hours": "Mo-Fr 08:00-13:00"
+  }
+},
+{
+  "type": "node",
+  "id": 12177388276,
+  "lat": 13.9428253,
+  "lon": 121.1667042,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Baliwag",
+    "brand:wikidata": "Q120755696",
+    "check_date": "2025-03-05",
+    "cuisine": "barbecue;filipino",
+    "name": "Baliwag",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12177853383,
+  "lat": 13.9427312,
+  "lon": 121.1668406,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-03-05",
+    "cuisine": "filipino",
+    "name": "Man-Ya-Man Keni-Pu",
+    "operator": "Shine's Kitchenette"
+  }
+},
+{
+  "type": "node",
+  "id": 12177853391,
+  "lat": 13.9425852,
+  "lon": 121.1687475,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "filipino",
+    "fixme": "name",
+    "note": "Karinderiya"
+  }
+},
+{
+  "type": "node",
+  "id": 12211520898,
+  "lat": 13.8882302,
+  "lon": 121.1511076,
+  "tags": {
+    "name": "Malyn's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12241943969,
+  "lat": 13.9526309,
+  "lon": 121.1659291,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "check_date": "2025-01-26",
+    "cuisine": "pizza",
+    "name": "Angel's Pizza",
+    "opening_hours": "Mo-Th 08:00-22:00; Fr-Su 08:00-24:00",
+    "phone": "(043) 772-2222",
+    "smoking": "no",
+    "takeaway": "yes",
+    "website": "https://www.angelspizza.com.ph"
+  }
+},
+{
+  "type": "node",
+  "id": 12242271740,
+  "lat": 13.9525954,
+  "lon": 121.1672384,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "City Park Avenue",
+    "amenity": "restaurant",
+    "cuisine": "filipino;lomi",
+    "name": "Pinky's Lomi"
+  }
+},
+{
+  "type": "node",
+  "id": 12243214831,
+  "lat": 13.9495636,
+  "lon": 121.1666258,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-06-29",
+    "cuisine": "filipino;lomi",
+    "name": "Liam's Lomi House"
+  }
+},
+{
+  "type": "node",
+  "id": 12246669818,
+  "lat": 13.9540524,
+  "lon": 121.1634898,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "korean",
+    "level": "2",
+    "name": "KimBob"
+  }
+},
+{
+  "type": "node",
+  "id": 12247075218,
+  "lat": 13.9430474,
+  "lon": 121.1532834,
+  "tags": {
+    "alt_name": "Kentucky Fried Chicken",
+    "amenity": "fast_food",
+    "brand": "KFC",
+    "brand:wikidata": "Q524757",
+    "cuisine": "chicken",
+    "name": "KFC",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12247841699,
+  "lat": 13.9346239,
+  "lon": 121.1650281,
+  "tags": {
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12247841700,
+  "lat": 13.9345660,
+  "lon": 121.1650701,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Andok's",
+    "brand:wikidata": "Q62267166",
+    "cuisine": "chicken",
+    "name": "Andok's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12247878907,
+  "lat": 13.9345892,
+  "lon": 121.1651571,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "indian"
+  }
+},
+{
+  "type": "node",
+  "id": 12247878925,
+  "lat": 13.9346743,
+  "lon": 121.1650440,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Potato Corner",
+    "brand:wikidata": "Q60741625",
+    "cuisine": "fries",
+    "name": "Potato Corner",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12249152960,
+  "lat": 13.9443278,
+  "lon": 121.1665524,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Potato Corner",
+    "brand:wikidata": "Q60741625",
+    "check_date": "2025-06-29",
+    "cuisine": "fries",
+    "name": "Potato Corner",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12249152961,
+  "lat": 13.9443201,
+  "lon": 121.1665239,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Angel's Burger",
+    "brand:wikidata": "Q62267228",
+    "check_date": "2025-06-29",
+    "cuisine": "burger",
+    "name": "Angel's Burger",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12249152962,
+  "lat": 13.9443106,
+  "lon": 121.1664931,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-06-29",
+    "cuisine": "juice",
+    "name": "Mango Royal Milkshake"
+  }
+},
+{
+  "type": "node",
+  "id": 12249152990,
+  "lat": 13.9448298,
+  "lon": 121.1666457,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-06-29",
+    "cuisine": "asian;filipino;halo-halo;palabok",
+    "name": "Teresita R. Razon"
+  }
+},
+{
+  "type": "node",
+  "id": 12249162439,
+  "lat": 13.9456439,
+  "lon": 121.1664202,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Minute Burger",
+    "brand:wikidata": "Q62273503",
+    "check_date": "2025-06-29",
+    "cuisine": "burger",
+    "name": "Minute Burger",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12251393949,
+  "lat": 13.9449966,
+  "lon": 121.1665804,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-06-29",
+    "cuisine": "barbecue",
+    "name": "Fae Fae"
+  }
+},
+{
+  "type": "node",
+  "id": 12251393951,
+  "lat": 13.9454853,
+  "lon": 121.1664471,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-06-29",
+    "cuisine": "noodle;lomi",
+    "name": "Sabang Lomi House"
+  }
+},
+{
+  "type": "node",
+  "id": 12251393959,
+  "lat": 13.9463482,
+  "lon": 121.1659955,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-02-02",
+    "cuisine": "pizza",
+    "name": "PizzaBox"
+  }
+},
+{
+  "type": "node",
+  "id": 12251399052,
+  "lat": 13.9483819,
+  "lon": 121.1657213,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-06-29",
+    "cuisine": "chicken",
+    "name": "Crispy King"
+  }
+},
+{
+  "type": "node",
+  "id": 12254516388,
+  "lat": 13.9335808,
+  "lon": 121.1721632,
+  "tags": {
+    "amenity": "restaurant",
+    "fixme": "Name of this stall",
+    "name": "Karinderiya"
+  }
+},
+{
+  "type": "node",
+  "id": 12254516404,
+  "lat": 13.9337342,
+  "lon": 121.1720815,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "burger",
+    "name": "Ronjay's HappyTummy"
+  }
+},
+{
+  "type": "node",
+  "id": 12254516405,
+  "lat": 13.9336533,
+  "lon": 121.1721250,
+  "tags": {
+    "amenity": "restaurant",
+    "fixme": "Name of this storefront",
+    "name": "Karinderiya"
+  }
+},
+{
+  "type": "node",
+  "id": 12270070057,
+  "lat": 13.9541175,
+  "lon": 121.1635884,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chicken",
+    "name": "Inihaw"
+  }
+},
+{
+  "type": "node",
+  "id": 12270070058,
+  "lat": 13.9540715,
+  "lon": 121.1635187,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "noodle",
+    "name": "Chin's"
+  }
+},
+{
+  "type": "node",
+  "id": 12270070059,
+  "lat": 13.9541365,
+  "lon": 121.1636173,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chicken",
+    "name": "Turks"
+  }
+},
+{
+  "type": "node",
+  "id": 12290860861,
+  "lat": 13.9389306,
+  "lon": 121.1653412,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "silog;pizza;asian;burger;chicken;fries;hot_dog;pansit",
+    "mobile": "(+63) 975 140 0449",
+    "name": "Fresh Food Hub"
+  }
+},
+{
+  "type": "node",
+  "id": 12294398133,
+  "lat": 13.9400509,
+  "lon": 121.1618725,
+  "tags": {
+    "addr:unit": "1C",
+    "amenity": "restaurant",
+    "cuisine": "chicken;filipino",
+    "name": "Bro's Inasal",
+    "outdoor_seating": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12298427301,
+  "lat": 13.9389055,
+  "lon": 121.1652666,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino;chicken",
+    "name": "ML Foodhub"
+  }
+},
+{
+  "type": "node",
+  "id": 12298427309,
+  "lat": 13.9388786,
+  "lon": 121.1651782,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Friendly Budget Meal"
+  }
+},
+{
+  "type": "node",
+  "id": 12300215638,
+  "lat": 13.9390128,
+  "lon": 121.1628775,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2024-10-29",
+    "cuisine": "filipino",
+    "name": "SameSaNiRap - LBN"
+  }
+},
+{
+  "type": "node",
+  "id": 12300215651,
+  "lat": 13.9387945,
+  "lon": 121.1627990,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2024-10-29",
+    "cuisine": "filipino;barbecue",
+    "name": "KKB"
+  }
+},
+{
+  "type": "node",
+  "id": 12331127619,
+  "lat": 13.9504380,
+  "lon": 121.1651275,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "cuisine": "pizza",
+    "name": "D'Ursi Pizza"
+  }
+},
+{
+  "type": "node",
+  "id": 12333952399,
+  "lat": 13.9400156,
+  "lon": 121.1626864,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Don Juan"
+  }
+},
+{
+  "type": "node",
+  "id": 12420263527,
+  "lat": 13.9384711,
+  "lon": 121.1658178,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Canteen"
+  }
+},
+{
+  "type": "node",
+  "id": 12470606970,
+  "lat": 13.9425675,
+  "lon": 121.1691521,
+  "tags": {
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "check_date": "2025-01-26",
+    "cuisine": "filipino;asian;noodle",
+    "delivery": "no",
+    "highchair": "yes",
+    "internet_access": "no",
+    "name": "Benigno's by LBN",
+    "outdoor_seating": "yes",
+    "payment:cash": "yes",
+    "smoking": "outside",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12499250159,
+  "lat": 13.9524252,
+  "lon": 121.1664448,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "City Park Avenue",
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "bar": "yes",
+    "branch": "Lipa",
+    "contact:facebook": "https://web.facebook.com/isobelrestoandbarph/",
+    "cuisine": "filipino",
+    "delivery": "no",
+    "email": "glad_sarabia@yahoo.com",
+    "name": "Isobel - Restaurant and Bar",
+    "opening_hours": "Mo-Su 10:00-21:00",
+    "outdoor_seating": "no",
+    "phone": "(043) 404-8697"
+  }
+},
+{
+  "type": "node",
+  "id": 12499271331,
+  "lat": 13.9560214,
+  "lon": 121.1658856,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "cuisine": "barbecue;korean",
+    "name": "XMeat Here"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457425,
+  "lat": 13.9441510,
+  "lon": 121.1669972,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "branch": "Puregold Lipa",
+    "check_date": "2025-01-19",
+    "cuisine": "juice",
+    "drive_through": "no",
+    "name": "Lemon Lime"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457427,
+  "lat": 13.9442086,
+  "lon": 121.1669882,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "branch": "Puregold Lipa",
+    "check_date": "2025-01-19",
+    "cuisine": "filipino",
+    "name": "Chef Gerwin's Happy Tummy"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457428,
+  "lat": 13.9442376,
+  "lon": 121.1669836,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "branch": "Puregold Lipa",
+    "check_date": "2025-01-19",
+    "cuisine": "chicken",
+    "name": "The Crunch"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457429,
+  "lat": 13.9442666,
+  "lon": 121.1669791,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-01-19",
+    "cuisine": "burger",
+    "name": "Kerrimo"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457431,
+  "lat": 13.9441114,
+  "lon": 121.1669786,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "branch": "Puregold Lipa",
+    "brand": "Mister Donut",
+    "brand:en": "Mister Donut",
+    "brand:wikidata": "Q1065819",
+    "check_date": "2025-01-19",
+    "cuisine": "donut",
+    "drive_through": "no",
+    "name": "Mister Donut",
+    "name:en": "Mister Donut",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457432,
+  "lat": 13.9441081,
+  "lon": 121.1669571,
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "branch": "Puregold Lipa",
+    "check_date": "2025-01-19",
+    "cuisine": "shawarma",
+    "drive_through": "no",
+    "name": "The Shawarma Shack"
+  }
+},
+{
+  "type": "node",
+  "id": 12516457443,
+  "lat": 13.9441410,
+  "lon": 121.1666054,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-06-29",
+    "cuisine": "chicken",
+    "name": "Uncle Belly"
+  }
+},
+{
+  "type": "node",
+  "id": 12533594134,
+  "lat": 13.9460663,
+  "lon": 121.1659083,
+  "tags": {
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "branch": "Sabang",
+    "check_date": "2025-06-29",
+    "cuisine": "filipino;chicken",
+    "name": "Kwatogs"
+  }
+},
+{
+  "type": "node",
+  "id": 12533808158,
+  "lat": 13.9460327,
+  "lon": 121.1661309,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Andok's",
+    "brand:wikidata": "Q62267166",
+    "check_date": "2025-06-29",
+    "cuisine": "chicken",
+    "name": "Andok's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12548866223,
+  "lat": 13.9415844,
+  "lon": 121.1842551,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-02-07",
+    "cuisine": "siomai",
+    "name": "Siomai King"
+  }
+},
+{
+  "type": "node",
+  "id": 12548866248,
+  "lat": 13.9415382,
+  "lon": 121.1844386,
+  "tags": {
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "check_date": "2025-02-07",
+    "cuisine": "noodle;lomi;goto",
+    "mobile": "(+63) 995 728 9895",
+    "name": "Cisos Food Hub",
+    "phone": "(043) 332-0887"
+  }
+},
+{
+  "type": "node",
+  "id": 12550723786,
+  "lat": 13.9495057,
+  "lon": 121.1658626,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-06-29",
+    "cuisine": "chicken",
+    "name": "Jacobus Chicken"
+  }
+},
+{
+  "type": "node",
+  "id": 12550723787,
+  "lat": 13.9494159,
+  "lon": 121.1660960,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-06-29",
+    "level": "0",
+    "name": "Rudy's Goto"
+  }
+},
+{
+  "type": "node",
+  "id": 12555461656,
+  "lat": 13.9432352,
+  "lon": 121.1812487,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-02-07",
+    "cuisine": "filipino;sisig",
+    "name": "Tomboy's Crispy Special Sisig & Bagnet"
+  }
+},
+{
+  "type": "node",
+  "id": 12560992442,
+  "lat": 13.9277159,
+  "lon": 121.1699677,
+  "tags": {
+    "addr:housename": "DLD Town Center",
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "name": "Four Corners"
+  }
+},
+{
+  "type": "node",
+  "id": 12560992444,
+  "lat": 13.9277854,
+  "lon": 121.1699050,
+  "tags": {
+    "addr:housename": "DLD Town Center",
+    "air_conditioning": "yes",
+    "branch": "Antipolo Del Norte",
+    "brand": "Woonmart",
+    "contact:facebook": "@woonmart",
+    "contact:phone": "+63917 137 6157",
+    "delivery": "yes",
+    "email": "woonmartph@gmail.com",
+    "internet_access": "wlan",
+    "internet_access:fee": "no",
+    "name": "Woonmart",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12560992452,
+  "lat": 13.9271157,
+  "lon": 121.1702699,
+  "tags": {
+    "addr:housename": "DLD Town Center",
+    "addr:unit": "8-A",
+    "amenity": "restaurant",
+    "contact:facebook": "@people-Hokage-Teppanyaki-Ramen-and-Sushi-Bar-By-Chef-Fuzion-Lipa-Batangas-61557415590686",
+    "cuisine": "japanese",
+    "name": "Hokage Teppanyaki"
+  }
+},
+{
+  "type": "node",
+  "id": 12560992462,
+  "lat": 13.9276859,
+  "lon": 121.1699949,
+  "tags": {
+    "addr:housename": "DLD Town Center",
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "contact:facebook": "@ichirosanjapaneserestaurant",
+    "contact:phone": "+63953 880 8658",
+    "cuisine": "japanese",
+    "name": "Ichirosan"
+  }
+},
+{
+  "type": "node",
+  "id": 12561278355,
+  "lat": 13.9423301,
+  "lon": 121.1782808,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:neighbourhood": "Sentrina",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "B. Reyes Street",
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "branch": "Sentrina",
+    "brand": "Bennett's Diner",
+    "check_date": "2025-07-10",
+    "cuisine": "filipino",
+    "facebook": "https://www.facebook.com/Bennetts.Dinner",
+    "mobile": "(+63) 991 764 9926;(+63) 955 280 0116",
+    "name": "Bennett's Diner",
+    "opening_hours": "Mo-Su 06:00-19:00"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218005,
+  "lat": 13.9293880,
+  "lon": 121.1680664,
+  "tags": {
+    "amenity": "fast_food",
+    "branch": "Antipolo del Norte",
+    "brand": "Five Star",
+    "cuisine": "chicken",
+    "name": "Five Star"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218006,
+  "lat": 13.9294336,
+  "lon": 121.1680281,
+  "tags": {
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "branch": "Antipolo Del Norte",
+    "brand": "LBN",
+    "name": "LBN Lomi and Eatery",
+    "operator": "Lutong Bahay Network"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218037,
+  "lat": 13.9302951,
+  "lon": 121.1676388,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chicken",
+    "name": "Jared Fried Chicken"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218039,
+  "lat": 13.9305097,
+  "lon": 121.1676912,
+  "tags": {
+    "name": "Aguila's Sari-Sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218052,
+  "lat": 13.9310693,
+  "lon": 121.1672240,
+  "tags": {
+    "name": "Gwen Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218064,
+  "lat": 13.9311573,
+  "lon": 121.1674026,
+  "tags": {
+    "name": "KC & Matthews Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218066,
+  "lat": 13.9311798,
+  "lon": 121.1671871,
+  "tags": {
+    "name": "Leoning's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218067,
+  "lat": 13.9312679,
+  "lon": 121.1671432,
+  "tags": {
+    "name": "Tin Tin's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12563218072,
+  "lat": 13.9313530,
+  "lon": 121.1671100,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Sylvia's Eatery"
+  }
+},
+{
+  "type": "node",
+  "id": 12568142232,
+  "lat": 13.9388352,
+  "lon": 121.1650345,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "fixme": "Name. Banner was obscured when surveying",
+    "name": "Karinderiya"
+  }
+},
+{
+  "type": "node",
+  "id": 12568142233,
+  "lat": 13.9386568,
+  "lon": 121.1645999,
+  "tags": {
+    "name": "May-May Eatery & Sari-Sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12568142239,
+  "lat": 13.9386190,
+  "lon": 121.1644120,
+  "tags": {
+    "name": "Aya Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12568142240,
+  "lat": 13.9387209,
+  "lon": 121.1643716,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino;lechon",
+    "name": "PapaLechon"
+  }
+},
+{
+  "type": "node",
+  "id": 12568142288,
+  "lat": 13.9391659,
+  "lon": 121.1637279,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Siopao House"
+  }
+},
+{
+  "type": "node",
+  "id": 12568142299,
+  "lat": 13.9395463,
+  "lon": 121.1642705,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "fixme": "Name. No banner, didn't go in.",
+    "name": "Karinderiya"
+  }
+},
+{
+  "type": "node",
+  "id": 12568145763,
+  "lat": 13.9396207,
+  "lon": 121.1650206,
+  "tags": {
+    "fixme": "Name. No banner and closed when walked by.",
+    "name": "Sari-Sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12569461567,
+  "lat": 13.9400428,
+  "lon": 121.1650716,
+  "tags": {
+    "fixme": "Name",
+    "name": "AC's Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12569461570,
+  "lat": 13.9402209,
+  "lon": 121.1650145,
+  "tags": {
+    "name": "Pauline Loading Station",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12569461574,
+  "lat": 13.9402722,
+  "lon": 121.1648826,
+  "tags": {
+    "name": "Acelio Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12569461580,
+  "lat": 13.9401745,
+  "lon": 121.1648069,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Merlia Food House"
+  }
+},
+{
+  "type": "node",
+  "id": 12569498918,
+  "lat": 13.9401994,
+  "lon": 121.1646712,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "TBN Eatery - KKB 1973"
+  }
+},
+{
+  "type": "node",
+  "id": 12621621543,
+  "lat": 13.9706832,
+  "lon": 121.1651249,
+  "tags": {
+    "addr:unit": "41",
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "branch": "Levitown Market",
+    "brand": "Bennett's Diner",
+    "cuisine": "filipino",
+    "facebook": "https://www.facebook.com/Bennetts.Dinner",
+    "mobile": "(+63) 955 280 0116",
+    "name": "Bennett's Diner"
+  }
+},
+{
+  "type": "node",
+  "id": 12626329374,
+  "lat": 13.9413524,
+  "lon": 121.1632322,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "check_date": "2025-07-27",
+    "cuisine": "hot_dog;fries;juice",
+    "name": "Bet Ko Toh"
+  }
+},
+{
+  "type": "node",
+  "id": 12631126386,
+  "lat": 13.9432385,
+  "lon": 121.1370853,
+  "tags": {
+    "name": "Unitop Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 12631126387,
+  "lat": 13.9430775,
+  "lon": 121.1372016,
+  "tags": {
+    "email": "unitop28lipa@gmail.com",
+    "facebook": "https://www.facebook.com/profile.php?id=61568739732280",
+    "name": "Unitop Department Store",
+    "opening_hours": "Mo-Su 09:00-21:00",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 12631136328,
+  "lat": 13.9430950,
+  "lon": 121.1371389,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "juice",
+    "name": "MangoSpot"
+  }
+},
+{
+  "type": "node",
+  "id": 12631808370,
+  "lat": 13.9411817,
+  "lon": 121.1620583,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "brand": "Chowking",
+    "brand:wikidata": "Q1076816",
+    "check_date": "2025-03-09",
+    "cuisine": "asian",
+    "level": "0",
+    "name": "Chowking",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12635329462,
+  "lat": 13.9431208,
+  "lon": 121.1619093,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Chooks to Go",
+    "brand:wikidata": "Q17065023",
+    "cuisine": "chicken",
+    "name": "Chooks to Go",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12635329472,
+  "lat": 13.9431998,
+  "lon": 121.1621612,
+  "tags": {
+    "fixme": "Name",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12635329473,
+  "lat": 13.9431043,
+  "lon": 121.1622114,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Jon @ Lyn Eatery"
+  }
+},
+{
+  "type": "node",
+  "id": 12635348911,
+  "lat": 13.9432880,
+  "lon": 121.1623647,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Marie Eatery"
+  }
+},
+{
+  "type": "node",
+  "id": 12635348974,
+  "lat": 13.9432515,
+  "lon": 121.1625434,
+  "tags": {
+    "fixme": "Name",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12636041200,
+  "lat": 13.9427887,
+  "lon": 121.1629372,
+  "tags": {
+    "name": "888 Sari-Sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12640051447,
+  "lat": 13.9412751,
+  "lon": 121.1629786,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "check_date": "2025-03-09",
+    "name": "SiomaiFaction"
+  }
+},
+{
+  "type": "node",
+  "id": 12640051452,
+  "lat": 13.9414184,
+  "lon": 121.1628605,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "brand": "Zagu",
+    "check_date": "2025-03-09",
+    "cuisine": "juice",
+    "name": "Zagu"
+  }
+},
+{
+  "type": "node",
+  "id": 12640374232,
+  "lat": 13.9417375,
+  "lon": 121.1620828,
+  "tags": {
+    "air_conditioning": "yes",
+    "name": "NOVO Department Store",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "yes",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "node",
+  "id": 12640463591,
+  "lat": 13.9391613,
+  "lon": 121.1642303,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chicken",
+    "name": "D'Fifth Chicken"
+  }
+},
+{
+  "type": "node",
+  "id": 12641425958,
+  "lat": 13.9408219,
+  "lon": 121.1642168,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "G. A. Solis Street",
+    "branch": "San Sebastian",
+    "brand": "7-Eleven",
+    "brand:website": "https://7-eleven.com.ph",
+    "brand:wikidata": "Q259340",
+    "brand:wikipedia": "en:7-Eleven",
+    "brand:wikipedia:es": "7-Eleven",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "internet_access": "wlan",
+    "name": "7-Eleven",
+    "name:ar": "7-إلفن",
+    "name:en": "7-Eleven",
+    "name:es": "7-Eleven",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "ref:branch": "873",
+    "shop": "convenience",
+    "wheelchair": "limited"
+  }
+},
+{
+  "type": "node",
+  "id": 12647102552,
+  "lat": 13.9410955,
+  "lon": 121.1618962,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "brand": "Lots'a Pizza",
+    "brand:wikidata": "Q121090232",
+    "check_date": "2025-03-09",
+    "cuisine": "pizza",
+    "level": "0",
+    "name": "Lots'a Pizza",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12647102553,
+  "lat": 13.9410867,
+  "lon": 121.1618670,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "brand": "Chooks to Go",
+    "brand:wikidata": "Q17065023",
+    "check_date": "2025-03-09",
+    "cuisine": "chicken",
+    "level": "0",
+    "name": "Chooks to Go",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12647102554,
+  "lat": 13.9410777,
+  "lon": 121.1618372,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "fast_food",
+    "brand": "Potato Corner",
+    "brand:wikidata": "Q60741625",
+    "check_date": "2025-03-09",
+    "cuisine": "fries",
+    "level": "0",
+    "name": "Potato Corner",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12650549507,
+  "lat": 13.9412755,
+  "lon": 121.1609386,
+  "tags": {
+    "name": "Jurrien Sari-Sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12659499124,
+  "lat": 13.9424706,
+  "lon": 121.1653980,
+  "tags": {
+    "amenity": "hospital",
+    "check_date": "2025-04-17",
+    "healthcare": "hospital",
+    "name": "San Antonio Medical Center"
+  }
+},
+{
+  "type": "node",
+  "id": 12659499126,
+  "lat": 13.9386771,
+  "lon": 121.1656939,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "N. L. Villa Memorial Medical Center"
+  }
+},
+{
+  "type": "node",
+  "id": 12659499127,
+  "lat": 13.9570635,
+  "lon": 121.1622510,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Ospital ng Lipa"
+  }
+},
+{
+  "type": "node",
+  "id": 12659499128,
+  "lat": 13.9683935,
+  "lon": 121.1664526,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Metro Lipa Medical Center"
+  }
+},
+{
+  "type": "node",
+  "id": 12679780157,
+  "lat": 13.9468912,
+  "lon": 121.1271872,
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fernando Air base Hospital"
+  }
+},
+{
+  "type": "node",
+  "id": 12689223050,
+  "lat": 13.9247540,
+  "lon": 121.1490326,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "air_conditioning": "yes",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "check_date": "2025-08-17",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12689223051,
+  "lat": 13.9234052,
+  "lon": 121.1488219,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12689223052,
+  "lat": 13.9047224,
+  "lon": 121.1460136,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "name": "Alfamart",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12689223053,
+  "lat": 13.9036497,
+  "lon": 121.1463207,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12689223054,
+  "lat": 13.8908331,
+  "lon": 121.1509193,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12689223055,
+  "lat": 13.8900676,
+  "lon": 121.1509770,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690041962,
+  "lat": 13.9398047,
+  "lon": 121.1568094,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "M. K. Lina Street",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690041963,
+  "lat": 13.9475439,
+  "lon": 121.1723797,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "D. P. Laygo Street",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690041964,
+  "lat": 13.9525065,
+  "lon": 121.1667382,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "City Park Avenue",
+    "air_conditioning": "yes",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "opening_hours": "Mo-Su 06:30-21:30",
+    "operator": "Hard Discount Philippines, Inc.",
+    "payment:cash": "yes",
+    "payment:gcash": "yes",
+    "payment:grabpay": "yes",
+    "payment:mastercard": "yes",
+    "payment:maya": "yes",
+    "payment:shopeepay": "yes",
+    "payment:visa": "yes",
+    "payment:visa_debit": "yes",
+    "shop": "convenience",
+    "smoking": "no",
+    "toilets": "no"
+  }
+},
+{
+  "type": "node",
+  "id": 12690041965,
+  "lat": 13.9536436,
+  "lon": 121.1584087,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Balintawak Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690041966,
+  "lat": 13.9500065,
+  "lon": 121.1508550,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599745,
+  "lat": 13.9438618,
+  "lon": 121.1097367,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599746,
+  "lat": 13.9487844,
+  "lon": 121.1333013,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "M.P. Casanova Street",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599747,
+  "lat": 13.9836036,
+  "lon": 121.1421579,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Governor Feliciano Leviste Provincial Highway",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599748,
+  "lat": 13.9837533,
+  "lon": 121.1681968,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599749,
+  "lat": 13.9786383,
+  "lon": 121.1682188,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "L. P. Leviste Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599750,
+  "lat": 13.9704945,
+  "lon": 121.1645977,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Leviste Drive",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599751,
+  "lat": 13.9168550,
+  "lon": 121.1446923,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa - Ibaan Provincial Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599752,
+  "lat": 13.9335508,
+  "lon": 121.1580764,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "J. P. Laurel Street",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690599753,
+  "lat": 13.9353107,
+  "lon": 121.1485655,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Lodlod Avenue",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690672549,
+  "lat": 13.9041822,
+  "lon": 121.1922294,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa-Rosario Road",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690672550,
+  "lat": 13.9035560,
+  "lon": 121.1923729,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa-Rosario Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690672551,
+  "lat": 13.9566105,
+  "lon": 121.2051482,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa-San Antonio Road",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12690672552,
+  "lat": 13.9517961,
+  "lon": 121.1849056,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Lipa-San Antonio Road",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12747197082,
+  "lat": 13.9650719,
+  "lon": 121.1782633,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Pinky's Lomi"
+  }
+},
+{
+  "type": "node",
+  "id": 12753550955,
+  "lat": 13.9416518,
+  "lon": 121.1602493,
+  "tags": {
+    "amenity": "restaurant",
+    "name": "Ninay's Special"
+  }
+},
+{
+  "type": "node",
+  "id": 12766508185,
+  "lat": 13.9307907,
+  "lon": 121.1419756,
+  "tags": {
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12797904361,
+  "lat": 13.9421381,
+  "lon": 121.1602693,
+  "tags": {
+    "air_conditioning": "no",
+    "amenity": "restaurant",
+    "check_date": "2025-03-09"
+  }
+},
+{
+  "type": "node",
+  "id": 12797904367,
+  "lat": 13.9422843,
+  "lon": 121.1602819,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-03-09",
+    "cuisine": "chicken",
+    "name": "Crispy King"
+  }
+},
+{
+  "type": "node",
+  "id": 12861878570,
+  "lat": 13.9463441,
+  "lon": 121.1663252,
+  "tags": {
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "check_date": "2025-06-29",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12965421844,
+  "lat": 13.9471845,
+  "lon": 121.1658529,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Pappu's Crispy Pata"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109829,
+  "lat": 13.9441362,
+  "lon": 121.1509247,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "check_date": "2025-07-05",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "level": "0",
+    "name": "McDonald's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109832,
+  "lat": 13.9438974,
+  "lon": 121.1509481,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-07-05",
+    "level": "0",
+    "name": "Binalot"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109838,
+  "lat": 13.9434619,
+  "lon": 121.1509907,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Mang Inasal",
+    "brand:wikidata": "Q6748573",
+    "check_date": "2025-07-05",
+    "cuisine": "barbecue",
+    "level": "0",
+    "name": "Mang Inasal",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109849,
+  "lat": 13.9434043,
+  "lon": 121.1509964,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Chooks to Go",
+    "brand:wikidata": "Q17065023",
+    "check_date": "2025-07-05",
+    "cuisine": "chicken",
+    "level": "0",
+    "name": "Chooks to Go",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109858,
+  "lat": 13.9431581,
+  "lon": 121.1510205,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Greenwich",
+    "brand:wikidata": "Q2691308",
+    "check_date": "2025-07-05",
+    "cuisine": "pizza",
+    "level": "0",
+    "name": "Greenwich",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109868,
+  "lat": 13.9424070,
+  "lon": 121.1507280,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Tokyo Tokyo",
+    "brand:wikidata": "Q7814003",
+    "check_date": "2025-07-05",
+    "cuisine": "japanese",
+    "name": "Tokyo Tokyo",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109874,
+  "lat": 13.9427359,
+  "lon": 121.1510619,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-07-05",
+    "cuisine": "filipino",
+    "level": "0",
+    "name": "Gerry's Grill"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109895,
+  "lat": 13.9426754,
+  "lon": 121.1509564,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Mister Donut",
+    "brand:en": "Mister Donut",
+    "brand:wikidata": "Q1065819",
+    "check_date": "2025-07-05",
+    "cuisine": "donut",
+    "level": "0",
+    "name": "Mister Donut",
+    "name:en": "Mister Donut",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109940,
+  "lat": 13.9434198,
+  "lon": 121.1508792,
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Dairy Queen",
+    "brand:wikidata": "Q1141226",
+    "check_date": "2025-07-05",
+    "cuisine": "ice_cream;burger;chicken",
+    "name": "Dairy Queen",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109949,
+  "lat": 13.9437155,
+  "lon": 121.1509659,
+  "tags": {
+    "amenity": "restaurant",
+    "brand": "Bonchon Chicken",
+    "brand:wikidata": "Q4941248",
+    "check_date": "2025-07-05",
+    "cuisine": "chicken;korean;sushi",
+    "level": "0",
+    "name": "Bonchon Chicken"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109957,
+  "lat": 13.9438863,
+  "lon": 121.1508264,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-07-05",
+    "cuisine": "juice",
+    "level": "0",
+    "name": "Fruitas"
+  }
+},
+{
+  "type": "node",
+  "id": 12980109959,
+  "lat": 13.9440515,
+  "lon": 121.1509330,
+  "tags": {
+    "amenity": "restaurant",
+    "check_date": "2025-07-05",
+    "cuisine": "barbecue",
+    "level": "0",
+    "name": "Reyes Barbeque"
+  }
+},
+{
+  "type": "node",
+  "id": 12997163321,
+  "lat": 13.9398609,
+  "lon": 121.1707417,
+  "tags": {
+    "name": "Sombrano Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 12997163322,
+  "lat": 13.9398716,
+  "lon": 121.1707765,
+  "tags": {
+    "amenity": "fast_food",
+    "cuisine": "chicken",
+    "drive_through": "no",
+    "name": "FaeFae"
+  }
+},
+{
+  "type": "node",
+  "id": 13031388139,
+  "lat": 13.9424473,
+  "lon": 121.1358213,
+  "tags": {
+    "brand": "Shell Select",
+    "brand:wikidata": "Q124359752",
+    "name": "Shell Select",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 13031388210,
+  "lat": 13.9419872,
+  "lon": 121.1376413,
+  "tags": {
+    "addr:housenumber": "028",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "cuisine": "noodle;filipino;lomi",
+    "name": "Lomi Lipeño"
+  }
+},
+{
+  "type": "node",
+  "id": 13040927887,
+  "lat": 13.9386828,
+  "lon": 121.1523677,
+  "tags": {
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 13040927888,
+  "lat": 13.9385689,
+  "lon": 121.1531349,
+  "tags": {
+    "amenity": "restaurant"
+  }
+},
+{
+  "type": "node",
+  "id": 13075752396,
+  "lat": 13.9243419,
+  "lon": 121.1489439,
+  "tags": {
+    "amenity": "fast_food",
+    "check_date": "2025-08-17",
+    "cuisine": "chicken",
+    "name": "KimLee's Grill House"
+  }
+},
+{
+  "type": "node",
+  "id": 13169428965,
+  "lat": 13.9359803,
+  "lon": 121.1489118,
+  "tags": {
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 13289740414,
+  "lat": 13.9422798,
+  "lon": 121.1657592,
+  "tags": {
+    "name": "Setra Minimart",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "node",
+  "id": 13483213487,
+  "lat": 13.9432714,
+  "lon": 121.1689462,
+  "tags": {
+    "amenity": "restaurant",
+    "cuisine": "filipino",
+    "name": "Onyong Lomi House"
+  }
+},
+{
+  "type": "node",
+  "id": 13518350457,
+  "lat": 13.9483040,
+  "lon": 121.1571150,
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "Ayala Highway",
+    "amenity": "restaurant",
+    "brand": "Kenny Rogers Roasters",
+    "brand:wikidata": "Q6391200",
+    "cuisine": "chicken",
+    "mapillary": "1458042388715536",
+    "name": "Kenny Rogers Roasters"
+  }
+},
+{
+  "type": "node",
+  "id": 13788216801,
+  "lat": 13.9480690,
+  "lon": 121.1567884,
+  "tags": {
+    "amenity": "hospital",
+    "name": "Lipa Medix Medical Center"
+  }
+},
+{
+  "type": "node",
+  "id": 13826680590,
+  "lat": 13.8873859,
+  "lon": 121.1513310,
+  "tags": {
+    "name": "ALL EN one",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "node",
+  "id": 13953504963,
+  "lat": 13.9275218,
+  "lon": 121.1704005,
+  "tags": {
+    "brand": "Robinsons Supermarket",
+    "brand:wikidata": "Q7353143",
+    "name": "Robinsons Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 31705509,
+  "center": {
+    "lat": 13.9547845,
+    "lon": 121.1630964
+  },
+  "tags": {
+    "addr:barangay": "Sabang",
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Ayala Highway",
+    "branch": "Lipa City",
+    "building": "retail",
+    "building:levels": "3",
+    "name": "SM City Lipa",
+    "note": "PNS.\nInformation missing: Retail shops inside the mall.",
+    "operator": "SM Supermalls",
+    "operator:wikidata": "Q7391510",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "payment:mastercard": "yes",
+    "payment:smac": "yes",
+    "payment:visa": "yes",
+    "shop": "mall",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 55559233,
+  "center": {
+    "lat": 13.9630623,
+    "lon": 121.1691338
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "landuse": "retail",
+    "name": "Fiesta World Mall",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 111709835,
+  "center": {
+    "lat": 13.9422137,
+    "lon": 121.1464620
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "amenity": "restaurant",
+    "building": "yes",
+    "name": "Chez Rafael",
+    "source": "Bing"
+  }
+},
+{
+  "type": "way",
+  "id": 119622905,
+  "center": {
+    "lat": 13.8762597,
+    "lon": 121.2117547
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "Dr. Romeo Isana Rosales General Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 155380641,
+  "center": {
+    "lat": 13.9436866,
+    "lon": 121.1520990
+  },
+  "tags": {
+    "addr2:street": "San Carlos Drive",
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Mary Mediatrix Medical Center",
+    "phone": "+63437736800",
+    "previously": "node:606404813",
+    "source": "Bing",
+    "website": "https://marymediatrixmedcenter.com.ph",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 182488046,
+  "center": {
+    "lat": 13.9427661,
+    "lon": 121.1522297
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Ayala Highway",
+    "amenity": "fast_food",
+    "branch": "Lipa Bus Stop",
+    "brand": "Jollibee",
+    "brand:website": "https://www.jollibee.com.ph/",
+    "brand:wikidata": "Q37614",
+    "brand:wikipedia": "en:Jollibee",
+    "check_date": "2025-07-05",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "landuse": "retail",
+    "name": "Jollibee",
+    "name:en": "Jollibee",
+    "payment:cash": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 182488048,
+  "center": {
+    "lat": 13.9474732,
+    "lon": 121.1575286
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "Jose P. Laurel Highway",
+    "amenity": "hospital",
+    "contact:phone": "+6343 757-0088;+6343756-3008",
+    "healthcare": "hospital",
+    "name": "Lipa Medix Medical Center"
+  }
+},
+{
+  "type": "way",
+  "id": 182488049,
+  "center": {
+    "lat": 13.9417283,
+    "lon": 121.1521790
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "addr:street:corner": "Claro M. Recto",
+    "amenity": "fast_food",
+    "branch": "Lipa",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia:es": "McDonald's",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "landuse": "retail",
+    "name": "McDonald's",
+    "name:ar": "مكدونالدز",
+    "name:en": "McDonald's",
+    "name:es": "McDonald's",
+    "name:ko": "디몰 맥도날드",
+    "name:ru": "Макдональдс",
+    "source": "Bing",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 182488051,
+  "center": {
+    "lat": 13.9436586,
+    "lon": 121.1529565
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "restaurant",
+    "brand": "Shakey's",
+    "brand:wikidata": "Q6134929",
+    "cuisine": "pizza",
+    "landuse": "retail",
+    "mapillary": "1334179934041773",
+    "name": "Shakey's",
+    "opening_hours": "24/7",
+    "source": "Bing"
+  }
+},
+{
+  "type": "way",
+  "id": 182488053,
+  "center": {
+    "lat": 13.9458677,
+    "lon": 121.1556972
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "Jose P. Laurel Highway",
+    "branch": "Lipa",
+    "landuse": "commercial",
+    "name": "South Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 249144236,
+  "center": {
+    "lat": 13.9508398,
+    "lon": 121.1655566
+  },
+  "tags": {
+    "addr:barangay": "Sabang",
+    "amenity": "restaurant",
+    "building": "yes",
+    "check_date": "2025-01-26",
+    "cuisine": "regional",
+    "name": "Hapag"
+  }
+},
+{
+  "type": "way",
+  "id": 249151216,
+  "center": {
+    "lat": 13.9452823,
+    "lon": 121.1617926
+  },
+  "tags": {
+    "addr:country": "PH",
+    "addr:province": "Batangas",
+    "building": "yes",
+    "name": "MS Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 263446047,
+  "center": {
+    "lat": 13.9548788,
+    "lon": 121.1648452
+  },
+  "tags": {
+    "addr:country": "PH",
+    "addr:province": "Batangas",
+    "amenity": "restaurant",
+    "brand": "Max's Restaurant",
+    "brand:wikidata": "Q6794477",
+    "building": "yes",
+    "cuisine": "asian",
+    "name": "Max's Restaurant"
+  }
+},
+{
+  "type": "way",
+  "id": 268000656,
+  "center": {
+    "lat": 13.9425348,
+    "lon": 121.1362058
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "building": "commercial",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 268530946,
+  "center": {
+    "lat": 13.9441330,
+    "lon": 121.1671980
+  },
+  "tags": {
+    "air_conditioning": "yes",
+    "branch": "Lipa",
+    "brand": "Puregold",
+    "brand:wikidata": "Q7261170",
+    "building": "yes",
+    "check_date": "2025-06-29",
+    "height": "7.5",
+    "name": "Puregold",
+    "operator": "Puregold",
+    "payment:cash": "yes",
+    "payment:coins": "yes",
+    "payment:contactless": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "payment:mastercard": "yes",
+    "payment:notes": "yes",
+    "payment:visa": "yes",
+    "shop": "supermarket",
+    "toilets": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 378932833,
+  "center": {
+    "lat": 13.9214650,
+    "lon": 121.1053100
+  },
+  "tags": {
+    "addr:place": "Banaybanay II",
+    "amenity": "hospital",
+    "name": "Metro San Jose Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 409054174,
+  "center": {
+    "lat": 13.9569740,
+    "lon": 121.1622607
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "facebook": "https://www.facebook.com/oslip",
+    "healthcare": "hospital",
+    "mobile": "(+63) 917 149 9387;(+63) 917 145 5474",
+    "name": "Ospital ng Lipa",
+    "note": "First Mobile and Phone number for Emergency Room.\nSecond Mobile and Phone number for general inquiry.",
+    "phone": "(043) 702-9845;(043) 702-1805"
+  }
+},
+{
+  "type": "way",
+  "id": 418084977,
+  "center": {
+    "lat": 13.9410714,
+    "lon": 121.1520172
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "B. Morada Street",
+    "amenity": "fast_food",
+    "brand": "Burger King",
+    "brand:wikidata": "Q177054",
+    "brand:wikipedia": "en:Burger King",
+    "cuisine": "burger",
+    "landuse": "retail",
+    "name": "Burger King",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 418084990,
+  "center": {
+    "lat": 13.9380309,
+    "lon": 121.1634758
+  },
+  "tags": {
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "building": "commercial",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 418085002,
+  "center": {
+    "lat": 13.9349707,
+    "lon": 121.1650432
+  },
+  "tags": {
+    "addr:country": "PH",
+    "addr:province": "Batangas",
+    "amenity": "restaurant",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 452241432,
+  "center": {
+    "lat": 13.8787308,
+    "lon": 121.1066800
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "addr:street": "Ona - Lodlod Road",
+    "addr:town": "San Jose",
+    "air_conditioning": "yes",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "building": "retail",
+    "name": "Alfamart",
+    "opening_hours": "24/7",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 452861313,
+  "center": {
+    "lat": 13.9317583,
+    "lon": 121.1138890
+  },
+  "tags": {
+    "addr:barangay": "Banaybanay",
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Jose P. Laurel Highway",
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "building": "retail",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 463656125,
+  "center": {
+    "lat": 13.9705242,
+    "lon": 121.1661912
+  },
+  "tags": {
+    "addr2:street": "Leviste Drive",
+    "addr:barangay": "Marawoy",
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "fast_food",
+    "brand": "Jollibee",
+    "brand:website": "https://www.jollibee.com.ph/",
+    "brand:wikidata": "Q37614",
+    "brand:wikipedia": "en:Jollibee",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "name": "Jollibee",
+    "name:en": "Jollibee",
+    "payment:cash": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 463662195,
+  "center": {
+    "lat": 13.9574696,
+    "lon": 121.1659400
+  },
+  "tags": {
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "building": "retail",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 466301526,
+  "center": {
+    "lat": 13.8646261,
+    "lon": 121.2074079
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "building": "retail",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 466301802,
+  "center": {
+    "lat": 13.8774106,
+    "lon": 121.2144888
+  },
+  "tags": {
+    "addr:city": "Padre Garcia",
+    "addr:province": "Batangas",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "brand:wikipedia": "en:Alfamart",
+    "building": "yes",
+    "building:levels": "1",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 466309692,
+  "center": {
+    "lat": 13.8759432,
+    "lon": 121.2104195
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "building": "yes",
+    "name": "Ongville Supermarket",
+    "opening_hours": "Mo-Su 7:00-20:00",
+    "opening_hours:covid19": "Mo-Su 7:00-18:00",
+    "payment:cash": "yes",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 466874402,
+  "center": {
+    "lat": 13.9574065,
+    "lon": 121.1642025
+  },
+  "tags": {
+    "addr:barangay": "Marawoy",
+    "addr:city": "Lipa City",
+    "addr:place": "Marawoy",
+    "addr:province": "Batangas",
+    "amenity": "fast_food",
+    "building": "government",
+    "fast_food": "cafeteria",
+    "name": "Canteen",
+    "operator": "National Bureau of Investigation"
+  }
+},
+{
+  "type": "way",
+  "id": 467947532,
+  "center": {
+    "lat": 13.9452255,
+    "lon": 121.1666757
+  },
+  "tags": {
+    "addr:city": "Lipa City",
+    "addr:province": "Batangas",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "building": "yes",
+    "building:levels": "1",
+    "check_date": "2025-06-29",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 472840689,
+  "center": {
+    "lat": 13.9431336,
+    "lon": 121.1210095
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:quarter": "Banaybanay",
+    "addr:street": "Lipa-Mataasnakahoy Road",
+    "amenity": "restaurant",
+    "building": "retail",
+    "cuisine": "japanese",
+    "name": "Irori",
+    "previously": "node:10635345033"
+  }
+},
+{
+  "type": "way",
+  "id": 473479008,
+  "center": {
+    "lat": 13.9368351,
+    "lon": 121.1530053
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "amenity": "restaurant",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 501025963,
+  "center": {
+    "lat": 13.9285258,
+    "lon": 121.1101144
+  },
+  "tags": {
+    "building": "retail",
+    "name": "Leon Force Convenience Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 548952953,
+  "center": {
+    "lat": 13.9430839,
+    "lon": 121.1361610
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia": "en:McDonald's",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "name": "McDonald's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 548952955,
+  "center": {
+    "lat": 13.9421805,
+    "lon": 121.1367171
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "fast_food",
+    "brand": "Jollibee",
+    "brand:website": "https://www.jollibee.com.ph/",
+    "brand:wikidata": "Q37614",
+    "brand:wikipedia": "en:Jollibee",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "diet:non-vegetarian": "yes",
+    "drive_through": "yes",
+    "name": "Jollibee",
+    "name:en": "Jollibee",
+    "payment:cash": "yes",
+    "payment:credit_cards": "no",
+    "payment:debit_cards": "no",
+    "phone": "+87000",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 670419488,
+  "center": {
+    "lat": 13.9334668,
+    "lon": 121.1591865
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:street": "J. P. Laurel Street",
+    "amenity": "hospital",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Lipa City District Hospital",
+    "ref": "DOH000000000001826"
+  }
+},
+{
+  "type": "way",
+  "id": 754182874,
+  "center": {
+    "lat": 13.9430683,
+    "lon": 121.1338648
+  },
+  "tags": {
+    "addr:barangay": "Tambo",
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "landuse": "retail",
+    "name": "Lipa Town Center",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 764893599,
+  "center": {
+    "lat": 14.0107748,
+    "lon": 121.1685418
+  },
+  "tags": {
+    "building": "retail",
+    "name": "Robinsons Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 764893601,
+  "center": {
+    "lat": 14.0095034,
+    "lon": 121.1699128
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "landuse": "retail",
+    "name": "The Outlets by LIMA",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 803175116,
+  "center": {
+    "lat": 13.9571542,
+    "lon": 121.1659853
+  },
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:website": "https://www.mcdonalds.com.ph",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia": "en:McDonald's",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "landuse": "retail",
+    "name": "McDonald's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 843320872,
+  "center": {
+    "lat": 13.9412189,
+    "lon": 121.1493885
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "brand:wikipedia": "en:McDonald's",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "name": "McDonald's",
+    "takeaway": "yes",
+    "was:amenity": "fuel",
+    "was:name": "Petron"
+  }
+},
+{
+  "type": "way",
+  "id": 901823383,
+  "center": {
+    "lat": 13.9550738,
+    "lon": 121.1641419
+  },
+  "tags": {
+    "building": "retail",
+    "building:levels": "3",
+    "name": "Lipa Annex",
+    "shop": "mall",
+    "wheelchair": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 901823395,
+  "center": {
+    "lat": 13.9501119,
+    "lon": 121.1507970
+  },
+  "tags": {
+    "branch": "San Carlos, Lipa City",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "brand:wikipedia": "en:Alfamart",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 901823401,
+  "center": {
+    "lat": 13.9419007,
+    "lon": 121.1525423
+  },
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Chowking",
+    "brand:wikidata": "Q1076816",
+    "cuisine": "asian",
+    "name": "Chowking",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 901823415,
+  "center": {
+    "lat": 13.9419856,
+    "lon": 121.1496090
+  },
+  "tags": {
+    "brand": "7-Eleven",
+    "brand:wikidata": "Q259340",
+    "building": "retail",
+    "building:levels": "1",
+    "name": "7-Eleven",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 901823445,
+  "center": {
+    "lat": 13.9410055,
+    "lon": 121.1518223
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:province": "Batangas",
+    "addr:street": "B. Morada Street",
+    "amenity": "restaurant",
+    "branch": "Lipa",
+    "landuse": "retail",
+    "name": "The Aristocrat"
+  }
+},
+{
+  "type": "way",
+  "id": 902193816,
+  "center": {
+    "lat": 13.9504106,
+    "lon": 121.1328302
+  },
+  "tags": {
+    "branch": "Tambo, Lipa",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 902193829,
+  "center": {
+    "lat": 13.9474950,
+    "lon": 121.1340661
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "M.P. Casanova Street",
+    "amenity": "restaurant",
+    "mobile": "+63 917 311 5508",
+    "name": "Mikabelle Kitchenette",
+    "phone": "+63 43 774 8226"
+  }
+},
+{
+  "type": "way",
+  "id": 942774164,
+  "center": {
+    "lat": 13.9386131,
+    "lon": 121.1657076
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:district": "Poblacion 8",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "F. Manalo Street",
+    "amenity": "hospital",
+    "email": "info@villahospital.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "healthcare:speciality": "general;paediatrics;emergency;surgery;intensive;vaccination;dialysis;maternity;urology;allergology;blood_check;community;radiology;cardiology",
+    "name": "N. L. Villa Memorial Medical Center",
+    "phone": "+63 43 756 1217",
+    "source": "local knowledge;survey",
+    "website": "https://villahospital.com/"
+  }
+},
+{
+  "type": "way",
+  "id": 953629572,
+  "center": {
+    "lat": 13.8867135,
+    "lon": 121.1049507
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "San Jose General Hospital"
+  }
+},
+{
+  "type": "way",
+  "id": 953629585,
+  "center": {
+    "lat": 13.8788799,
+    "lon": 121.1005634
+  },
+  "tags": {
+    "building": "retail",
+    "building:levels": "2",
+    "name": "EC Supermarket",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 958589477,
+  "center": {
+    "lat": 13.9468899,
+    "lon": 121.1271902
+  },
+  "tags": {
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "Fernando Air Base Hospital",
+    "previously": "node:611995238"
+  }
+},
+{
+  "type": "way",
+  "id": 983512840,
+  "center": {
+    "lat": 13.8743043,
+    "lon": 121.2137699
+  },
+  "tags": {
+    "air_conditioning": "yes",
+    "building": "yes",
+    "contact:facebook": "https://www.facebook.com/share/18KGNMBH1M/",
+    "email": "luckygoldensm@gmail.com",
+    "name": "Lucky Golden Shopping Mall",
+    "opening_hours": "Mo-Su 08:30-20:30",
+    "phone": "09629604335",
+    "shop": "mall"
+  }
+},
+{
+  "type": "way",
+  "id": 983512874,
+  "center": {
+    "lat": 13.8775299,
+    "lon": 121.2132226
+  },
+  "tags": {
+    "addr:city": "Padre Garcia",
+    "addr:postcode": "4224",
+    "addr:street": "J. P. Rizal Street",
+    "building": "retail",
+    "building:levels": "2",
+    "name": "Ultra Mega",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 983512878,
+  "center": {
+    "lat": 13.8766490,
+    "lon": 121.2110014
+  },
+  "tags": {
+    "addr:city": "Padre Garcia",
+    "addr:place": "Sambat",
+    "addr:province": "Batangas",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "brand:wikipedia": "en:Alfamart",
+    "building": "retail",
+    "building:levels": "1",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1035381935,
+  "center": {
+    "lat": 13.8814900,
+    "lon": 121.1343605
+  },
+  "tags": {
+    "description": "Sari-sari Store",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1062242971,
+  "center": {
+    "lat": 13.9426983,
+    "lon": 121.1370336
+  },
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Mang Inasal",
+    "brand:wikidata": "Q6748573",
+    "brand:wikipedia": "en:Mang Inasal",
+    "cuisine": "barbecue",
+    "landuse": "commercial",
+    "name": "Mang Inasal",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1180532745,
+  "center": {
+    "lat": 13.8788955,
+    "lon": 121.1014974
+  },
+  "tags": {
+    "addr:street": "Chief Justice Q. C. Makalintal Avenue",
+    "building": "yes",
+    "name": "Savemore Market",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 1180532751,
+  "center": {
+    "lat": 13.8775731,
+    "lon": 121.1049984
+  },
+  "tags": {
+    "addr:city": "San Jose",
+    "addr:street": "Chief Justice Q. C. Makalintal Avenue",
+    "air_conditioning": "yes",
+    "branch": "Poblacion II, San Jose, Batangas",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "building": "yes",
+    "building:levels": "1",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1215474366,
+  "center": {
+    "lat": 13.9427272,
+    "lon": 121.1690486
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "B. Reyes Street",
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "building": "yes",
+    "check_date": "2025-01-26",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1215657403,
+  "center": {
+    "lat": 13.9408435,
+    "lon": 121.1729781
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "B. Reyes Street",
+    "amenity": "restaurant",
+    "building": "house",
+    "cuisine": "noodle"
+  }
+},
+{
+  "type": "way",
+  "id": 1238619765,
+  "center": {
+    "lat": 13.9421834,
+    "lon": 121.1514632
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:housename": "Robinsons Place Lipa",
+    "addr:postcode": "4217",
+    "addr:street": "President Jose P. Laurel Highway",
+    "brand": "Uncle John's",
+    "brand:facebook": "UncleJohnsPH",
+    "brand:instagram": "unclejohnsph",
+    "brand:website": "https://unclejohns.ph/",
+    "brand:wikidata": "Q115917776",
+    "building": "yes",
+    "building:levels": "1",
+    "check_date": "2025-07-05",
+    "device_charging": "yes",
+    "device_charging:capacity": "3",
+    "device_charging:fee": "yes",
+    "name": "Uncle John's",
+    "name:en": "Uncle John's",
+    "old_name": "Ministop",
+    "opening_hours": "24/7",
+    "payment:cash": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1246280037,
+  "center": {
+    "lat": 13.8878844,
+    "lon": 121.1519849
+  },
+  "tags": {
+    "addr:city": "Batangas",
+    "addr:district": "Mabini",
+    "addr:housenumber": "18",
+    "addr:street": "Silang Street",
+    "addr:unit": "16",
+    "building": "yes",
+    "contact:facebook": "usanahealthsciences",
+    "contact:instagram": "usanainc",
+    "contact:pinterest": "usana",
+    "contact:twitter": "USANAinc",
+    "contact:youtube": "USANAHealthSciences",
+    "name": "USANA",
+    "shop": "convenience",
+    "website": "https://10943124.usana.com/ux/dotcom/enu-PH/home"
+  }
+},
+{
+  "type": "way",
+  "id": 1315118939,
+  "center": {
+    "lat": 13.9431810,
+    "lon": 121.1824736
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:district": "San Jose",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "A. Bonifacio",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "building": "yes",
+    "check_date": "2025-02-07",
+    "name": "Dali",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1315225772,
+  "center": {
+    "lat": 13.9434256,
+    "lon": 121.1635865
+  },
+  "tags": {
+    "amenity": "restaurant",
+    "building": "yes",
+    "check_date": "2025-03-30",
+    "name": "Chito's Restaurant & Cafe"
+  }
+},
+{
+  "type": "way",
+  "id": 1315225830,
+  "center": {
+    "lat": 13.9421824,
+    "lon": 121.1616172
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Mabini Street",
+    "building": "commercial",
+    "check_date": "2025-03-09",
+    "name": "NewStar Shopping Center",
+    "shop": "department_store"
+  }
+},
+{
+  "type": "way",
+  "id": 1315232687,
+  "center": {
+    "lat": 13.9423018,
+    "lon": 121.1611051
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Mabini Street",
+    "building": "commercial",
+    "check_date": "2024-11-03",
+    "name": "Southern's Twin Supermart II",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 1323006538,
+  "center": {
+    "lat": 13.9526178,
+    "lon": 121.1672362
+  },
+  "tags": {
+    "amenity": "restaurant",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1323996236,
+  "center": {
+    "lat": 13.9411291,
+    "lon": 121.1615766
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "air_conditioning": "yes",
+    "amenity": "fast_food",
+    "branch": "Lipa - San Sebastian",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "check_date": "2025-03-09",
+    "cuisine": "burger",
+    "delivery": "yes",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "drive_through": "no",
+    "name": "McDonald's",
+    "smoking": "no",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1324006057,
+  "center": {
+    "lat": 13.9433581,
+    "lon": 121.1618573
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "P. Torres Street",
+    "landuse": "commercial",
+    "name": "Southern's Twin Supermart I",
+    "shop": "supermarket"
+  }
+},
+{
+  "type": "way",
+  "id": 1329351154,
+  "center": {
+    "lat": 13.9382279,
+    "lon": 121.1633342
+  },
+  "tags": {
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "building": "yes",
+    "name": "Dali",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1329378204,
+  "center": {
+    "lat": 13.9424513,
+    "lon": 121.1654126
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:housenumber": "2",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "C. M. Recto Avenue",
+    "amenity": "hospital",
+    "healthcare": "hospital",
+    "name": "San Antonio Medical Center"
+  }
+},
+{
+  "type": "way",
+  "id": 1338347858,
+  "center": {
+    "lat": 13.9367887,
+    "lon": 121.1583471
+  },
+  "tags": {
+    "addr:barangay": "Poblacion 7",
+    "addr:city": "Lipa City",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "Sinagtala Street",
+    "addr:unit": "706",
+    "amenity": "hospital",
+    "contact:facebook": "https://www.facebook.com/@DLMC83/",
+    "email": "divinelovemrktg@gmail.com",
+    "emergency": "yes",
+    "healthcare": "hospital",
+    "name": "Divine Love Medical Center"
+  }
+},
+{
+  "type": "way",
+  "id": 1342489458,
+  "center": {
+    "lat": 13.9367219,
+    "lon": 121.1612655
+  },
+  "tags": {
+    "amenity": "restaurant",
+    "building": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1355211829,
+  "center": {
+    "lat": 13.9564930,
+    "lon": 121.1660003
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:street": "President Jose P. Laurel Highway",
+    "amenity": "fast_food",
+    "brand": "Jollibee",
+    "brand:wikidata": "Q37614",
+    "cuisine": "burger",
+    "landuse": "retail",
+    "name": "Jollibee",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1355910981,
+  "center": {
+    "lat": 13.9398775,
+    "lon": 121.1853585
+  },
+  "tags": {
+    "brand": "Alfamart",
+    "brand:wikidata": "Q23745600",
+    "building": "yes",
+    "check_date": "2025-02-01",
+    "name": "Alfamart",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1362626629,
+  "center": {
+    "lat": 13.9520389,
+    "lon": 121.1605065
+  },
+  "tags": {
+    "air_conditioning": "yes",
+    "amenity": "restaurant",
+    "branch": "Lipa",
+    "brand": "Peri-Peri Chicken",
+    "cuisine": "chicken;american;filipino;asian",
+    "delivery": "yes",
+    "name": "Peri-Peri Chicken",
+    "opening_hours": "10:00-21:00",
+    "payment:cash": "yes",
+    "payment:credit_cards": "yes",
+    "payment:debit_cards": "yes",
+    "payment:mastercard": "yes",
+    "payment:visa": "yes",
+    "website": "https://www.periperichicken.ph/"
+  }
+},
+{
+  "type": "way",
+  "id": 1419748506,
+  "center": {
+    "lat": 13.9413350,
+    "lon": 121.1565454
+  },
+  "tags": {
+    "addr:barangay": "Poblacion 1",
+    "addr:city": "Lipa",
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "check_date": "2025-06-14",
+    "name": "Dali",
+    "payment:cash": "yes",
+    "payment:contactless": "yes",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1425201053,
+  "center": {
+    "lat": 13.9698053,
+    "lon": 121.1601643
+  },
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "cuisine": "burger",
+    "drinking_straw": "paper",
+    "drinking_straw:colour": "white",
+    "landuse": "retail",
+    "name": "McDonald's",
+    "note": "Re-survey when complete",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1442077614,
+  "center": {
+    "lat": 13.9407478,
+    "lon": 121.1617561
+  },
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "Mang Inasal",
+    "brand:wikidata": "Q6748573",
+    "building": "yes",
+    "cuisine": "barbecue",
+    "name": "Mang Inasal",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "way",
+  "id": 1498368875,
+  "center": {
+    "lat": 13.8647067,
+    "lon": 121.2070226
+  },
+  "tags": {
+    "brand": "Dali",
+    "brand:wikidata": "Q119854219",
+    "building": "yes",
+    "name": "Dali",
+    "opening_hours": "Mo-Su 06:30-19:30",
+    "shop": "convenience"
+  }
+},
+{
+  "type": "way",
+  "id": 1507930938,
+  "center": {
+    "lat": 14.0065006,
+    "lon": 121.1651151
+  },
+  "tags": {
+    "amenity": "hospital",
+    "name": "The Paramount Medical Center"
+  }
+},
+{
+  "type": "way",
+  "id": 1530979923,
+  "center": {
+    "lat": 13.9260933,
+    "lon": 121.1712699
+  },
+  "tags": {
+    "amenity": "fast_food",
+    "brand": "McDonald's",
+    "brand:wikidata": "Q38076",
+    "cuisine": "burger",
+    "name": "McDonald's",
+    "takeaway": "yes"
+  }
+},
+{
+  "type": "relation",
+  "id": 15457269,
+  "center": {
+    "lat": 13.9433678,
+    "lon": 121.1209541
+  },
+  "tags": {
+    "addr:city": "Lipa",
+    "addr:postcode": "4217",
+    "addr:province": "Batangas",
+    "addr:quarter": "Banaybanay",
+    "addr:street": "Lipa-Mataasnakahoy Road",
+    "addr:town": "Mataas na Kahoy",
+    "amenity": "restaurant",
+    "building": "yes",
+    "contact:email": "casamarikit@yahoo.com",
+    "contact:facebook": "CasaMarikitRistorante",
+    "cuisine": "italian",
+    "name": "Casa Marikit",
+    "previously": "node 10635349409",
+    "type": "multipolygon"
+  }
+},
+{
+  "type": "relation",
+  "id": 19324521,
+  "center": {
+    "lat": 13.9433575,
+    "lon": 121.1505902
+  },
+  "tags": {
+    "addr:province": "Batangas",
+    "air_conditioning": "yes",
+    "building": "yes",
+    "building:levels": "3",
+    "check_date": "2025-07-05",
+    "height": "15",
+    "note": "name can be found on landuse",
+    "opening_hours": "Mo-Su 10:00-21:00",
+    "shop": "mall",
+    "type": "multipolygon"
+  }
+}
+
+  ]
+}

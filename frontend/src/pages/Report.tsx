@@ -5,33 +5,84 @@ import {
   BookmarkCheck,
   BookmarkPlus,
   ChevronLeft,
-  CircleCheck,
+  Copy,
+  FileDown,
   FileQuestion,
-  Newspaper,
+  Link2,
+  Link2Off,
   Pencil,
+  Printer,
   Trash2,
-  TriangleAlert,
 } from 'lucide-react'
-import { deleteReport, findReport, saveReport, useSavedReports } from '../lib/reports'
-import { formatDate, formatPeso, GRADE_ORDER, gradeInfo, insightTone, parseGrade, splitInsights, toneText } from '../lib/format'
-import { FACTORS } from '../lib/presets'
+import { deleteReport, findReport, saveReport, setShared, useSavedReports, type Report } from '../lib/reports'
+import { useUser } from '../lib/auth'
+import { downloadCsv, printReport } from '../lib/export'
+import { formatDate } from '../lib/format'
 import { useReveal } from '../lib/motion'
 import { Button, ButtonLink } from '../components/Button'
-import { GradeBadge, Meter } from '../components/Grade'
 import { Banner, EmptyState } from '../components/States'
+import { ReportBody, ReportHero } from '../components/ReportBody'
 
-const SENTIMENT_COPY = {
-  positive: 'Mostly good news for the area.',
-  negative: 'Mostly bad news for the area.',
-  neutral: 'No clear signal either way.',
+type Notice = 'saved-device' | 'saved-account' | 'save-failed' | 'share-failed' | 'delete-failed' | 'copied' | null
+
+function shareUrl(token: string) {
+  return `${window.location.origin}/shared/${token}`
 }
 
-function Card({ title, children, className = '' }: { title: string; children: React.ReactNode; className?: string }) {
+function SharePanel({ report, onNotice }: { report: Report; onNotice: (n: Notice) => void }) {
+  const [busy, setBusy] = useState(false)
+  const token = report.shareToken
+
+  async function toggle(on: boolean) {
+    setBusy(true)
+    try {
+      await setShared(report, on)
+    } catch {
+      onNotice('share-failed')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(shareUrl(token!))
+      onNotice('copied')
+    } catch {
+      // Clipboard blocked: the link is selectable in the field
+      document.getElementById('share-link')?.focus()
+    }
+  }
+
+  if (!token) {
+    return (
+      <Button variant="secondary" disabled={busy} onClick={() => void toggle(true)} icon={<Link2 size={18} aria-hidden />}>
+        Create share link
+      </Button>
+    )
+  }
   return (
-    <section data-reveal className={`flex flex-col gap-lg rounded-lg border border-hairline bg-surface p-md sm:p-lg ${className}`}>
-      <h2 className="text-tagline font-semibold">{title}</h2>
-      {children}
-    </section>
+    <div className="flex w-full flex-col gap-xs rounded-lg border border-hairline bg-surface p-md">
+      <label htmlFor="share-link" className="font-semibold">
+        Share link
+      </label>
+      <p className="text-caption text-ink-secondary">Anyone with this link can view the report. They can't change it.</p>
+      <input
+        id="share-link"
+        readOnly
+        value={shareUrl(token)}
+        onFocus={(e) => e.currentTarget.select()}
+        className="h-tap w-full rounded-sm border border-hairline bg-surface-raised px-sm text-caption text-ink"
+      />
+      <div className="flex flex-wrap gap-sm">
+        <Button onClick={() => void copy()} icon={<Copy size={18} aria-hidden />}>
+          Copy link
+        </Button>
+        <Button variant="plain" disabled={busy} onClick={() => void toggle(false)} icon={<Link2Off size={18} aria-hidden />}>
+          Turn off link
+        </Button>
+      </div>
+    </div>
   )
 }
 
@@ -39,13 +90,14 @@ export function ReportPage() {
   const { id = '' } = useParams()
   const navigate = useNavigate()
   const fresh = (useLocation().state as { fresh?: boolean } | null)?.fresh ?? false
+  const user = useUser()
   // Subscribing re-renders this page when the saved list changes, so the
   // lookup below always reflects whether the report is saved
   useSavedReports()
   const found = findReport(id)
-  const [notice, setNotice] = useState<'saved' | 'save-failed' | null>(null)
+  const [notice, setNotice] = useState<Notice>(null)
+  const [saving, setSaving] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
-  const [lotSize, setLotSize] = useState(300)
   const pageRef = useRef<HTMLDivElement>(null)
   useReveal(pageRef, [id])
 
@@ -55,55 +107,52 @@ export function ReportPage() {
         as="h1"
         icon={FileQuestion}
         title="We can't find this report"
-        body="It may have been deleted, or it was made in a different browser. Reports are stored on this device."
-        action={<ButtonLink to="/check">Check a location</ButtonLink>}
+        body={
+          user
+            ? 'It may have been deleted, or it was never saved.'
+            : 'It may have been deleted, or it was saved in a different browser. Sign in to see reports saved to your account.'
+        }
+        action={<ButtonLink to={user ? '/check' : '/account'}>{user ? 'Check a location' : 'Sign in'}</ButtonLink>}
       />
     )
   }
 
   const { report, saved } = found
   const { result, input } = report
-  const grade = parseGrade(result.category)
-  const insights = splitInsights(result.insights)
-  const features = result.feature_analysis
-  const news = result.news_analysis
-  const newsInsights = Array.isArray(news?.insights) ? news.insights : []
-  const total = Number.isFinite(lotSize) && lotSize > 0 ? result.predicted_price_sqm * lotSize : null
 
-  function onSave() {
-    setNotice(saveReport(report) ? 'saved' : 'save-failed')
+  async function onSave() {
+    setSaving(true)
+    const where = await saveReport(report)
+    setSaving(false)
+    setNotice(where === 'account' ? 'saved-account' : where === 'device' ? 'saved-device' : 'save-failed')
   }
 
-  function onDelete() {
-    deleteReport(report.id)
-    navigate('/reports', { state: { deleted: result.location } })
+  async function onDelete() {
+    if (await deleteReport(report.id)) navigate('/reports', { state: { deleted: result.location } })
+    else setNotice('delete-failed')
   }
 
   return (
     <div ref={pageRef}>
-      {/* Header band */}
-      <div className="bg-canvas-alt">
-        <div className="gutter mx-auto flex max-w-reading flex-col gap-lg pb-xxl pt-lg sm:pb-section">
+      <ReportHero
+        report={report}
+        eyebrow={`Report · ${formatDate(report.createdAt)}`}
+        back={
           <Link
             to={saved ? '/reports' : '/check'}
             state={saved ? undefined : { input }}
-            className="press -ml-xs inline-flex min-h-tap items-center gap-xxs self-start px-xs text-accent"
+            className="press -ml-xs inline-flex min-h-tap items-center gap-xxs self-start px-xs text-on-tile-accent print:hidden"
           >
             <ChevronLeft size={20} aria-hidden />
             {saved ? 'Saved reports' : 'Back to the form'}
           </Link>
+        }
+      />
 
-          <div data-reveal className="flex flex-col gap-sm">
-            <p className="text-caption text-ink-secondary">
-              Report · {formatDate(report.createdAt)}
-            </p>
-            <h1 className="text-display-md sm:text-display-lg">{result.location}</h1>
-            <div>
-              <GradeBadge grade={grade} size="large" />
-            </div>
-          </div>
-
-          {notice === 'saved' && (
+      {/* Actions */}
+      <div className="border-b border-hairline bg-canvas-alt print:hidden">
+        <div className="gutter mx-auto flex max-w-reading flex-col gap-md py-lg">
+          {notice === 'saved-account' && (
             <Banner
               tone="positive"
               title="Report saved"
@@ -114,7 +163,23 @@ export function ReportPage() {
                 </ButtonLink>
               }
             >
-              It stays on this device until you delete it.
+              It's in your account, so you can open it on any device where you sign in.
+            </Banner>
+          )}
+          {notice === 'saved-device' && (
+            <Banner
+              tone="positive"
+              title="Report saved on this device"
+              onDismiss={() => setNotice(null)}
+              action={
+                <ButtonLink to="/account" variant="plain" className="-ml-xs" iconAfter={<ArrowRight size={18} aria-hidden />}>
+                  {user ? 'Check your account' : 'Sign in to keep it everywhere'}
+                </ButtonLink>
+              }
+            >
+              {user
+                ? "We couldn't reach your account. We'll upload it the next time you're online."
+                : 'Sign in to keep reports on every device and share them with a link.'}
             </Banner>
           )}
           {notice === 'save-failed' && (
@@ -122,172 +187,72 @@ export function ReportPage() {
               Your browser is blocking site storage. Allow storage for this site, then try again.
             </Banner>
           )}
+          {notice === 'share-failed' && (
+            <Banner tone="critical" title="We couldn't change the share link" onDismiss={() => setNotice(null)}>
+              Check your connection, then try again.
+            </Banner>
+          )}
+          {notice === 'delete-failed' && (
+            <Banner tone="critical" title="We couldn't delete this report" onDismiss={() => setNotice(null)}>
+              Check your connection, then try again.
+            </Banner>
+          )}
+          {notice === 'copied' && (
+            <p role="status" className="text-caption text-positive">
+              Link copied.
+            </p>
+          )}
           {fresh && !saved && notice === null && (
             <p role="status" className="sr-only">
               Report ready for {result.location}.
             </p>
           )}
 
-          <div data-reveal className="flex flex-col gap-sm xs:flex-row xs:flex-wrap">
+          <div className="flex flex-col gap-sm xs:flex-row xs:flex-wrap">
             {saved ? (
               <Button variant="secondary" icon={<BookmarkCheck size={20} aria-hidden />} disabled>
                 Saved
               </Button>
             ) : (
-              <Button onClick={onSave} icon={<BookmarkPlus size={20} aria-hidden />}>
+              <Button onClick={() => void onSave()} disabled={saving} icon={<BookmarkPlus size={20} aria-hidden />}>
                 Save report
               </Button>
             )}
             <ButtonLink to="/check" state={{ input }} variant="secondary" icon={<Pencil size={18} aria-hidden />}>
               Change values
             </ButtonLink>
+            <Button variant="secondary" onClick={printReport} icon={<Printer size={18} aria-hidden />}>
+              Print or save as PDF
+            </Button>
+            <Button variant="secondary" onClick={() => downloadCsv(report)} icon={<FileDown size={18} aria-hidden />}>
+              Download CSV
+            </Button>
+          </div>
+
+          <div>
+            {user && saved ? (
+              <SharePanel report={report} onNotice={setNotice} />
+            ) : (
+              <p className="text-caption text-ink-secondary">
+                {user ? (
+                  'Save this report to share it with a link.'
+                ) : (
+                  <>
+                    <Link to="/account" className="text-accent">
+                      Sign in
+                    </Link>{' '}
+                    to share reports with a link and keep them on every device.
+                  </>
+                )}
+              </p>
+            )}
           </div>
         </div>
       </div>
 
-      <div className="gutter mx-auto flex max-w-reading flex-col gap-lg py-xxl sm:py-section">
-        {/* Headline numbers */}
-        <div className="grid gap-lg md:grid-cols-2">
-          <Card title="Estimated price">
-            <div className="flex flex-col gap-xxs">
-              <p className="text-display-lg tabular-nums sm:text-hero">{formatPeso(result.predicted_price_sqm)}</p>
-              <p className="text-ink-secondary">per square meter</p>
-            </div>
-            <div className="flex flex-col gap-xs border-t border-hairline pt-md">
-              <label htmlFor="lot-size" className="font-semibold">
-                Lot size
-              </label>
-              <div className="flex items-center gap-xs">
-                <input
-                  id="lot-size"
-                  type="number"
-                  inputMode="numeric"
-                  min={1}
-                  value={Number.isNaN(lotSize) ? '' : lotSize}
-                  onChange={(e) => setLotSize(e.target.value === '' ? NaN : Number(e.target.value))}
-                  className="h-tap w-32 rounded-sm border border-hairline bg-surface px-sm text-right tabular-nums text-ink focus-visible:border-focus"
-                />
-                <span className="text-ink-secondary">sqm</span>
-              </div>
-              <p className="tabular-nums" aria-live="polite">
-                {total !== null ? (
-                  <>
-                    About <span className="font-semibold">{formatPeso(total)}</span> for the whole lot
-                  </>
-                ) : (
-                  <span className="text-ink-secondary">Enter a lot size to see the total.</span>
-                )}
-              </p>
-            </div>
-          </Card>
+      <ReportBody report={report} />
 
-          <Card title="Growth outlook">
-            <Meter
-              label="Growth score"
-              value={result.growth_score}
-              max={100}
-              hint="How strongly local conditions point to rising prices."
-            />
-            <div className="flex flex-col gap-xs border-t border-hairline pt-md">
-              <p className="font-semibold">
-                {grade.grade} · {grade.label}
-              </p>
-              <p className="text-ink-secondary">{grade.summary}</p>
-            </div>
-          </Card>
-        </div>
-
-        {insights.length > 0 && (
-          <Card title="What drives this result">
-            <ul className="flex flex-col gap-sm">
-              {insights.map((text) => {
-                const tone = insightTone(text)
-                const Icon = tone === 'caution' ? TriangleAlert : CircleCheck
-                return (
-                  <li key={text} className="flex items-start gap-sm">
-                    <Icon size={20} strokeWidth={2} className={`mt-0.5 shrink-0 ${toneText[tone]}`} aria-hidden />
-                    <span>
-                      <span className="sr-only">{tone === 'caution' ? 'Watch out: ' : 'Good sign: '}</span>
-                      {text}
-                    </span>
-                  </li>
-                )
-              })}
-            </ul>
-          </Card>
-        )}
-
-        {features && (
-          <Card title="Area scores">
-            <div className="grid gap-lg md:grid-cols-3">
-              <Meter label="Amenities" value={Math.min(10, features.amenity_score)} max={10} hint="Closeness to malls, schools, and hospitals." />
-              <Meter label="Economy" value={Math.min(10, features.economic_score)} max={10} hint="Local GDP and population growth." />
-              <Meter label="Risk" value={Math.min(10, features.risk_score)} max={10} invert hint="Typhoon exposure and weak infrastructure. Lower is better." />
-            </div>
-          </Card>
-        )}
-
-        {input.data.news_text.trim() && news && (
-          <Card title="News check">
-            <div className="flex items-start gap-sm">
-              <Newspaper size={22} strokeWidth={1.75} className="mt-0.5 shrink-0 text-ink-secondary" aria-hidden />
-              <div className="flex flex-col gap-xs">
-                <p>
-                  <span className="font-semibold capitalize">{news.sentiment}</span>. {SENTIMENT_COPY[news.sentiment]}
-                </p>
-                {newsInsights.length > 0 && (
-                  <ul className="flex list-disc flex-col gap-xxs pl-lg text-ink-secondary">
-                    {newsInsights.map((n) => (
-                      <li key={n}>{n}</li>
-                    ))}
-                  </ul>
-                )}
-                <blockquote className="border-l-2 border-hairline pl-sm text-caption text-ink-secondary">
-                  {input.data.news_text}
-                </blockquote>
-              </div>
-            </div>
-          </Card>
-        )}
-
-        <Card title="Values used">
-          <dl className="grid gap-x-lg sm:grid-cols-2">
-            {FACTORS.map((f) => (
-              <div key={f.key} className="flex min-h-tap items-center justify-between gap-md border-b border-hairline py-xs">
-                <dt className="text-ink-secondary">{f.label}</dt>
-                <dd className="tabular-nums">
-                  {input.data[f.key]}
-                  {f.unit ? ` ${f.unit}` : ' of 10'}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </Card>
-
-        <Card title="How grades work">
-          <ol className="flex flex-col gap-sm">
-            {GRADE_ORDER.map((g) => {
-              const info = gradeInfo(g)
-              const current = info.grade === grade.grade
-              return (
-                <li
-                  key={g}
-                  aria-current={current ? 'true' : undefined}
-                  className={`flex flex-col gap-xs rounded-lg p-sm sm:flex-row sm:items-center sm:gap-md ${current ? 'bg-surface-raised ring-2 ring-focus' : ''}`}
-                >
-                  <div className="sm:w-56 sm:shrink-0">
-                    <GradeBadge grade={info} />
-                  </div>
-                  <p className="text-caption text-ink-secondary">
-                    {current && <span className="font-semibold text-ink">This location. </span>}
-                    {info.summary}
-                  </p>
-                </li>
-              )
-            })}
-          </ol>
-        </Card>
-
+      <div className="gutter mx-auto max-w-reading pb-xxl sm:pb-section print:hidden">
         <div data-reveal className="flex flex-col gap-md border-t border-hairline pt-lg sm:flex-row sm:items-center sm:justify-between">
           <ButtonLink to="/check" variant="plain" iconAfter={<ArrowRight size={18} aria-hidden />} className="self-start">
             Check another location
@@ -299,7 +264,7 @@ export function ReportPage() {
                 <Button variant="plain" onClick={() => setConfirmDelete(false)}>
                   Keep
                 </Button>
-                <Button variant="secondary" className="border-critical text-critical" onClick={onDelete}>
+                <Button variant="secondary" className="border-critical text-critical" onClick={() => void onDelete()}>
                   Delete
                 </Button>
               </div>

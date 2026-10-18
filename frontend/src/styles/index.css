@@ -35,6 +35,10 @@
   --color-caution-soft: color-mix(in srgb, var(--sl-caution) 12%, transparent);
   --color-critical-soft: color-mix(in srgb, var(--sl-critical) 12%, transparent);
   --color-tile-hairline: rgba(255, 255, 255, 0.14);
+  /* [ext] Status colours on dark tiles, in both themes */
+  --color-positive-on-tile: var(--sl-positive-dark);
+  --color-caution-on-tile: var(--sl-caution-dark);
+  --color-critical-on-tile: var(--sl-critical-dark);
   --color-transparent: transparent;
   --color-current: currentColor;
 
@@ -43,6 +47,11 @@
 
   /* Type scale: DESIGN.md typography, in rem so it follows browser zoom */
   --text-*: initial;
+  /* [ext] One headline figure per screen, such as the price on a report */
+  --text-figure: 4.5rem;
+  --text-figure--line-height: 1;
+  --text-figure--letter-spacing: -0.09rem;
+  --text-figure--font-weight: 600;
   --text-hero: 3.5rem;
   --text-hero--line-height: 1.07;
   --text-hero--letter-spacing: -0.0175rem;
@@ -124,7 +133,11 @@
   --breakpoint-xl: 90rem;
 
   --ease-apple: var(--sl-ease);
+  --shadow-product: 3px 5px 30px rgba(0, 0, 0, 0.22);
   --animate-shimmer: sl-shimmer 1.6s var(--sl-ease) infinite;
+  --animate-ring: sl-ring 1.2s var(--sl-ease) both;
+  --animate-grow: sl-grow 0.9s var(--sl-ease) both;
+  --animate-pulse-dot: sl-pulse 1.2s var(--sl-ease) infinite;
   --animate-spin: spin 0.9s linear infinite;
 }
 
@@ -134,6 +147,23 @@
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+/* Score rings fill from empty; the ring sets --ring-from to its full length */
+@keyframes sl-ring {
+  from { stroke-dashoffset: var(--ring-from); }
+}
+/* Range bars grow out from their left edge */
+@keyframes sl-grow {
+  from { transform: scaleX(0); }
+}
+/* usePlayOnView sets data-play="on" once the section is on screen */
+[data-play="off"] .animate-ring,
+[data-play="off"] .animate-grow {
+  animation-play-state: paused;
+}
+@keyframes sl-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
 }
 
 @layer base {
@@ -183,6 +213,12 @@
   }
   .frosted {
     background: var(--sl-nav);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+  /* [ext] Frosted dark tile for overlays on the map, such as the live estimate */
+  .frosted-dark {
+    background: rgba(0, 0, 0, 0.78);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
   }
@@ -252,6 +288,18 @@
   .range:focus-visible::-moz-range-thumb {
     outline: 2px solid var(--sl-focus);
     outline-offset: 2px;
+  }
+}
+
+/* Dark tiles print as plain ink on paper, since browsers drop backgrounds */
+@media print {
+  .tile-print {
+    background: none !important;
+    box-shadow: none !important;
+  }
+  .tile-print,
+  .tile-print * {
+    color: var(--apple-ink) !important;
   }
 }
 

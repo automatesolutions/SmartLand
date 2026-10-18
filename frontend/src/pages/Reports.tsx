@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Bookmark, ChevronRight, Plus } from 'lucide-react'
-import { useSavedReports } from '../lib/reports'
+import { useSavedReports, useSyncState } from '../lib/reports'
+import { useUser } from '../lib/auth'
 import { formatDate, formatPeso, parseGrade } from '../lib/format'
 import { useReveal } from '../lib/motion'
 import { ButtonLink } from '../components/Button'
@@ -18,6 +19,9 @@ const SORTS: { value: Sort; label: string }[] = [
 
 export function ReportsPage() {
   const reports = useSavedReports()
+  const user = useUser()
+  const sync = useSyncState()
+  const where = user ? 'in your account' : 'on this device'
   const deleted = (useLocation().state as { deleted?: string } | null)?.deleted
   const [showDeleted, setShowDeleted] = useState(Boolean(deleted))
   const [sort, setSort] = useState<Sort>('newest')
@@ -37,9 +41,11 @@ export function ReportsPage() {
           <div className="flex flex-col gap-xs">
             <h1 className="text-display-md sm:text-display-lg">Saved reports</h1>
             <p className="text-ink-secondary">
-              {reports.length === 0
-                ? 'Reports you save show up here.'
-                : `${reports.length} ${reports.length === 1 ? 'location' : 'locations'}, stored on this device.`}
+              {sync === 'syncing' && reports.length === 0
+                ? 'Loading your reports.'
+                : reports.length === 0
+                  ? 'Reports you save show up here.'
+                  : `${reports.length} ${reports.length === 1 ? 'location' : 'locations'}, saved ${where}.`}
             </p>
           </div>
           {reports.length > 0 && (
@@ -48,6 +54,20 @@ export function ReportsPage() {
             </ButtonLink>
           )}
         </header>
+
+        {!user && (
+          <p className="text-caption text-ink-secondary">
+            <Link to="/account" className="text-accent">
+              Sign in
+            </Link>{' '}
+            to keep these on every device and share them with a link.
+          </p>
+        )}
+        {user && sync === 'error' && (
+          <Banner tone="caution" title="We couldn't reach your account">
+            You're seeing the copy on this device. New saves upload when the connection is back.
+          </Banner>
+        )}
 
         {showDeleted && deleted && (
           <Banner tone="positive" title="Report deleted" onDismiss={() => setShowDeleted(false)}>

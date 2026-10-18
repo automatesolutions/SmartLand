@@ -1,282 +1,376 @@
-import requests
-import json
-import pandas as pd
-from typing import Dict, List, Optional
+"""Measures what's around a point using OpenStreetMap through the Overpass API,
+and lists nearby places from OpenStreetMap and the local Overture copy.
+
+One Overpass request per point answers two questions at once:
+- the nearest mall, school, hospital and town center, and how built-up the
+  area is (used for the scoring factors), and
+- the hospitals, supermarkets, malls, and popular chains nearby (the report's
+  "What's nearby" card).
+
+The request starts as soon as a place is looked up, so the report usually
+finds the answer cached. Requests for the same point share one query, and the
+query goes to every working mirror at once; the first good answer wins.
+"""
+
+import asyncio
+import math
+import re
 import time
+
 from loguru import logger
 
-class OSMDataCollector:
-    """Collects geospatial data from OpenStreetMap for Philippine real estate analysis"""
-    
-    def __init__(self):
-        self.base_url = "https://overpass-api.de/api/interpreter"
-        self.headers = {
-            'User-Agent': 'SmartLand-GeoTrendSync/1.0'
-        }
-    
-    def get_amenities_near_location(self, lat: float, lon: float, radius: float = 5000) -> Dict:
-        """Get amenities (malls, schools, hospitals) near a location"""
-        query = f"""
-        [out:json][timeout:25];
-        (
-          node["amenity"="mall"](around:{radius},{lat},{lon});
-          node["amenity"="school"](around:{radius},{lat},{lon});
-          node["amenity"="hospital"](around:{radius},{lat},{lon});
-          node["amenity"="university"](around:{radius},{lat},{lon});
-          node["shop"="supermarket"](around:{radius},{lat},{lon});
-          node["leisure"="park"](around:{radius},{lat},{lon});
-          way["amenity"="mall"](around:{radius},{lat},{lon});
-          way["amenity"="school"](around:{radius},{lat},{lon});
-          way["amenity"="hospital"](around:{radius},{lat},{lon});
-        );
-        out center;
-        """
-        
-        try:
-            response = requests.post(self.base_url, data=query, headers=self.headers)
-            response.raise_for_status()
-            data = response.json()
-            
-            amenities = {
-                'malls': [],
-                'schools': [],
-                'hospitals': [],
-                'universities': [],
-                'supermarkets': [],
-                'parks': []
-            }
-            
-            for element in data.get('elements', []):
-                if element['type'] == 'node':
-                    name = element.get('tags', {}).get('name', 'Unknown')
-                    amenity_type = element.get('tags', {}).get('amenity', '')
-                    shop_type = element.get('tags', {}).get('shop', '')
-                    leisure_type = element.get('tags', {}).get('leisure', '')
-                    
-                    location = {
-                        'name': name,
-                        'lat': element['lat'],
-                        'lon': element['lon'],
-                        'distance': self._calculate_distance(lat, lon, element['lat'], element['lon'])
-                    }
-                    
-                    if amenity_type == 'mall':
-                        amenities['malls'].append(location)
-                    elif amenity_type == 'school':
-                        amenities['schools'].append(location)
-                    elif amenity_type == 'hospital':
-                        amenities['hospitals'].append(location)
-                    elif amenity_type == 'university':
-                        amenities['universities'].append(location)
-                    elif shop_type == 'supermarket':
-                        amenities['supermarkets'].append(location)
-                    elif leisure_type == 'park':
-                        amenities['parks'].append(location)
-            
-            return amenities
-            
-        except Exception as e:
-            logger.error(f"Error fetching OSM amenities: {e}")
-            return {}
-    
-    def get_land_use_data(self, lat: float, lon: float, radius: float = 2000) -> Dict:
-        """Get land use information for an area"""
-        query = f"""
-        [out:json][timeout:25];
-        (
-          way["landuse"](around:{radius},{lat},{lon});
-          way["building"](around:{radius},{lat},{lon});
-          way["highway"](around:{radius},{lat},{lon});
-        );
-        out center;
-        """
-        
-        try:
-            response = requests.post(self.base_url, data=query, headers=self.headers)
-            response.raise_for_status()
-            data = response.json()
-            
-            land_use = {
-                'residential': 0,
-                'commercial': 0,
-                'industrial': 0,
-                'agricultural': 0,
-                'roads': 0,
-                'buildings': 0
-            }
-            
-            for element in data.get('elements', []):
-                if element['type'] == 'way':
-                    landuse_type = element.get('tags', {}).get('landuse', '')
-                    building_type = element.get('tags', {}).get('building', '')
-                    highway_type = element.get('tags', {}).get('highway', '')
-                    
-                    if landuse_type == 'residential':
-                        land_use['residential'] += 1
-                    elif landuse_type == 'commercial':
-                        land_use['commercial'] += 1
-                    elif landuse_type == 'industrial':
-                        land_use['industrial'] += 1
-                    elif landuse_type == 'agricultural':
-                        land_use['agricultural'] += 1
-                    elif building_type:
-                        land_use['buildings'] += 1
-                    elif highway_type:
-                        land_use['roads'] += 1
-            
-            return land_use
-            
-        except Exception as e:
-            logger.error(f"Error fetching OSM land use: {e}")
-            return {}
-    
-    def get_transportation_data(self, lat: float, lon: float, radius: float = 3000) -> Dict:
-        """Get transportation infrastructure data"""
-        query = f"""
-        [out:json][timeout:25];
-        (
-          node["railway"="station"](around:{radius},{lat},{lon});
-          node["highway"="bus_stop"](around:{radius},{lat},{lon});
-          way["highway"="primary"](around:{radius},{lat},{lon});
-          way["highway"="secondary"](around:{radius},{lat},{lon});
-          way["highway"="tertiary"](around:{radius},{lat},{lon});
-        );
-        out center;
-        """
-        
-        try:
-            response = requests.post(self.base_url, data=query, headers=self.headers)
-            response.raise_for_status()
-            data = response.json()
-            
-            transport = {
-                'train_stations': [],
-                'bus_stops': [],
-                'primary_roads': 0,
-                'secondary_roads': 0,
-                'tertiary_roads': 0
-            }
-            
-            for element in data.get('elements', []):
-                if element['type'] == 'node':
-                    railway_type = element.get('tags', {}).get('railway', '')
-                    highway_type = element.get('tags', {}).get('highway', '')
-                    
-                    if railway_type == 'station':
-                        transport['train_stations'].append({
-                            'name': element.get('tags', {}).get('name', 'Unknown'),
-                            'lat': element['lat'],
-                            'lon': element['lon'],
-                            'distance': self._calculate_distance(lat, lon, element['lat'], element['lon'])
-                        })
-                    elif highway_type == 'bus_stop':
-                        transport['bus_stops'].append({
-                            'name': element.get('tags', {}).get('name', 'Unknown'),
-                            'lat': element['lat'],
-                            'lon': element['lon'],
-                            'distance': self._calculate_distance(lat, lon, element['lat'], element['lon'])
-                        })
-                elif element['type'] == 'way':
-                    highway_type = element.get('tags', {}).get('highway', '')
-                    
-                    if highway_type == 'primary':
-                        transport['primary_roads'] += 1
-                    elif highway_type == 'secondary':
-                        transport['secondary_roads'] += 1
-                    elif highway_type == 'tertiary':
-                        transport['tertiary_roads'] += 1
-            
-            return transport
-            
-        except Exception as e:
-            logger.error(f"Error fetching OSM transportation: {e}")
-            return {}
-    
-    def _calculate_distance(self, lat1: float, lon1: float, lat2: float, lon2: float) -> float:
-        """Calculate distance between two points using Haversine formula"""
-        import math
-        
-        R = 6371  # Earth's radius in kilometers
-        
-        lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
-        dlat = lat2 - lat1
-        dlon = lon2 - lon1
-        
-        a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
-        c = 2 * math.asin(math.sqrt(a))
-        
-        return R * c
-    
-    def get_location_features(self, lat: float, lon: float) -> Dict:
-        """Get comprehensive location features for GeoTrendSync analysis"""
-        logger.info(f"Collecting OSM data for location: {lat}, {lon}")
-        
-        # Collect all data types
-        amenities = self.get_amenities_near_location(lat, lon)
-        land_use = self.get_land_use_data(lat, lon)
-        transport = self.get_transportation_data(lat, lon)
-        
-        # Calculate proximity scores
-        proximity_scores = self._calculate_proximity_scores(amenities)
-        
-        # Calculate infrastructure score
-        infrastructure_score = self._calculate_infrastructure_score(land_use, transport)
-        
-        features = {
-            'amenities': amenities,
-            'land_use': land_use,
-            'transport': transport,
-            'proximity_scores': proximity_scores,
-            'infrastructure_score': infrastructure_score
-        }
-        
-        logger.info(f"Collected features for location: {len(amenities['malls'])} malls, {len(amenities['schools'])} schools, infrastructure score: {infrastructure_score}")
-        
-        return features
-    
-    def _calculate_proximity_scores(self, amenities: Dict) -> Dict:
-        """Calculate proximity scores for different amenity types"""
-        scores = {}
-        
-        for amenity_type, locations in amenities.items():
-            if locations:
-                # Get the closest distance
-                closest_distance = min(loc['distance'] for loc in locations)
-                # Convert to score (closer = higher score)
-                scores[f'{amenity_type}_proximity'] = max(0, 10 - closest_distance)
-            else:
-                scores[f'{amenity_type}_proximity'] = 0
-        
-        return scores
-    
-    def _calculate_infrastructure_score(self, land_use: Dict, transport: Dict) -> float:
-        """Calculate overall infrastructure score (0-10)"""
-        score = 0
-        
-        # Land use diversity
-        land_use_types = sum(1 for count in land_use.values() if count > 0)
-        score += min(3, land_use_types)
-        
-        # Road density
-        total_roads = land_use.get('roads', 0) + transport.get('primary_roads', 0) + transport.get('secondary_roads', 0)
-        score += min(3, total_roads / 10)
-        
-        # Public transport
-        transport_points = len(transport.get('train_stations', [])) + len(transport.get('bus_stops', []))
-        score += min(2, transport_points / 5)
-        
-        # Building density
-        buildings = land_use.get('buildings', 0)
-        score += min(2, buildings / 20)
-        
-        return min(10, score)
+from reference import haversine_km
 
-# Example usage
-if __name__ == "__main__":
-    collector = OSMDataCollector()
-    
-    # Example: Metro Manila coordinates
-    lat, lon = 14.5995, 120.9842
-    
-    features = collector.get_location_features(lat, lon)
-    print(json.dumps(features, indent=2)) 
+from . import places_db
+from .http import TTLCache, client
+
+OVERPASS_MIRRORS = [
+    "https://overpass-api.de/api/interpreter",
+    "https://maps.mail.ru/osm/tools/overpass/api/interpreter",
+    "https://overpass.kumi.systems/api/interpreter",
+    "https://overpass.private.coffee/api/interpreter",
+]
+# A mirror that fails is skipped for this long, unless every mirror is down
+_MIRROR_BACKOFF_SECONDS = 300
+_mirror_down_until: dict[str, float] = {}
+# Public mirrors queue each client, so a pin dragged around the map shouldn't
+# fire more than a couple of queries at once
+_slots = asyncio.Semaphore(2)
+
+# Search radius per amenity type, in meters. Nothing found means "farther than this".
+RADII = {"mall": 10000, "school": 4000, "hospital": 20000, "center": 12000}
+
+# "What's nearby": places within `count` meters are counted and listed. Beyond
+# that, the nearest one within `search` meters is still reported, so the card
+# can say "nearest 7-Eleven: 18 km" instead of a bare 0.
+NEARBY = {
+    "hospital": {"count": 10000, "search": 20000},
+    "school": {"count": 3000, "search": 10000},
+    "supermarket": {"count": 5000, "search": 15000},
+    "mall": {"count": 10000, "search": 20000},
+    "seven_eleven": {"count": 5000, "search": 20000},
+    "restaurant": {"count": 2000, "search": 5000},
+    "jollibee": {"count": 5000, "search": 20000},
+    "mcdonalds": {"count": 5000, "search": 20000},
+    "mang_inasal": {"count": 5000, "search": 20000},
+    "resort": {"count": 15000, "search": 40000},
+    "car_rental": {"count": 10000, "search": 40000},
+    "computer_shop": {"count": 5000, "search": 15000},
+}
+NEARBY_LIMIT = 5
+
+# Chains by Wikidata ID (the brand:wikidata tag) and the exact brand or name
+# spellings mappers use. Exact tags hit Overpass's index; name regexes would
+# scan the whole planet and time out.
+CHAINS = {
+    "seven_eleven": {"wikidata": "Q259340", "names": ["7-Eleven", "7 Eleven", "7-11", "Seven Eleven", "7-ELEVEN"]},
+    "mcdonalds": {"wikidata": "Q38076", "names": ["McDonald's", "McDonalds", "Mcdonald's", "McDonald’s"]},
+    "jollibee": {"wikidata": "Q37614", "names": ["Jollibee", "JOLLIBEE"]},
+    "mang_inasal": {"wikidata": "Q6748573", "names": ["Mang Inasal", "MANG INASAL"]},
+}
+_CHAIN_BY_WIKIDATA = {c["wikidata"]: kind for kind, c in CHAINS.items()}
+
+_cache = TTLCache(ttl_seconds=7 * 24 * 3600)
+_nearby_cache = TTLCache(ttl_seconds=7 * 24 * 3600)
+_inflight: dict[str, asyncio.Task] = {}
+
+
+def _key(lat: float, lon: float) -> str:
+    # About 110 m, so small pin nudges reuse the same answer
+    return f"{lat:.3f},{lon:.3f}"
+
+
+def _query(lat: float, lon: float) -> str:
+    r = RADII
+    p = f"{lat},{lon}"
+    chain_r = max(NEARBY[k]["search"] for k in CHAINS)
+    chains = []
+    for c in CHAINS.values():
+        chains.append(f'nwr["brand:wikidata"="{c["wikidata"]}"](around:{chain_r},{p});')
+        for name in c["names"]:
+            chains.append(f'nwr["brand"="{name}"](around:{chain_r},{p});')
+            chains.append(f'nwr["name"="{name}"](around:{chain_r},{p});')
+    chain_lines = "\n  ".join(chains)
+    return f"""
+[out:json][timeout:50];
+(
+  nwr["shop"="mall"](around:{r['mall']},{p});
+  nwr["shop"="department_store"](around:{r['mall']},{p});
+  nwr["amenity"="hospital"](around:{r['hospital']},{p});
+  nwr["amenity"="school"](around:{r['school']},{p});
+  nwr["amenity"="college"](around:{r['school']},{p});
+  nwr["amenity"="townhall"](around:{r['center']},{p});
+  nwr["amenity"="marketplace"](around:{r['center']},{p});
+  nwr["shop"="supermarket"](around:{NEARBY['supermarket']['search']},{p});
+  {chain_lines}
+);
+out tags center;
+way["highway"~"^(motorway|trunk|primary|secondary|tertiary)$"](around:2000,{p});
+out count;
+way["highway"~"^(residential|unclassified|living_street)$"](around:1000,{p});
+out count;
+way["building"](around:1000,{p});
+out count;
+nwr["public_transport"~"^(station|stop_position|platform)$"](around:2000,{p});
+out count;
+"""
+
+
+def _kind(tags: dict) -> str | None:
+    """Kind used for the scoring factors"""
+    if tags.get("shop") in ("mall", "department_store"):
+        return "mall"
+    amenity = tags.get("amenity")
+    if amenity == "hospital":
+        return "hospital"
+    if amenity in ("school", "college"):
+        return "school"
+    if amenity in ("townhall", "marketplace"):
+        return "center"
+    return None
+
+
+def _nearby_kind(tags: dict) -> str | None:
+    """Kind used for the "What's nearby" card. Chains win over shop type, so a
+    7-Eleven isn't also listed as a supermarket."""
+    chain = _CHAIN_BY_WIKIDATA.get(tags.get("brand:wikidata", ""))
+    if chain:
+        return chain
+    label = f"{tags.get('brand', '')} {tags.get('name', '')}".lower().replace("’", "'")
+    if "7-eleven" in label or "7 eleven" in label or "7-11" in label or "seven eleven" in label:
+        return "seven_eleven"
+    if "jollibee" in label:
+        return "jollibee"
+    if "mcdonald" in label:
+        return "mcdonalds"
+    if "mang inasal" in label:
+        return "mang_inasal"
+    if tags.get("amenity") == "hospital":
+        return "hospital"
+    if tags.get("amenity") in ("school", "college"):
+        return "school"
+    if tags.get("shop") == "supermarket":
+        return "supermarket"
+    if tags.get("shop") in ("mall", "department_store"):
+        return "mall"
+    return None
+
+
+def _log_points(value: float, target: float, weight: float) -> float:
+    """Up to `weight` points, reaching the max when value hits target."""
+    return weight * min(1.0, math.log1p(value) / math.log1p(target))
+
+
+def infrastructure_score(major_roads: int, local_roads: int, buildings: int, transit: int) -> float:
+    """0 to 10. Targets are what a built-up Metro Manila district scores."""
+    score = (
+        _log_points(major_roads, 40, 3)
+        + _log_points(local_roads, 250, 3)
+        + _log_points(buildings, 4000, 2)
+        + _log_points(transit, 40, 2)
+    )
+    return round(min(10.0, score), 1)
+
+
+def _point(el: dict) -> dict | None:
+    return el.get("center") or ({"lat": el["lat"], "lon": el["lon"]} if "lat" in el else None)
+
+
+def _parse_measure(elements: list[dict], counts: list[int], lat: float, lon: float) -> dict:
+    nearest: dict[str, dict] = {}
+    for el in elements:
+        kind = _kind(el.get("tags", {}))
+        point = _point(el)
+        if not kind or not point:
+            continue
+        d = haversine_km(lat, lon, point["lat"], point["lon"])
+        if d * 1000 > RADII[kind]:
+            continue
+        if kind not in nearest or d < nearest[kind]["distance_km"]:
+            nearest[kind] = {
+                "type": kind,
+                "name": el.get("tags", {}).get("name") or None,
+                "lat": point["lat"],
+                "lon": point["lon"],
+                "distance_km": round(d, 2),
+            }
+    major, local, buildings, transit = (counts + [0, 0, 0, 0])[:4]
+    return {
+        "nearest": nearest,
+        "counts": {"major_roads": major, "local_roads": local, "buildings": buildings, "transit_stops": transit},
+        "infrastructure_score": infrastructure_score(major, local, buildings, transit),
+        "radii_km": {k: v / 1000 for k, v in RADII.items()},
+    }
+
+
+def _words(name: str | None) -> set[str]:
+    return set(re.findall(r"[a-z0-9]+", (name or "").lower().replace("’", "'")))
+
+
+def _same_place(a: dict, b: dict) -> bool:
+    """The same branch is often mapped twice: as a point and as a building, or
+    once in each dataset with slightly different names ("Cabadbaran District
+    Hospital" and "Cabadbaran City District Hospital")"""
+    gap = haversine_km(a["lat"], a["lon"], b["lat"], b["lon"])
+    if gap < 0.04:
+        return True
+    wa, wb = _words(a["name"]), _words(b["name"])
+    if not wa or not wb or gap > 0.3:
+        return False
+    # Most of the words in common
+    return len(wa & wb) / len(wa | wb) >= 0.6
+
+
+def _osm_nearby(elements: list[dict], lat: float, lon: float) -> dict[str, list[dict]]:
+    """OpenStreetMap's places per kind, within each kind's search radius"""
+    found: dict[str, list[dict]] = {k: [] for k in NEARBY}
+    for el in elements:
+        tags = el.get("tags", {})
+        kind = _nearby_kind(tags)
+        point = _point(el)
+        if not kind or not point:
+            continue
+        d = haversine_km(lat, lon, point["lat"], point["lon"])
+        if d * 1000 > NEARBY[kind]["search"]:
+            continue
+        street = " ".join(filter(None, [tags.get("addr:housenumber"), tags.get("addr:street")]))
+        place = {
+            "name": tags.get("name") or tags.get("brand") or None,
+            "address": street or tags.get("addr:city") or None,
+            "lat": point["lat"],
+            "lon": point["lon"],
+            "distance_km": round(d, 2),
+            "source": "openstreetmap",
+        }
+        if not any(_same_place(place, p) for p in found[kind]):
+            found[kind].append(place)
+    return found
+
+
+def _categories(osm: dict[str, list[dict]] | None, lat: float, lon: float) -> dict:
+    """Merges OpenStreetMap with the local Overture copy, which has many branches
+    OSM is missing (most 7-Elevens outside big cities, for one). OSM comes first
+    when both have a place, since its positions are usually hand-placed."""
+    categories = {}
+    for kind, spec in NEARBY.items():
+        places = list((osm or {}).get(kind, []))
+        for extra in places_db.near(kind, lat, lon, spec["search"] / 1000):
+            if not any(_same_place(extra, p) for p in places):
+                places.append(extra)
+        places.sort(key=lambda p: p["distance_km"])
+        within = [p for p in places if p["distance_km"] * 1000 <= spec["count"]]
+        categories[kind] = {
+            "count": len(within),
+            "radius_km": spec["count"] / 1000,
+            "places": within[:NEARBY_LIMIT],
+            # Nearest one even when it's outside the count radius
+            "nearest": places[0] if places else None,
+            "search_km": spec["search"] / 1000,
+        }
+    return categories
+
+
+async def _ask(url: str, query: str, timeout: float) -> dict:
+    res = await client().post(url, data={"data": query}, timeout=timeout)
+    res.raise_for_status()
+    data = res.json()
+    # Overpass answers 200 with a remark when the query times out or runs out of memory
+    remark = data.get("remark") or ""
+    if "error" in remark.lower() or "timed out" in remark.lower():
+        raise RuntimeError(remark)
+    return data
+
+
+async def _overpass(query: str, label: str, timeout: float = 60) -> dict | None:
+    """Sends the query to every mirror that hasn't failed recently and returns
+    the first good answer, or None when they all fail."""
+    now = time.monotonic()
+    urls = [u for u in OVERPASS_MIRRORS if _mirror_down_until.get(u, 0) <= now] or OVERPASS_MIRRORS
+    tasks = {asyncio.create_task(_ask(u, query, timeout)): u for u in urls}
+    pending = set(tasks)
+    try:
+        while pending:
+            done, pending = await asyncio.wait(pending, return_when=asyncio.FIRST_COMPLETED)
+            for t in done:
+                url = tasks[t]
+                if t.exception() is None:
+                    logger.info(f"Overpass {url} answered for {label}")
+                    _mirror_down_until.pop(url, None)
+                    return t.result()
+                logger.warning(f"Overpass {url} failed for {label}: {t.exception()!r}")
+                _mirror_down_until[url] = time.monotonic() + _MIRROR_BACKOFF_SECONDS
+        return None
+    finally:
+        for t in pending:
+            t.cancel()
+
+
+async def _survey(lat: float, lon: float, key: str) -> dict | None:
+    try:
+        async with _slots:
+            data = await _overpass(_query(lat, lon), key)
+        return _store(data, lat, lon, key) if data is not None else None
+    except Exception as e:
+        logger.error(f"Overpass survey failed for {key}: {e!r}")
+        return None
+
+
+def _store(data: dict, lat: float, lon: float, key: str) -> dict:
+    elements, counts = [], []
+    for el in data.get("elements", []):
+        if el.get("type") == "count":
+            counts.append(int(el.get("tags", {}).get("total", 0)))
+        else:
+            elements.append(el)
+    result = {"measure": _parse_measure(elements, counts, lat, lon), "nearby": _categories(_osm_nearby(elements, lat, lon), lat, lon)}
+    _cache.set(key, result["measure"])
+    _nearby_cache.set(key, result["nearby"])
+    return result
+
+
+def _survey_task(lat: float, lon: float) -> asyncio.Task:
+    """The one in-flight survey for this point, started if needed"""
+    key = _key(lat, lon)
+    task = _inflight.get(key)
+    if task is None:
+        task = asyncio.create_task(_survey(lat, lon, key))
+        _inflight[key] = task
+        task.add_done_callback(lambda _: _inflight.pop(key, None))
+    return task
+
+
+async def collect(lat: float, lon: float, budget: float | None = None) -> dict | None:
+    """Amenity distances and an infrastructure score. Waits at most `budget`
+    seconds; the survey keeps running after that, so the report's nearby list
+    still gets cached. Returns None when it isn't ready or every mirror fails."""
+    cached = _cache.get(_key(lat, lon))
+    if cached is not None:
+        return cached
+    try:
+        result = await asyncio.wait_for(asyncio.shield(_survey_task(lat, lon)), budget)
+    except TimeoutError:
+        logger.info(f"Overpass not back within {budget}s for {_key(lat, lon)}; using estimates")
+        return None
+    return result["measure"] if result else None
+
+
+async def nearby(lat: float, lon: float, budget: float = 2) -> dict | None:
+    """Schools, hospitals, shops, food, and more around a point, nearest first.
+
+    Joins the survey /locate started, if it's still running. If OpenStreetMap
+    isn't back within `budget` seconds, answers at once from the local Overture
+    copy with partial=True; the survey keeps going, so asking again shortly gets
+    the full answer. None only when both sources fail.
+    Returns {"categories": {...}, "partial": bool}."""
+    cached = _nearby_cache.get(_key(lat, lon))
+    if cached is not None:
+        return {"categories": cached, "partial": False}
+    task = _survey_task(lat, lon)
+    try:
+        result = await asyncio.wait_for(asyncio.shield(task), budget if places_db.available() else None)
+    except TimeoutError:
+        return {"categories": _categories(None, lat, lon), "partial": True}
+    if result:
+        return {"categories": result["nearby"], "partial": False}
+    # Every Overpass mirror failed: Overture alone is still a good answer
+    return {"categories": _categories(None, lat, lon), "partial": False} if places_db.available() else None

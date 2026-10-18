@@ -14,7 +14,7 @@ WORKDIR /app
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/main.py .
+COPY backend/main.py backend/store.py backend/listing_rules.py ./
 COPY --from=web /web/dist ./static
 
 CMD exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-3000}
