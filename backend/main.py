@@ -392,7 +392,9 @@ def google_sign_in(request: Request, body: GoogleCredential):
         raise HTTPException(status_code=404, detail="Google sign-in isn't set up on this server")
     try:
         key = _google_keys.get_signing_key_from_jwt(body.credential)
-        claims = jwt.decode(body.credential, key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID)
+        # Two minutes of leeway: a PC clock a few seconds behind Google's would
+        # otherwise see a fresh token as issued in the future
+        claims = jwt.decode(body.credential, key.key, algorithms=["RS256"], audience=GOOGLE_CLIENT_ID, leeway=120)
     except (jwt.PyJWTError, jwt.PyJWKClientError) as e:
         logger.warning(f"Rejected Google credential: {e}")
         raise HTTPException(status_code=401, detail="Google sign-in didn't go through. Try again.")

@@ -176,3 +176,11 @@ For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/St
 2026-10-18 17:06:53.542 | WARNING  | main:connect_databases:130 - PostgreSQL unavailable, using Open-Meteo elevation instead of PostGIS: database "smartland_geo" does not exist
 2026-10-18 17:52:33.160 | WARNING  | main:connect_databases:121 - MongoDB unavailable, agency contacts disabled: No servers found yet, Timeout: 2.0s, Topology Description: <TopologyDescription id: 6ad496df19ecec5aef756945, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None>]>
 2026-10-18 17:52:33.329 | WARNING  | main:connect_databases:130 - PostgreSQL unavailable, using Open-Meteo elevation instead of PostGIS: database "smartland_geo" does not exist
+2026-10-18 18:03:32.376 | WARNING  | main:connect_databases:121 - MongoDB unavailable, agency contacts disabled: No servers found yet, Timeout: 2.0s, Topology Description: <TopologyDescription id: 6ad499729ad87f1c83440bbf, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None>]>
+2026-10-18 18:03:32.436 | WARNING  | main:connect_databases:130 - PostgreSQL unavailable, using Open-Meteo elevation instead of PostGIS: database "smartland_geo" does not exist
+2026-10-18 18:04:14.447 | WARNING  | main:_decode:91 - Invalid JWT token: Signature verification failed
+2026-10-18 18:04:14.452 | WARNING  | main:_decode:91 - Invalid JWT token: Signature verification failed
+2026-10-18 18:04:25.936 | WARNING  | main:google_sign_in:397 - Rejected Google credential: The token is not yet valid (iat)
+2026-10-18 18:05:41.720 | WARNING  | main:connect_databases:121 - MongoDB unavailable, agency contacts disabled: No servers found yet, Timeout: 2.0s, Topology Description: <TopologyDescription id: 6ad499f3ff7c293af532bf97, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None>]>
+2026-10-18 18:05:41.779 | WARNING  | main:connect_databases:130 - PostgreSQL unavailable, using Open-Meteo elevation instead of PostGIS: database "smartland_geo" does not exist
+2026-10-18 18:07:15.627 | INFO     | main:analyze:340 - Generated report for Poblacion 11, Cabadbaran, Agusan del Norte (user 452a62442cc7420fa1bbacb9f51ec354)

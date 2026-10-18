@@ -27,8 +27,15 @@ gcloud run deploy smartland-ai --source "$root/ai-microservice" --project $Proje
   --allow-unauthenticated --memory 512Mi --max-instances 3 --quiet
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
+# The client ID isn't secret and is usually already in backend/.env for local use
+if (-not $GoogleClientId -and (Test-Path "$root/backend/.env")) {
+  $line = Select-String -Path "$root/backend/.env" -Pattern '^\s*GOOGLE_CLIENT_ID\s*=\s*(.+)$' | Select-Object -First 1
+  if ($line) { $GoogleClientId = $line.Matches[0].Groups[1].Value.Trim() }
+}
 if (-not $GoogleClientId) {
-  Write-Warning "SMARTLAND_GOOGLE_CLIENT_ID is not set. Sign in with Google will be hidden."
+  Write-Warning "SMARTLAND_GOOGLE_CLIENT_ID is not set and backend/.env has no GOOGLE_CLIENT_ID. Sign in with Google will be hidden."
+} else {
+  Write-Host "Sign in with Google: $GoogleClientId"
 }
 if (-not $AdminEmails) {
   Write-Warning "SMARTLAND_ADMIN_EMAILS is not set. Nobody can review listing documents."

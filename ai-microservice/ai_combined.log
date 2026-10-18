@@ -128,3 +128,8 @@
 2026-10-18 14:45:39.428 | INFO     | data_collectors.osm_collector:_overpass:297 - Overpass https://overpass-api.de/api/interpreter answered for 9.112,125.529
 2026-10-18 15:02:26.997 | INFO     | main:predict:260 - Prediction completed: A to B+ (High Growth) - 3000.0 PHP/sqm (medium)
 2026-10-18 15:27:45.540 | INFO     | main:predict:260 - Prediction completed: A to B+ (High Growth) - 3000.0 PHP/sqm (medium)
+2026-10-18 18:07:01.167 | WARNING  | data_collectors.osm_collector:_overpass:300 - Overpass https://overpass.private.coffee/api/interpreter failed for 9.112,125.529: HTTPStatusError("Server error '500 Internal Server Error' for url 'https://overpass.private.coffee/api/interpreter'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500")
+2026-10-18 18:07:01.171 | WARNING  | data_collectors.osm_collector:_overpass:300 - Overpass https://overpass.kumi.systems/api/interpreter failed for 9.112,125.529: HTTPStatusError("Server error '500 Internal Server Error' for url 'https://overpass.kumi.systems/api/interpreter'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/500")
+2026-10-18 18:07:14.500 | INFO     | data_collectors.osm_collector:collect:352 - Overpass not back within 15s for 9.112,125.529; using estimates
+2026-10-18 18:07:15.622 | INFO     | main:predict:260 - Prediction completed: C- (High Risk) - 2310.0 PHP/sqm (medium)
+2026-10-18 18:07:19.556 | INFO     | data_collectors.osm_collector:_overpass:297 - Overpass https://maps.mail.ru/osm/tools/overpass/api/interpreter answered for 9.112,125.529
