@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, FileCheck2, FileUp, LoaderCircle, Lock, MapPin, UserRound, X } from 'lucide-react'
+import { ChevronLeft, ChevronRight, FileCheck2, FileUp, ImagePlus, LoaderCircle, Lock, MapPin, UserRound, X } from 'lucide-react'
 import {
   ApiError,
   errorCopy,
@@ -21,6 +21,7 @@ import { TextArea, TextField } from '../components/Fields'
 import { PinMapView } from '../components/Map'
 import { Banner, EmptyState, Skeleton } from '../components/States'
 import { GoogleSignIn } from '../components/GoogleSignIn'
+import { UploadBar } from '../components/Photos'
 
 const control =
   'h-tap w-full rounded-sm border border-hairline bg-surface px-md text-body text-ink transition-colors duration-200 ease-apple focus-visible:border-focus aria-[invalid=true]:border-critical'
@@ -227,11 +228,18 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
   const [phone, setPhone] = useState('')
   const [authorized, setAuthorized] = useState(false)
   const [staged, setStaged] = useState<Partial<Record<DocumentType, File>>>({})
+  // Sale listings: the seller confirmed they have no title or proof of rights to show
+  const [noTitle, setNoTitle] = useState(false)
+  const [photos, setPhotos] = useState<{ key: number; file: File; alt: string; preview: string }[]>([])
+  const [uploadFraction, setUploadFraction] = useState<number | null>(null)
   const [errors, setErrors] = useState<Record<string, string | undefined>>({})
   const [failure, setFailure] = useState<string | null>(null)
   const [progress, setProgress] = useState<string | null>(null)
   const nameAbort = useRef<AbortController | null>(null)
   const fileInputs = useRef<Partial<Record<DocumentType, HTMLInputElement | null>>>({})
+  const photoInput = useRef<HTMLInputElement>(null)
+  const photoKey = useRef(0)
+  const hasTitleDoc = !!(staged.title || staged.rights)
 
   async function onPin(lat: number, lon: number) {
     setPin({ lat, lon })
@@ -274,8 +282,25 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
       }))
       return
     }
-    setErrors((e) => ({ ...e, [`doc-${type}`]: undefined }))
+    setErrors((e) => ({ ...e, [`doc-${type}`]: undefined, ...(type === 'title' || type === 'rights' ? { title_doc: undefined } : {}) }))
     setStaged((s) => ({ ...s, [type]: file }))
+  }
+
+  function addPhotos(files: FileList | null) {
+    if (!files) return
+    const room = schema.max_photos - photos.length
+    const next = [...files].slice(0, room)
+    const tooBig = next.filter((f) => f.size > schema.max_photo_mb * 1024 * 1024)
+    setErrors((e) => ({
+      ...e,
+      photos:
+        tooBig.length > 0
+          ? `${tooBig.map((f) => f.name).join(', ')} ${tooBig.length === 1 ? 'is' : 'are'} over ${schema.max_photo_mb} MB.`
+          : files.length > room
+            ? `A listing can have up to ${schema.max_photos} photos.`
+            : undefined,
+    }))
+    setPhotos((ps) => [...ps, ...next.filter((f) => !tooBig.includes(f)).map((file) => ({ key: photoKey.current++, file, alt: '', preview: URL.createObjectURL(file) }))])
   }
 
   /** Field values as the API wants them, plus any errors */
@@ -322,6 +347,11 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
     if (contactName.trim().length < 2) errs.contact_name = 'Enter the name people should ask for.'
     if (!/^[0-9+()\-\s]{7,20}$/.test(phone.trim())) errs.contact_phone = 'Enter a phone number, such as 0917 123 4567.'
     if (!authorized) errs.authorized = `Confirm that you may ${spec.rent ? 'rent out' : 'sell'} this property.`
+    if (!spec.rent && !hasTitleDoc && !noTitle)
+      errs.title_doc = 'Add the land title or proof of rights, or tick the box below if you have none to show.'
+    photos.forEach((ph) => {
+      if (ph.alt.trim().length < 3) errs[`photo-${ph.key}`] = 'Describe this photo in a few words.'
+    })
     setErrors(errs)
     if (Object.keys(errs).length > 0) {
       requestAnimationFrame(() => document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus())
@@ -347,6 +377,7 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
       contact_phone: phone.trim(),
       details: values,
       authorized,
+      title_status: spec.rent ? null : hasTitleDoc ? 'attached' : 'none',
     }
     setFailure(null)
     setProgress('Posting your listing')
@@ -356,19 +387,31 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
       let failed = 0
       for (const [i, t] of docs.entries()) {
         setProgress(`Uploading document ${i + 1} of ${docs.length}`)
+        setUploadFraction(0)
         try {
-          await listingsApi.uploadDocument(listing.id, t, staged[t]!)
+          await listingsApi.uploadDocument(listing.id, t, staged[t]!, setUploadFraction)
         } catch {
           failed += 1
         }
       }
+      let photosFailed = 0
+      for (const [i, ph] of photos.entries()) {
+        setProgress(`Uploading photo ${i + 1} of ${photos.length}`)
+        setUploadFraction(0)
+        try {
+          await listingsApi.uploadPhoto(listing.id, ph.file, ph.alt.trim(), setUploadFraction)
+        } catch {
+          photosFailed += 1
+        }
+      }
       navigate(`/listing/${listing.id}`, {
         replace: true,
-        state: { posted: true, uploadFailed: failed },
+        state: { posted: true, uploadFailed: failed, photosFailed },
       })
     } catch (err) {
       setFailure(err instanceof ApiError && err.kind === 'invalid' && err.detail ? err.detail : errorCopy(err).body)
       setProgress(null)
+      setUploadFraction(null)
     }
   }
 
@@ -450,6 +493,77 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
       </div>
 
       <Section
+        title="Photos (optional)"
+        hint="Anyone can see these. Show the land, the road in front, and any buildings. Don’t upload the title here: add it under Documents, where it stays private."
+      >
+        {photos.length > 0 && (
+          <ul className="flex flex-col gap-sm">
+            {photos.map((ph, i) => (
+              <li key={ph.key} className="flex gap-sm">
+                <img src={ph.preview} alt="" className="size-20 shrink-0 rounded-sm border border-hairline object-cover" />
+                <div className="flex min-w-0 flex-1 flex-col gap-xxs">
+                  <label htmlFor={`photo-${ph.key}`} className="text-caption font-semibold">
+                    {i === 0 ? 'Cover photo. ' : ''}Describe it for people who can’t see it
+                  </label>
+                  <input
+                    id={`photo-${ph.key}`}
+                    value={ph.alt}
+                    maxLength={200}
+                    placeholder="Front of the lot from the road"
+                    onChange={(e) => {
+                      const alt = e.target.value
+                      setPhotos((ps) => ps.map((x) => (x.key === ph.key ? { ...x, alt } : x)))
+                      setErrors((x) => ({ ...x, [`photo-${ph.key}`]: undefined }))
+                    }}
+                    aria-invalid={!!errors[`photo-${ph.key}`]}
+                    className={control}
+                  />
+                  {errors[`photo-${ph.key}`] && <p className="text-caption text-critical">{errors[`photo-${ph.key}`]}</p>}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    URL.revokeObjectURL(ph.preview)
+                    setPhotos((ps) => ps.filter((x) => x.key !== ph.key))
+                  }}
+                  className="press inline-flex size-tap shrink-0 items-center justify-center text-ink-secondary"
+                  aria-label={`Remove ${ph.file.name}`}
+                >
+                  <X size={18} aria-hidden />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+        <input
+          ref={photoInput}
+          type="file"
+          multiple
+          accept={schema.photo_types.join(',')}
+          onChange={(e) => {
+            addPhotos(e.target.files)
+            e.target.value = ''
+          }}
+          className="sr-only"
+          tabIndex={-1}
+          aria-label="Choose photos"
+        />
+        <Button
+          variant="secondary"
+          className="self-start"
+          disabled={photos.length >= schema.max_photos}
+          onClick={() => photoInput.current?.click()}
+          icon={<ImagePlus size={18} aria-hidden />}
+        >
+          Add photos
+        </Button>
+        {errors.photos && <p className="text-caption text-critical">{errors.photos}</p>}
+        <p className="text-caption text-ink-secondary">
+          JPG, PNG, or WebP, up to {schema.max_photo_mb} MB each, {schema.max_photos} at most. The first one is the cover.
+        </p>
+      </Section>
+
+      <Section
         title={spec.rent ? 'Documents (optional)' : 'Documents'}
         hint={
           <>
@@ -525,6 +639,33 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
         <p className="text-caption text-ink-secondary">
           PDF, JPG, PNG, or WebP, up to {schema.max_document_mb} MB each. Upload clear photos or scans of the whole page. You can add documents later too.
         </p>
+        {!spec.rent && !hasTitleDoc && (
+          <div className="flex flex-col gap-xs border-t border-hairline pt-md">
+            {errors.title_doc && (
+              <p role="alert" className="text-caption text-critical">
+                {errors.title_doc}
+              </p>
+            )}
+            <label className="flex cursor-pointer items-start gap-sm">
+              <input
+                type="checkbox"
+                checked={noTitle}
+                onChange={(e) => {
+                  setNoTitle(e.target.checked)
+                  setErrors((x) => ({ ...x, title_doc: undefined }))
+                }}
+                aria-invalid={!!errors.title_doc}
+                className="mt-1 size-5 shrink-0 accent-accent-fill"
+              />
+              <span className="flex flex-col">
+                <span>I don’t have a land title or proof of rights to show</span>
+                <span className="text-caption text-ink-secondary">
+                  Your listing will say “No title shown” where buyers see it first. Many buyers skip those listings. You can add the title later.
+                </span>
+              </span>
+            </label>
+          </div>
+        )}
       </Section>
 
       <Section title={spec.rent ? 'Who’s renting it out' : 'Who’s selling'}>
@@ -597,9 +738,12 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
 
       <div className="flex flex-col items-stretch gap-xs sm:flex-row sm:items-center sm:justify-end">
         {progress && (
-          <p role="status" className="text-caption text-ink-secondary">
-            {progress}.
-          </p>
+          <div className="flex min-w-0 flex-1 flex-col gap-xxs sm:max-w-xs">
+            <p role="status" className="text-caption text-ink-secondary">
+              {progress}.
+            </p>
+            {uploadFraction !== null && <UploadBar fraction={uploadFraction} label={progress} />}
+          </div>
         )}
         <Button type="submit" size="large" disabled={busy} icon={busy ? <LoaderCircle size={20} className="animate-spin" aria-hidden /> : undefined}>
           {busy ? 'Posting' : 'Post listing'}

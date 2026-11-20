@@ -1,8 +1,35 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
-import { CircleAlert, CircleCheck, CircleDashed, Clock, ExternalLink, FileUp, Fingerprint, LoaderCircle, ShieldCheck, ShieldX } from 'lucide-react'
-import { errorCopy, listingsApi, type Credibility, type DocumentType, type Listing, type ListingDocument, type ListingEvent, type ListingSchema } from '../lib/api'
+import {
+  BadgeCheck,
+  Building2,
+  CircleAlert,
+  CircleCheck,
+  CircleDashed,
+  Clock,
+  ExternalLink,
+  FileUp,
+  FileX2,
+  Fingerprint,
+  Landmark,
+  LoaderCircle,
+  ShieldCheck,
+  ShieldX,
+  UserRound,
+  type LucideIcon,
+} from 'lucide-react'
+import {
+  errorCopy,
+  listingsApi,
+  type Credibility,
+  type DocumentType,
+  type Listing,
+  type ListingDocument,
+  type ListingEvent,
+  type ListingSchema,
+  type TitleState,
+} from '../lib/api'
 import { formatDate, formatPeso, type Tone } from '../lib/format'
-import { fingerprint, openDocument, shortHash } from '../lib/listings'
+import { categoryByKey, fingerprint, openDocument, shortHash } from '../lib/listings'
 import { Button } from './Button'
 import { Ring } from './Grade'
 
@@ -14,6 +41,68 @@ const LEVEL_STYLE: Record<Credibility['level'], string> = {
 }
 
 const LEVEL_TONE: Record<Credibility['level'], Tone> = { Strong: 'positive', Good: 'positive', Fair: 'caution', Low: 'critical' }
+
+// Trust badges: who's selling and where the title stands, shown before the
+// credibility score. Status colours always come with an icon and words.
+const BADGE_TONE = {
+  positive: 'bg-positive-soft text-positive',
+  caution: 'bg-caution-soft text-caution',
+  critical: 'bg-critical-soft text-critical',
+  neutral: 'border border-hairline bg-surface-raised text-ink',
+} as const
+
+function Badge({ icon: Icon, tone, children }: { icon: LucideIcon; tone: keyof typeof BADGE_TONE; children: string }) {
+  return (
+    <span className={`inline-flex items-center gap-xxs rounded-pill px-sm py-xxs text-caption font-semibold ${BADGE_TONE[tone]}`}>
+      <Icon size={14} strokeWidth={2.25} aria-hidden />
+      {children}
+    </span>
+  )
+}
+
+const TITLE_BADGE: Record<TitleState, { text: string; icon: LucideIcon; tone: keyof typeof BADGE_TONE }> = {
+  checked: { text: 'Title checked by SmartLand', icon: ShieldCheck, tone: 'positive' },
+  shown: { text: 'Title shown, not checked yet', icon: Clock, tone: 'neutral' },
+  rejected: { text: 'Title didn’t pass review', icon: ShieldX, tone: 'critical' },
+  none: { text: 'No title shown', icon: FileX2, tone: 'caution' },
+}
+
+/** "Owner", "Licensed broker · PRC 1234567", and the title's status */
+export function TrustBadges({ listing }: { listing: Pick<Listing, 'seller_type' | 'prc_license' | 'title_state' | 'category'> }) {
+  const rent = categoryByKey(listing.category).rent
+  const title = TITLE_BADGE[listing.title_state]
+  // Rentals don't need a title to be shown, so they only get the badge when there is one
+  const showTitle = !rent || listing.title_state === 'checked' || listing.title_state === 'shown'
+  return (
+    <span className="flex flex-wrap gap-xxs">
+      {listing.seller_type === 'owner' && (
+        <Badge icon={UserRound} tone="neutral">
+          Owner
+        </Badge>
+      )}
+      {listing.seller_type === 'broker' && (
+        <Badge icon={BadgeCheck} tone="neutral">
+          {listing.prc_license ? `Licensed broker · PRC ${listing.prc_license}` : 'Broker'}
+        </Badge>
+      )}
+      {listing.seller_type === 'developer' && (
+        <Badge icon={Building2} tone="neutral">
+          Developer
+        </Badge>
+      )}
+      {listing.seller_type === 'bank' && (
+        <Badge icon={Landmark} tone="neutral">
+          Bank or Pag-IBIG
+        </Badge>
+      )}
+      {showTitle && (
+        <Badge icon={title.icon} tone={title.tone}>
+          {title.text}
+        </Badge>
+      )}
+    </span>
+  )
+}
 
 /** Small "Credibility 55 · Fair" chip for listing cards */
 export function CredibilityChip({ credibility }: { credibility: Credibility }) {

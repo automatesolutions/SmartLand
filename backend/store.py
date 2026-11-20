@@ -84,6 +84,18 @@ CREATE TABLE IF NOT EXISTS documents (
     reviewed_at TEXT
 );
 CREATE INDEX IF NOT EXISTS documents_listing ON documents (listing_id);
+-- Public photos of a listing. Files live in storage.py under photos/, named by their SHA-256
+CREATE TABLE IF NOT EXISTS photos (
+    id TEXT PRIMARY KEY,
+    listing_id TEXT NOT NULL REFERENCES listings(id) ON DELETE CASCADE,
+    sha256 TEXT NOT NULL,
+    mime TEXT NOT NULL,
+    size INTEGER NOT NULL,
+    alt TEXT NOT NULL,
+    position INTEGER NOT NULL,
+    uploaded_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS photos_listing ON photos (listing_id, position);
 CREATE INDEX IF NOT EXISTS documents_status ON documents (status);
 -- Every change to a listing, each one fingerprinted together with the one before
 CREATE TABLE IF NOT EXISTS listing_events (
@@ -108,6 +120,10 @@ def _migrate(conn: sqlite3.Connection) -> None:
     cols = {r[1] for r in conn.execute("PRAGMA table_info(listings)")}
     if "details" not in cols:
         conn.execute("ALTER TABLE listings ADD COLUMN details TEXT NOT NULL DEFAULT '{}'")
+    if "title_status" not in cols:
+        # What the seller said about the title when posting: "attached", or
+        # "none" when they confirmed they have no title to show
+        conn.execute("ALTER TABLE listings ADD COLUMN title_status TEXT")
     for old, new in listing_rules.RENAMED.items():
         conn.execute("UPDATE listings SET category = ? WHERE category = ?", (new, old))
     conn.commit()
@@ -120,6 +136,9 @@ def _db() -> sqlite3.Connection:
         _conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
         _conn.row_factory = sqlite3.Row
         _conn.execute("PRAGMA foreign_keys = ON")
+        # Write-ahead log: what Litestream copies to the bucket (see start.sh)
+        _conn.execute("PRAGMA journal_mode = WAL")
+        _conn.execute("PRAGMA busy_timeout = 5000")
         _conn.executescript(SCHEMA)
         _migrate(_conn)
     return _conn
@@ -277,7 +296,7 @@ def shared_report(token: str) -> dict | None:
 
 LISTING_FIELDS = (
     "category", "title", "description", "price", "lot_sqm", "floor_sqm", "lat", "lon", "place", "town",
-    "province", "seller_type", "prc_license", "contact_name", "contact_phone", "details",
+    "province", "seller_type", "prc_license", "contact_name", "contact_phone", "details", "title_status",
 )
 
 
@@ -435,6 +454,55 @@ def add_document(listing_id: str, doc_type: str, filename: str, mime: str, size:
         _append_event(conn, listing_id, "document", {"id": doc_id, "type": doc_type, "sha256": sha256})
         conn.commit()
     return get_document(doc_id)
+
+
+# Photos ---------------------------------------------------------------------
+
+def list_photos(listing_id: str) -> list[dict]:
+    with _lock:
+        rows = _db().execute("SELECT * FROM photos WHERE listing_id = ? ORDER BY position, uploaded_at", (listing_id,)).fetchall()
+    return [dict(r) for r in rows]
+
+
+def photos_for(listing_ids: list[str]) -> dict[str, list[dict]]:
+    """Photos for many listings at once, for search results"""
+    if not listing_ids:
+        return {}
+    marks = ", ".join("?" for _ in listing_ids)
+    with _lock:
+        rows = _db().execute(
+            f"SELECT * FROM photos WHERE listing_id IN ({marks}) ORDER BY position, uploaded_at", listing_ids
+        ).fetchall()
+    out: dict[str, list[dict]] = {}
+    for r in rows:
+        out.setdefault(r["listing_id"], []).append(dict(r))
+    return out
+
+
+def get_photo(photo_id: str) -> dict | None:
+    with _lock:
+        row = _db().execute("SELECT * FROM photos WHERE id = ?", (photo_id,)).fetchone()
+    return dict(row) if row else None
+
+
+def add_photo(listing_id: str, sha256: str, mime: str, size: int, alt: str) -> dict:
+    photo_id = secrets.token_urlsafe(9)
+    with _lock:
+        conn = _db()
+        last = conn.execute("SELECT COALESCE(MAX(position), -1) AS p FROM photos WHERE listing_id = ?", (listing_id,)).fetchone()
+        conn.execute(
+            "INSERT INTO photos (id, listing_id, sha256, mime, size, alt, position, uploaded_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (photo_id, listing_id, sha256, mime, size, alt, last["p"] + 1, _now()),
+        )
+        conn.commit()
+    return get_photo(photo_id)
+
+
+def delete_photo(listing_id: str, photo_id: str) -> bool:
+    with _lock:
+        cur = _db().execute("DELETE FROM photos WHERE id = ? AND listing_id = ?", (photo_id, listing_id))
+        _db().commit()
+    return cur.rowcount > 0
 
 
 def review_document(doc_id: str, status: str, note: str | None) -> dict | None:

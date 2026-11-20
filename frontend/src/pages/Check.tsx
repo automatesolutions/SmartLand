@@ -36,6 +36,7 @@ import {
 } from '../lib/api'
 import { DEFAULT_DATA, FACTORS, PLACE_SUGGESTIONS, SOURCE_LABEL, type FactorKey } from '../lib/presets'
 import { newReportId, storeDraft } from '../lib/reports'
+import { useSlow } from '../lib/slow'
 import { formatPeso, parseGrade } from '../lib/format'
 import { Button } from '../components/Button'
 import { CountUp } from '../components/CountUp'
@@ -267,6 +268,7 @@ export function CheckPage() {
   const [lookup, setLookup] = useState<Lookup | null>(null)
   const [pin, setPin] = useState<Point | null>(null)
   const [finding, setFinding] = useState(false)
+  const slowFinding = useSlow(finding)
   const [preview, setPreview] = useState<Preview | null>(null)
   const [failedKey, setFailedKey] = useState<string | null>(null)
   const [errors, setErrors] = useState<Errors>({})
@@ -592,9 +594,13 @@ export function CheckPage() {
             </p>
           )}
           {finding && (
-            <p className="frosted inline-flex items-center gap-xs self-start rounded-pill px-md py-xs text-caption text-ink">
+            <p role="status" className="frosted inline-flex items-center gap-xs self-start rounded-pill px-md py-xs text-caption text-ink">
               <LoaderCircle size={16} className="animate-spin" aria-hidden />
-              {pin ? 'Updating the values for this spot' : 'Finding this place'}
+              {slowFinding
+                ? 'Still working. The map service is slow, so this can take up to 20 seconds.'
+                : pin
+                  ? 'Updating the values for this spot'
+                  : 'Finding this place'}
             </p>
           )}
         </div>

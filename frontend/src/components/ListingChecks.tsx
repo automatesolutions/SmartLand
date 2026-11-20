@@ -2,21 +2,25 @@ import { ExternalLink, ShieldCheck } from 'lucide-react'
 
 const CHECKS: { title: string; body: string; link?: { href: string; label: string } }[] = [
   {
-    title: 'Deal with a licensed broker',
-    body: 'Only PRC-licensed brokers may sell property for someone else (RA 9646). Ask for their license number and look it up.',
+    title: 'Ask whose name is on the title',
+    body: 'If it isn’t the person you’re talking to, ask how they’re connected to the owner. Only PRC-licensed brokers may sell property for someone else (RA 9646), so ask for their license number and look it up.',
     link: { href: 'https://online.prc.gov.ph/Verification', label: 'Look up a PRC license' },
   },
   {
-    title: 'Ask a developer for its License to Sell',
-    body: 'Subdivision and condo projects need a License to Sell from DHSUD before they can take reservations.',
+    title: 'See the title before anything else',
+    body: 'A seller who won’t show the title is a warning sign. Get a certified true copy from the Registry of Deeds. The owner on it must match the seller’s ID.',
   },
   {
-    title: 'Check the title',
-    body: 'Get a certified true copy of the title from the Registry of Deeds. The owner on it must match the seller’s ID.',
+    title: 'Count the people between you and the owner',
+    body: 'Each middleman adds a commission to the price. If nobody can put you in touch with the owner or a licensed broker, ask why.',
   },
   {
     title: 'Check the tax declaration',
     body: 'The assessor’s office confirms the tax declaration. The treasurer’s office confirms the real property tax is paid.',
+  },
+  {
+    title: 'Ask a developer for its License to Sell',
+    body: 'Subdivision and condo projects need a License to Sell from DHSUD before they can take reservations.',
   },
   {
     title: 'See it before you pay',
@@ -24,13 +28,13 @@ const CHECKS: { title: string; body: string; link?: { href: string; label: strin
   },
 ]
 
-/** How to tell a listing is real, before anyone pays */
+/** How to deal with the owner instead of a chain of middlemen, before anyone pays */
 export function ListingChecks() {
   return (
     <div className="flex flex-col gap-sm">
       <h3 className="inline-flex items-center gap-xs font-semibold text-positive">
         <ShieldCheck size={20} strokeWidth={2} aria-hidden />
-        How to tell a listing is legit
+        Deal with the owner, not a chain of middlemen
       </h3>
       <ol className="flex flex-col">
         {CHECKS.map((c, i) => (

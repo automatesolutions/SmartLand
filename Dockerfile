@@ -14,7 +14,14 @@ WORKDIR /app
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY backend/main.py backend/store.py backend/listing_rules.py ./
+# Litestream copies the SQLite database to a Cloud Storage bucket as it changes
+# (only when LITESTREAM_REPLICA_URL is set; see backend/start.sh)
+ARG LITESTREAM_VERSION=0.3.13
+RUN python -c "import urllib.request as u; u.urlretrieve('https://github.com/benbjohnson/litestream/releases/download/v${LITESTREAM_VERSION}/litestream-v${LITESTREAM_VERSION}-linux-amd64.tar.gz', '/tmp/ls.tgz')"  && tar -xzf /tmp/ls.tgz -C /usr/local/bin litestream && rm /tmp/ls.tgz
+
+COPY backend/main.py backend/store.py backend/storage.py backend/listing_rules.py backend/start.sh ./
+# Windows checkouts can add CR line endings, which sh can't run
+RUN sed -i 's/\r$//' start.sh && chmod +x start.sh
 COPY --from=web /web/dist ./static
 
-CMD exec uvicorn main:app --host 0.0.0.0 --port ${PORT:-3000}
+CMD ["./start.sh"]

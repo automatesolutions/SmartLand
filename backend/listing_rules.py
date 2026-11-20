@@ -154,6 +154,23 @@ ALLOWED_TYPES = {"application/pdf": "pdf", "image/jpeg": "jpg", "image/png": "pn
 MAX_DOCUMENT_BYTES = 10 * 1024 * 1024
 MAX_DOCUMENTS = 12
 
+# Public photos of the property. Unlike documents, anyone can see them.
+PHOTO_TYPES = {"image/jpeg": "jpg", "image/png": "png", "image/webp": "webp"}
+MAX_PHOTO_BYTES = 8 * 1024 * 1024
+MAX_PHOTOS = 8
+
+
+def is_rent(category: str) -> bool:
+    return bool(CATEGORIES[category]["rent"])
+
+
+def title_state(credibility_result: dict) -> str:
+    """What a buyer sees first about the title: "checked" once a reviewer
+    checked the land title or proof of rights, "shown" while it waits for review,
+    "rejected" if it didn't pass, and "none" when the seller hasn't shown one."""
+    own = next(i for i in credibility_result["items"] if i["key"] == "ownership")
+    return {"verified": "checked", "uploaded": "shown", "rejected": "rejected"}.get(own["state"], "none")
+
 
 def validate_details(category: str, details: dict) -> dict:
     """Keeps only the fields this category asks for, checked against their
