@@ -172,6 +172,11 @@ OFFICE_SEARCHES = {
 }
 
 
+# One search can still take ~11 s after this (lock wait plus a 10 s timeout), so
+# 8 keeps the worst case under the backend's 20 s timeout
+OFFICES_BUDGET = 8
+
+
 @app.get("/offices")
 async def offices(
     town: str = Query(min_length=2, max_length=100),
@@ -180,18 +185,35 @@ async def offices(
     lon: float = Query(ge=116.0, le=127.0),
 ):
     """Finds the offices from the report's "Before you buy" list on the map.
-    An office that isn't on OpenStreetMap comes back as null."""
-    found: dict[str, dict | None] = {}
+    An office that isn't on OpenStreetMap comes back as null. Searches wait on
+    Nominatim's one-per-second limit, so after OFFICES_BUDGET seconds the rest are
+    skipped and `partial` is true."""
+    found: dict[str, dict | None | bool] = {}
+    deadline = asyncio.get_running_loop().time() + OFFICES_BUDGET
+    partial = False
     for kind, searches in OFFICE_SEARCHES.items():
         hit = None
         for template in searches:
+            if asyncio.get_running_loop().time() > deadline:
+                partial = True
+                break
             query = template.format(town=town, province=province or town)
             # Provincial registries can sit in the capital, farther from the lot
             hit = await geocoder.search_near(query, lat, lon, span=0.8 if kind == "registry" else 0.4)
             if hit:
                 break
         found[kind] = hit
+    found["partial"] = partial
     return found
+
+
+@app.get("/geocode")
+async def geocode(q: str = Query(min_length=2, max_length=200)):
+    """Finds a place by name, without the map survey and news that /locate runs"""
+    place = await geocoder.geocode(q)
+    if not place:
+        raise HTTPException(status_code=404, detail="Place not found")
+    return place
 
 
 @app.get("/reverse")

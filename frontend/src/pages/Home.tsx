@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { BadgeCheck, FileText, UserRound } from 'lucide-react'
 import { ButtonLink } from '../components/Button'
 import { GRADE_ORDER, gradeInfo } from '../lib/format'
 import { useReveal } from '../lib/motion'
@@ -7,6 +8,25 @@ const OUTPUTS = [
   { sample: '₱11,090', title: 'Price per sqm', body: 'An estimate in pesos, plus the total for your lot size.' },
   { sample: '78', title: 'Growth score', body: 'From 0 to 100. How strongly local conditions point to rising prices.' },
   { sample: 'A to B+', title: 'Investment grade', body: 'A+ to C-, with the reasons behind it and the risks to check.' },
+]
+
+// Why SmartLand: deal with the owner or a licensed broker, and see the papers
+const DIRECT = [
+  {
+    icon: UserRound,
+    title: 'Owners post their own land',
+    body: 'Call the person whose name is on the title, not an agent of an agent.',
+  },
+  {
+    icon: BadgeCheck,
+    title: 'Licensed brokers welcome. Unlicensed middlemen aren’t.',
+    body: 'Brokers must give their PRC license number. It’s on every listing they post, so you can look it up.',
+  },
+  {
+    icon: FileText,
+    title: 'Papers up front',
+    body: 'Sellers attach the title or proof of rights, and our reviewers check it with the office that issued it.',
+  },
 ]
 
 const STEPS = [
@@ -23,11 +43,11 @@ export function HomePage() {
     <div ref={pageRef}>
       <section className="flex min-h-[calc(100dvh-var(--spacing-nav))] flex-col bg-canvas">
         <div className="gutter mx-auto flex w-full max-w-reading flex-col items-center gap-md pt-xxl text-center sm:pt-section">
-          <h1 data-reveal className="text-display-md xs:text-display-lg lg:text-hero">
-            Know what land is worth before you buy.
+          <h1 data-reveal className="text-display-md xs:text-display-lg">
+            If the seller won’t show the title, you’re probably paying five people who never owned the land.
           </h1>
           <p data-reveal className="max-w-prose text-lead font-regular">
-            A price per sqm, a growth score, and a grade for any city or town.
+            Know what land is worth before you buy, and deal with owners and licensed brokers who show their papers.
           </p>
           <div data-reveal className="flex flex-col items-stretch gap-sm pt-xs xs:flex-row xs:items-center">
             <ButtonLink to="/check">Check a location</ButtonLink>
@@ -45,6 +65,34 @@ export function HomePage() {
             fetchPriority="high"
             className="block w-full object-cover"
           />
+        </div>
+      </section>
+
+      <section id="direct" aria-labelledby="direct-title" className="bg-canvas-alt py-xxl sm:py-section">
+        <div className="gutter mx-auto flex max-w-grid flex-col gap-xxl">
+          <div data-reveal className="mx-auto flex max-w-reading flex-col items-center gap-sm text-center">
+            <h2 id="direct-title" className="text-display-md sm:text-display-lg">
+              Hidden title. Five middlemen. None of them own the land. Ask why.
+            </h2>
+            <p className="text-lead font-regular text-ink-secondary">
+              Every middleman adds to the price. On SmartLand you deal with the owner or a licensed broker.
+            </p>
+          </div>
+          <ul className="grid gap-xxl md:grid-cols-3">
+            {DIRECT.map((item, i) => (
+              <li key={item.title} data-reveal data-reveal-delay={i * 0.08} className="flex flex-col items-center gap-sm text-center">
+                <item.icon size={28} strokeWidth={1.75} className="text-ink-secondary" aria-hidden />
+                <h3 className="text-tagline font-semibold">{item.title}</h3>
+                <p className="max-w-prose text-ink-secondary">{item.body}</p>
+              </li>
+            ))}
+          </ul>
+          <div data-reveal className="flex flex-col items-center gap-sm xs:flex-row xs:justify-center">
+            <ButtonLink to="/listings">Find listings by town</ButtonLink>
+            <ButtonLink to="/listings/new" variant="secondary">
+              Post a listing
+            </ButtonLink>
+          </div>
         </div>
       </section>
 

@@ -281,7 +281,12 @@ async def _ask(url: str, query: str, timeout: float) -> dict:
     return data
 
 
-async def _overpass(query: str, label: str, timeout: float = 60) -> dict | None:
+# The survey runs in the background after a request stops waiting for it, so
+# this caps how long one slow mirror can hold it, not how long people wait
+OVERPASS_TIMEOUT = 30
+
+
+async def _overpass(query: str, label: str, timeout: float = OVERPASS_TIMEOUT) -> dict | None:
     """Sends the query to every mirror that hasn't failed recently and returns
     the first good answer, or None when they all fail."""
     now = time.monotonic()
@@ -354,12 +359,12 @@ async def collect(lat: float, lon: float, budget: float | None = None) -> dict |
     return result["measure"] if result else None
 
 
-async def nearby(lat: float, lon: float, budget: float = 2) -> dict | None:
+async def nearby(lat: float, lon: float, budget: float = 2, budget_without_overture: float = 15) -> dict | None:
     """Schools, hospitals, shops, food, and more around a point, nearest first.
 
     Joins the survey /locate started, if it's still running. If OpenStreetMap
-    isn't back within `budget` seconds, answers at once from the local Overture
-    copy with partial=True; the survey keeps going, so asking again shortly gets
+    isn't back within `budget` seconds (`budget_without_overture` when the
+    local copy isn't installed), answers with what's ready and partial=True; the survey keeps going, so asking again shortly gets
     the full answer. None only when both sources fail.
     Returns {"categories": {...}, "partial": bool}."""
     cached = _nearby_cache.get(_key(lat, lon))
@@ -367,7 +372,7 @@ async def nearby(lat: float, lon: float, budget: float = 2) -> dict | None:
         return {"categories": cached, "partial": False}
     task = _survey_task(lat, lon)
     try:
-        result = await asyncio.wait_for(asyncio.shield(task), budget if places_db.available() else None)
+        result = await asyncio.wait_for(asyncio.shield(task), budget if places_db.available() else budget_without_overture)
     except TimeoutError:
         return {"categories": _categories(None, lat, lon), "partial": True}
     if result:

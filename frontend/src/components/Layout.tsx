@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 import { LandPlot, Menu, Moon, Sun, X } from 'lucide-react'
 import { useTheme, type ThemeChoice } from '../lib/theme'
 import { useUser } from '../lib/auth'
@@ -26,6 +26,16 @@ function ThemeButton() {
   )
 }
 
+// Which nav item a path belongs to. Posting a listing is its own item, so
+// /listings/new doesn't also light up Listings.
+const NAV_MATCH: Record<string, (path: string) => boolean> = {
+  '/listings': (p) => (p === '/listings' || p.startsWith('/listings/') || p.startsWith('/listing/')) && !p.startsWith('/listings/new'),
+  '/listings/new': (p) => p.startsWith('/listings/new'),
+  '/check': (p) => p.startsWith('/check'),
+  '/reports': (p) => p.startsWith('/reports'),
+  '/account': (p) => p.startsWith('/account'),
+}
+
 const navLink = ({ isActive }: { isActive: boolean }) =>
   `press inline-flex min-h-tap items-center px-sm text-fine-print tracking-[-0.0075rem] ${
     isActive ? 'text-on-tile' : 'text-on-tile-secondary hover:text-on-tile'
@@ -44,10 +54,13 @@ function GlobalNav() {
   const open = openOn === pathname
   const setOpen = (next: boolean) => setOpenOn(next ? pathname : null)
   const links = [
-    { to: '/check', label: 'Check' },
+    { to: '/listings', label: 'Listings' },
+    { to: '/listings/new', label: 'Post a listing' },
+    { to: '/check', label: 'Check a price' },
     { to: '/reports', label: 'Saved' },
     { to: '/account', label: user ? 'Account' : 'Sign in' },
   ]
+  const isActive = (to: string) => NAV_MATCH[to]?.(pathname) ?? false
 
   useEffect(() => {
     if (!open) return
@@ -70,9 +83,9 @@ function GlobalNav() {
           {/* Full link row from 834px, per DESIGN.md */}
           <div className="hidden items-center md:flex">
             {links.map((l) => (
-              <NavLink key={l.to} to={l.to} className={navLink}>
+              <Link key={l.to} to={l.to} aria-current={isActive(l.to) ? 'page' : undefined} className={navLink({ isActive: isActive(l.to) })}>
                 {l.label}
-              </NavLink>
+              </Link>
             ))}
           </div>
           <ThemeButton />
@@ -93,9 +106,9 @@ function GlobalNav() {
           <ul className="mx-auto max-w-grid">
             {links.map((l) => (
               <li key={l.to}>
-                <NavLink to={l.to} className={trayLink}>
+                <Link to={l.to} aria-current={isActive(l.to) ? 'page' : undefined} className={trayLink({ isActive: isActive(l.to) })}>
                   {l.label}
-                </NavLink>
+                </Link>
               </li>
             ))}
           </ul>
@@ -113,7 +126,7 @@ const SUBNAV_TITLES: [RegExp, string][] = [
   [/^\/check/, 'Check a location'],
   [/^\/listings\/new/, 'Post a listing'],
   [/^\/listings\/mine/, 'Your listings'],
-  [/^\/listings\//, 'Listings'],
+  [/^\/listings(\/|$)/, 'Listings'],
   [/^\/listing\//, 'Listing'],
   [/^\/reviews/, 'Document reviews'],
 ]
@@ -139,6 +152,14 @@ function SubNav() {
 const YEAR = new Date().getFullYear()
 
 const FOOTER = [
+  {
+    heading: 'Listings',
+    links: [
+      { to: '/listings', label: 'Find listings by town' },
+      { to: '/listings/new', label: 'Post a listing' },
+      { to: '/listings/mine', label: 'Your listings' },
+    ],
+  },
   {
     heading: 'Check land',
     links: [
@@ -166,7 +187,7 @@ function Footer() {
           SmartLand estimates come from reference prices for nearby areas, OpenStreetMap, regional figures, and news.
           They are not an appraisal. Check with a licensed appraiser and the local assessor before you buy.
         </p>
-        <div className="grid gap-xl sm:grid-cols-2">
+        <div className="grid gap-xl sm:grid-cols-3">
           {FOOTER.map((col) => (
             <div key={col.heading}>
               <p className="text-caption font-semibold text-ink">{col.heading}</p>

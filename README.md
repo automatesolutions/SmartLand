@@ -27,7 +27,7 @@ The web app calls `/api/...` and the Vite dev server forwards it to the backend 
 | GET, PUT, DELETE | `/api/reports`, `/api/reports/{id}` | Yes | Saved reports in the account |
 | POST, DELETE | `/api/reports/{id}/share` | Yes | Turn a public link on or off |
 | GET | `/api/shared/{token}` | No | A shared report, read-only |
-| GET | `/api/listings?lat=&lon=&radius_km=25&category=` | No | Active listings near a point, nearest first, plus the count per category. Phone numbers are left out of search results |
+| GET | `/api/listings?lat=&lon=&radius_km=25&category=` | No | Active listings near a point (every kind when `category` is left out), nearest first, plus the count per category. Phone numbers are left out of search results |
 | GET | `/api/listings/{id}` | No | One listing, with the seller's phone number |
 | GET | `/api/listings/mine` | Yes | The signed-in seller's listings, active and sold |
 | POST | `/api/listings` | Yes | Post a listing. Brokers must give a PRC license number; every seller confirms they may sell. 20 per hour |
@@ -36,10 +36,16 @@ The web app calls `/api/...` and the Vite dev server forwards it to the backend 
 | GET | `/api/listings/{id}/record` | No | Every change to a listing with its fingerprint, and whether the chain is intact |
 | POST | `/api/listings/{id}/documents` | Yes | Add a document to your listing (multipart: `type`, `file`) |
 | GET | `/api/listings/{id}/documents/{doc}/file` | Yes | The file, for the listing's owner and reviewers only |
+| POST | `/api/listings/{id}/photos` | Yes | Add a public photo to your listing (multipart: `alt`, `file`). JPG, PNG, or WebP, up to 8 MB, 8 per listing |
+| GET | `/api/listings/{id}/photos/{photo}` | No | A listing photo |
+| DELETE | `/api/listings/{id}/photos/{photo}` | Yes | Remove a photo from your listing |
 | GET | `/api/admin/documents?status=pending` | Reviewer | Documents waiting for review |
 | POST | `/api/admin/documents/{doc}/review` | Reviewer | Mark a document `verified` or `rejected`, with a note |
 | DELETE | `/api/listings/{id}` | Yes | Remove your listing |
 | GET | `/api/reverse?lat=&lon=` | No | Barangay, town, and province for a pinned spot |
+| GET | `/api/geocode?q=` | No | A town or barangay by name, without the map survey and news. The Listings page uses it to search by town |
+
+Location lookups wait at most about 20 seconds. The backend keeps repeat answers in memory (`locate` for an hour, or two minutes when OpenStreetMap's survey wasn't back yet; `nearby` for an hour; `offices`, `reverse`, and `geocode` for a day). When the map service runs slow, `nearby` and `offices` answer with what's ready and `"partial": true`, and other lookups answer 504 with a reason the web app shows. The OpenStreetMap survey keeps running in the AI service for up to 30 seconds per mirror, so asking again shortly gets the full answer.
 
 Checking a location works without an account. Guests are limited to 100 reports per 15 minutes per IP address, and signed-in people get their own limit.
 
@@ -68,7 +74,9 @@ Without it, the Google button is hidden and email sign-in works as before.
 
 Sellers post listings from `/listings/new`. Each kind of property (farm lot, house for sale, house for rent, land for lease, commercial building or warehouse for sale, warehouse for lease, beach property, foreclosure) asks for its own fields, defined once in `backend/listing_rules.py` and served to the form by `GET /api/listings/schema`.
 
-- **Documents.** Sellers can attach a land title, proof of rights (CLOA or deed of sale), tax declaration, real property tax clearance, lot plan, or other papers: PDF, JPG, PNG, or WebP, up to 10 MB. The server checks the real file type from its first bytes. Files are saved in `UPLOAD_DIR` (default `backend/uploads/`), named by their SHA-256, and only the seller and reviewers can open them. Buyers see each document's kind, review status, and fingerprint.
+- **Title rule.** Sale listings must come with the land title or proof of rights, or the seller ticks "I don't have a land title or proof of rights to show" (`title_status`: `attached` or `none`). Every listing has a `title_state`: `checked` (a reviewer checked it), `shown` (uploaded, not checked yet), `rejected`, or `none`. Cards and the listing page show it as a badge ("Title checked by SmartLand", "No title shown") next to who's selling, ahead of the credibility score.
+- **Photos.** Public photos with alt text, checked by their first bytes like documents, stored under `photos/` next to the documents. The first is the cover on listing cards. Title documents never go here.
+- **Documents.** Sellers can attach a land title, proof of rights (CLOA or deed of sale), tax declaration, real property tax clearance, lot plan, or other papers: PDF, JPG, PNG, or WebP, up to 10 MB. The server checks the real file type from its first bytes. Files are saved in `UPLOAD_DIR` (default `backend/uploads/`) or a Cloud Storage bucket (see Keep data between deploys), named by their SHA-256, and only the seller and reviewers can open them. Buyers see each document's kind, review status, and fingerprint.
 - **Reviews.** People whose emails are in `ADMIN_EMAILS` (comma-separated) review documents at `/reviews`. They check each one with the office that issued it (Registry of Deeds, assessor, treasurer, DAR, DENR) and mark it checked or rejected.
 - **Credibility score** (0 to 100). Proof of ownership is worth 40 once checked (15 while only uploaded), the tax declaration and tax clearance 15 each, the lot plan 10, an exact pin with area 10, and an identified seller 10. Rejected documents count for nothing. It shows how much of a listing has documents behind it. It isn't a guarantee.
 - **Fingerprints.** A buyer can choose a file the seller sent them on the listing page. The browser works out its SHA-256 and compares it with the uploaded documents, without uploading the file.
@@ -99,7 +107,31 @@ Build for production with `npm run build` in `frontend/`. Output goes to `fronte
 
 `./deploy.ps1` deploys the AI service and the web app to Cloud Run. Set `SMARTLAND_JWT_SECRET` in your shell first, so sign-ins survive new deploys, and `SMARTLAND_ADMIN_EMAILS` to the reviewers' emails.
 
-Cloud Run's disk is wiped on every deploy and is not shared between instances. The script runs the web app on one instance and keeps the SQLite file in `/tmp`. Accounts, saved reports, listings, and uploaded documents still reset on each deploy. For lasting accounts, mount a persistent volume and point `DATABASE_PATH` at it, or move `backend/store.py` to Cloud SQL.
+Cloud Run's disk is wiped on every deploy and whenever the app sits idle, and it isn't shared between instances. The script runs the web app on one instance, because the database is one SQLite file.
+
+### Keep data between deploys
+
+Without a bucket, the database and uploads sit in `/tmp` and reset often. With one, they last:
+
+- **Database.** [Litestream](https://litestream.io) copies every change to `gs://<bucket>/db` within about a second, and restores the database from there when the app starts (`backend/start.sh`).
+- **Uploaded files.** Documents go straight to `gs://<bucket>/uploads/`, named by their SHA-256 (`backend/storage.py`). The bucket stays private: files are served only through the backend, which checks who's asking.
+
+One-time setup (this creates a paid resource, a few cents a month at SmartLand's size):
+
+```powershell
+gcloud storage buckets create gs://smartland-data-510911 --project smartland-510911 --location asia-southeast1 --uniform-bucket-level-access --public-access-prevention
+$sa = "$(gcloud projects describe smartland-510911 --format 'value(projectNumber)')-compute@developer.gserviceaccount.com"
+gcloud storage buckets add-iam-policy-binding gs://smartland-data-510911 --member "serviceAccount:$sa" --role roles/storage.objectAdmin
+$env:SMARTLAND_BUCKET = "smartland-data-510911"
+./deploy.ps1
+```
+
+| Setting | What it does |
+|---|---|
+| `DATABASE_PATH` | Where the SQLite file lives. Default `backend/smartland.db` |
+| `UPLOAD_DIR` | Folder for uploaded files when no bucket is set. Default `uploads/` next to the database |
+| `STORAGE_BUCKET` | Keep uploaded files in this Cloud Storage bucket instead (`STORAGE_PREFIX`, default `uploads`) |
+| `LITESTREAM_REPLICA_URL` | Copy the database here, for example `gcs://my-bucket/db` |
 
 ## Design
 

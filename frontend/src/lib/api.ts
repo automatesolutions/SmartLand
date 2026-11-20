@@ -106,7 +106,7 @@ export interface AnalyzeResult {
   geo_data?: (Partial<Place> & { amenities?: Amenity[] }) | null
 }
 
-export type ApiErrorKind = 'offline' | 'server' | 'rate-limited' | 'invalid' | 'not-found' | 'unauthorized' | 'conflict'
+export type ApiErrorKind = 'offline' | 'slow' | 'server' | 'rate-limited' | 'invalid' | 'not-found' | 'unauthorized' | 'conflict'
 
 export class ApiError extends Error {
   kind: ApiErrorKind
@@ -158,6 +158,8 @@ async function request<T>(path: string, init: RequestInit = {}, signal?: AbortSi
   if (res.status === 409) throw new ApiError('conflict', 'Conflict', detail)
   if (res.status === 429) throw new ApiError('rate-limited', 'Too many requests')
   if (res.status === 422 || res.status === 413 || res.status === 415) throw new ApiError('invalid', 'The server rejected the values', detail)
+  // The backend answers 504 with a reason when the map service runs slow
+  if (res.status === 504 && detail) throw new ApiError('slow', 'Map service slow', detail)
   // Vite's proxy answers 502/504 when the backend is not running
   if (res.status === 502 || res.status === 503 || res.status === 504) throw new ApiError('offline', `Backend unavailable (${res.status})`)
   if (!res.ok) throw new ApiError('server', `Backend error ${res.status}`, detail)
@@ -182,7 +184,7 @@ export interface OfficeLocation {
 export function officeLocations(
   q: { town: string; province?: string | null; lat: number; lon: number },
   signal?: AbortSignal,
-): Promise<Partial<Record<OfficeKind, OfficeLocation | null>>> {
+): Promise<Partial<Record<OfficeKind, OfficeLocation | null>> & { partial?: boolean }> {
   const params = new URLSearchParams({ town: q.town, lat: q.lat.toFixed(6), lon: q.lon.toFixed(6) })
   if (q.province) params.set('province', q.province)
   return request(`/api/offices?${params}`, {}, signal)
@@ -231,6 +233,11 @@ export interface NearbyResult {
 /** Schools, hospitals, shops, food, and more around a lot, from OpenStreetMap and Overture Maps */
 export function nearbyPlaces(lat: number, lon: number, signal?: AbortSignal): Promise<NearbyResult> {
   return request(`/api/nearby?lat=${lat.toFixed(6)}&lon=${lon.toFixed(6)}`, {}, signal)
+}
+
+/** Finds a town or barangay by name, without the map survey and news that locate runs */
+export function geocode(query: string, signal?: AbortSignal): Promise<Place> {
+  return request<Place>(`/api/geocode?q=${encodeURIComponent(query)}`, {}, signal)
 }
 
 /** Same as locate, for a spot pinned on the map */
@@ -316,6 +323,9 @@ export interface ListingSchema {
   scoring: Partial<Record<DocumentType, { label: string; uploaded: number; verified: number }>>
   max_document_mb: number
   document_types: string[]
+  max_photo_mb: number
+  max_photos: number
+  photo_types: string[]
 }
 
 export interface ListingInput {
@@ -337,6 +347,8 @@ export interface ListingInput {
   contact_phone: string
   details: Record<string, DetailValue>
   authorized: boolean
+  /** Sale listings: the title comes with the listing, or the seller confirmed they have none to show */
+  title_status?: 'attached' | 'none' | null
 }
 
 /** What anyone sees about a document. The file itself is private. */
@@ -361,8 +373,20 @@ export interface Credibility {
   items: { key: string; label: string; points: number; max: number; state: 'verified' | 'uploaded' | 'rejected' | 'missing' | 'complete' | 'partial' }[]
 }
 
+/** Where the title stands: checked by a reviewer, shown but not checked yet, failed review, or not shown */
+export type TitleState = 'checked' | 'shown' | 'rejected' | 'none'
+
+/** A public photo of the property */
+export interface ListingPhoto {
+  id: string
+  alt: string
+  url: string
+}
+
 export interface Listing extends Omit<ListingInput, 'authorized' | 'contact_phone'> {
   id: string
+  title_state: TitleState
+  photos: ListingPhoto[]
   status: 'active' | 'sold'
   created_at: string
   updated_at: string
@@ -409,6 +433,41 @@ async function requestBlob(path: string): Promise<Blob> {
   return res.blob()
 }
 
+/**
+ * Uploads a form with the signed-in token and reports progress from 0 to 1.
+ * fetch can't report upload progress, so this uses XMLHttpRequest.
+ */
+function upload<T>(path: string, form: FormData, onProgress?: (fraction: number) => void): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open('POST', path)
+    if (authToken) xhr.setRequestHeader('Authorization', `Bearer ${authToken}`)
+    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(e.loaded / e.total)
+    xhr.onerror = () => reject(new ApiError('offline', 'Network request failed'))
+    xhr.onload = () => {
+      let body: { detail?: unknown } | null = null
+      try {
+        body = JSON.parse(xhr.responseText)
+      } catch {
+        // Not JSON
+      }
+      const detail = typeof body?.detail === 'string' ? body.detail : undefined
+      const st = xhr.status
+      if (st >= 200 && st < 300) return resolve(body as T)
+      if (st === 401) {
+        if (authToken) onUnauthorized?.()
+        return reject(new ApiError('unauthorized', 'Not signed in', detail))
+      }
+      if (st === 404) return reject(new ApiError('not-found', 'Not found', detail))
+      if (st === 429) return reject(new ApiError('rate-limited', 'Too many requests'))
+      if (st === 413 || st === 415 || st === 422) return reject(new ApiError('invalid', 'The server rejected the file', detail))
+      if (st === 502 || st === 503 || st === 504) return reject(new ApiError('offline', `Unavailable (${st})`))
+      reject(new ApiError('server', `Error ${st}`, detail))
+    }
+    xhr.send(form)
+  })
+}
+
 const lid = (id: string) => `/api/listings/${encodeURIComponent(id)}`
 
 export const listingsApi = {
@@ -425,12 +484,19 @@ export const listingsApi = {
   setStatus: (id: string, status: 'active' | 'sold') => request<Listing>(lid(id), { method: 'PATCH', body: JSON.stringify({ status }) }),
   setPrice: (id: string, price: number) => request<Listing>(lid(id), { method: 'PATCH', body: JSON.stringify({ price }) }),
   remove: (id: string) => request<void>(lid(id), { method: 'DELETE' }),
-  uploadDocument: (id: string, type: DocumentType, file: File) => {
+  uploadDocument: (id: string, type: DocumentType, file: File, onProgress?: (fraction: number) => void) => {
     const form = new FormData()
     form.set('type', type)
     form.set('file', file)
-    return request<ListingDocument>(`${lid(id)}/documents`, { method: 'POST', body: form })
+    return upload<ListingDocument>(`${lid(id)}/documents`, form, onProgress)
   },
+  uploadPhoto: (id: string, file: File, alt: string, onProgress?: (fraction: number) => void) => {
+    const form = new FormData()
+    form.set('alt', alt)
+    form.set('file', file)
+    return upload<ListingPhoto>(`${lid(id)}/photos`, form, onProgress)
+  },
+  deletePhoto: (id: string, photoId: string) => request<void>(`${lid(id)}/photos/${encodeURIComponent(photoId)}`, { method: 'DELETE' }),
   documentFile: (listingId: string, docId: string) => requestBlob(`${lid(listingId)}/documents/${encodeURIComponent(docId)}/file`),
   /** Barangay, town, and province for a pinned spot, without the full lookup */
   reverse: (lat: number, lon: number, signal?: AbortSignal) =>
@@ -463,6 +529,11 @@ export function errorCopy(err: unknown): { title: string; body: string } {
       return {
         title: "We couldn't reach SmartLand",
         body: 'The pricing service is not answering. Check that the backend and AI service are running, then try again.',
+      }
+    case 'slow':
+      return {
+        title: 'This is taking longer than usual',
+        body: 'The map service is slow right now. Try again in a minute.',
       }
     case 'rate-limited':
       return {

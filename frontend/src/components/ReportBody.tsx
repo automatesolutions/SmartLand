@@ -26,6 +26,7 @@ import type { MapPlace } from './LotMap'
 import { Skeleton } from './States'
 import { Listings } from './Listings'
 import { NearbyPlaces } from './NearbyPlaces'
+import { useSlow } from '../lib/slow'
 
 const SENTIMENT_COPY = {
   positive: 'Mostly good news for the area.',
@@ -517,7 +518,7 @@ function BeforeYouBuy({ report }: { report: Report }) {
   const geo = result.geo_data
   const lot = typeof geo?.lat === 'number' && typeof geo?.lon === 'number' ? { lat: geo.lat, lon: geo.lon } : null
   const town = geo?.locality ?? geo?.name ?? null
-  const [found, setFound] = useState<Partial<Record<OfficeKind, OfficeLocation | null>> | null>(null)
+  const [found, setFound] = useState<(Partial<Record<OfficeKind, OfficeLocation | null>> & { partial?: boolean }) | null>(null)
 
   useEffect(() => {
     if (!lot || !town) return
@@ -558,6 +559,7 @@ function BeforeYouBuy({ report }: { report: Report }) {
   }, [found])
 
   const loading = lot !== null && town !== null && found === null
+  const slow = useSlow(loading)
 
   return (
     <Card title="Before you buy" intro="Check the lot with these offices. They hold the official records.">
@@ -614,9 +616,13 @@ function BeforeYouBuy({ report }: { report: Report }) {
             )}
             <p role="status" className="text-caption text-ink-secondary">
               {loading
-                ? 'Finding the offices on the map.'
+                ? slow
+                  ? 'Still finding the offices. The map service is slow right now.'
+                  : 'Finding the offices on the map.'
                 : places.length > 0
-                  ? 'The blue dot is the lot. Numbers match the list.'
+                  ? found?.partial
+                    ? 'The blue dot is the lot. Some offices aren’t on the map yet; their directions links search by name.'
+                    : 'The blue dot is the lot. Numbers match the list.'
                   : "We couldn't find these offices on OpenStreetMap. The directions links search for them by name."}
             </p>
           </div>

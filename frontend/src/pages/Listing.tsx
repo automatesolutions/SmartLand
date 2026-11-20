@@ -8,7 +8,8 @@ import { Button, ButtonLink } from '../components/Button'
 import { ListingChecks } from '../components/ListingChecks'
 import { MapView } from '../components/Map'
 import { Banner, EmptyState, Skeleton } from '../components/States'
-import { CopyCheck, CredibilityCard, DocumentList, ListingRecord } from '../components/Trust'
+import { CopyCheck, CredibilityCard, DocumentList, ListingRecord, TrustBadges } from '../components/Trust'
+import { PhotoGallery, PhotoManager } from '../components/Photos'
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -103,7 +104,7 @@ function OwnerControls({ listing, onChange }: { listing: Listing; onChange: (l: 
 export function ListingPage() {
   const { id = '' } = useParams()
   const navigate = useNavigate()
-  const arrival = useLocation().state as { posted?: boolean; uploadFailed?: number } | null
+  const arrival = useLocation().state as { posted?: boolean; uploadFailed?: number; photosFailed?: number } | null
   const posted = arrival?.posted ?? false
   const schema = useListingSchema()
   const [listing, setListing] = useState<{ id: string; data: Listing } | null>(null)
@@ -185,6 +186,11 @@ export function ListingPage() {
               Add {arrival!.uploadFailed === 1 ? 'it' : 'them'} again under Documents below.
             </Banner>
           )}
+          {(arrival?.photosFailed ?? 0) > 0 && (
+            <Banner tone="caution" title={`${arrival!.photosFailed} ${arrival!.photosFailed === 1 ? 'photo' : 'photos'} didn't upload`}>
+              Add {arrival!.photosFailed === 1 ? 'it' : 'them'} again under Photos below.
+            </Banner>
+          )}
           {l.status === 'sold' && (
             <Banner tone="caution" title="Marked as sold">
               The seller says this property is sold. It no longer shows in searches.
@@ -196,6 +202,7 @@ export function ListingPage() {
               {c.label} · Posted {formatDate(l.created_at)}
             </p>
             <h1 className="text-display-md">{l.title}</h1>
+            <TrustBadges listing={l} />
             <p className="text-display-lg tabular-nums">{listingPrice(l)}</p>
             {perSqm && <p className="tabular-nums text-ink-secondary">{formatPeso(perSqm)} per sqm of lot</p>}
           </div>
@@ -204,6 +211,7 @@ export function ListingPage() {
 
       <div className="gutter mx-auto grid max-w-reading gap-lg py-xl md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-lg">
+          <PhotoGallery photos={l.photos} />
           <MapView lat={l.lat} lon={l.lon} label={l.title} className="h-72 rounded-lg border border-hairline sm:h-80" />
           <dl>
             <Row label="Where">
@@ -231,6 +239,7 @@ export function ListingPage() {
           )}
           {schema && (
             <>
+              {l.mine && <PhotoManager listing={l} schema={schema} onChange={(photos) => setListing({ id, data: { ...l, photos } })} />}
               <DocumentList listing={l} schema={schema} onChange={refresh} />
               {!l.mine && <CopyCheck documents={l.documents} schema={schema} />}
               <ListingRecord listingId={l.id} schema={schema} version={version} />
@@ -255,11 +264,11 @@ export function ListingPage() {
             />
           ) : (
             <section aria-label="Contact the seller" className="flex flex-col gap-sm rounded-lg border border-hairline bg-surface p-md sm:p-lg">
+              <TrustBadges listing={l} />
               <p className="inline-flex items-center gap-xs font-semibold">
                 <UserRound size={18} className="text-ink-secondary" aria-hidden />
                 {l.contact_name}
               </p>
-              <p className="text-caption text-ink-secondary">{SELLER_LABEL[l.seller_type]}</p>
               {l.contact_phone && l.status === 'active' && (
                 <a href={`tel:${l.contact_phone.replace(/[^\d+]/g, '')}`} className="press inline-flex min-h-tap items-center justify-center gap-xs rounded-pill bg-accent-fill px-btn-x text-on-accent">
                   <Phone size={18} aria-hidden />
@@ -279,7 +288,8 @@ export function ListingPage() {
                 </a>
               )}
               <p className="text-caption text-ink-secondary">
-                SmartLand doesn’t check sellers or licenses. Never send money before you’ve seen the property and the title.
+                SmartLand reviewers check the titles sellers upload, but not IDs or PRC licenses. Never send money before you’ve seen the property and the
+                title.
               </p>
             </section>
           )}

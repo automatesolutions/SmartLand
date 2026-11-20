@@ -8,7 +8,10 @@ param(
   # Comma-separated emails of the people who review listing documents
   [string]$AdminEmails = $env:SMARTLAND_ADMIN_EMAILS,
   # OAuth client ID for "Sign in with Google" (Google Cloud Console > APIs & Services > Credentials)
-  [string]$GoogleClientId = $env:SMARTLAND_GOOGLE_CLIENT_ID
+  [string]$GoogleClientId = $env:SMARTLAND_GOOGLE_CLIENT_ID,
+  # Cloud Storage bucket that keeps the database and uploaded files between
+  # deploys. The script never creates it: see "Keep data between deploys" in README.md.
+  [string]$Bucket = $env:SMARTLAND_BUCKET
 )
 
 $ErrorActionPreference = "Stop"
@@ -49,10 +52,24 @@ if (-not $JwtSecret) {
 
 $aiUrl = gcloud run services describe smartland-ai --project $Project --region $Region --format "value(status.url)"
 
+# Where the database and uploaded files live
+if ($Bucket) {
+  gcloud storage buckets describe "gs://$Bucket" --project $Project --format "value(name)" | Out-Null
+  if ($LASTEXITCODE) {
+    Write-Error "Bucket gs://$Bucket doesn't exist or this account can't see it. Create it first (README.md, Keep data between deploys)."
+    exit 1
+  }
+  Write-Host "Database and uploads are kept in gs://$Bucket"
+  $storageVars = "DATABASE_PATH=/data/smartland.db;STORAGE_BUCKET=$Bucket;LITESTREAM_REPLICA_URL=gcs://$Bucket/db"
+} else {
+  Write-Warning "SMARTLAND_BUCKET is not set. Accounts, listings, and uploads reset on every deploy and whenever the app sits idle."
+  $storageVars = "DATABASE_PATH=/tmp/smartland.db;UPLOAD_DIR=/tmp/uploads"
+}
+
 # One instance: accounts live in a SQLite file, which instances can't share
 gcloud run deploy smartland-web --source "$root" --project $Project --region $Region `
   --allow-unauthenticated --memory 512Mi --max-instances 1 --quiet `
-  --set-env-vars "^;^AI_SERVICE_URL=$aiUrl/predict;CORS_ORIGIN=*;JWT_SECRET=$JwtSecret;DATABASE_PATH=/tmp/smartland.db;ADMIN_EMAILS=$AdminEmails;GOOGLE_CLIENT_ID=$GoogleClientId"
+  --set-env-vars "^;^AI_SERVICE_URL=$aiUrl/predict;CORS_ORIGIN=*;JWT_SECRET=$JwtSecret;$storageVars;ADMIN_EMAILS=$AdminEmails;GOOGLE_CLIENT_ID=$GoogleClientId"
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
 $webUrl = gcloud run services describe smartland-web --project $Project --region $Region --format "value(status.url)"

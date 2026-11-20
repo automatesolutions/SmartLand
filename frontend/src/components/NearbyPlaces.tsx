@@ -25,6 +25,7 @@ import { MapView } from './Map'
 import type { MapPlace } from './LotMap'
 import { Card } from './ReportBody'
 import { Skeleton } from './States'
+import { useSlow } from '../lib/slow'
 
 type Group = 'Everyday' | 'Food' | 'Getting around and fun'
 
@@ -67,6 +68,7 @@ export function NearbyPlaces({ report }: { report: Report }) {
   const [failed, setFailed] = useState(false)
   const [attempt, setAttempt] = useState(0)
   const [picked, setPicked] = useState<NearbyKind | null>(null)
+  const slow = useSlow(!found && !failed)
 
   useEffect(() => {
     if (!lot) return
@@ -130,7 +132,7 @@ export function NearbyPlaces({ report }: { report: Report }) {
       ) : !found ? (
         <div aria-busy className="flex flex-col gap-sm">
           <p role="status" className="text-caption text-ink-secondary">
-            Finding places near the lot. This usually takes a few seconds.
+            {slow ? 'Still looking. The map service is slow right now, so this can take up to 20 seconds.' : 'Finding places near the lot. This usually takes a few seconds.'}
           </p>
           <div className="flex flex-wrap gap-xs">
             {KINDS.map((k) => (

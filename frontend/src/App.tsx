@@ -65,6 +65,7 @@ export default function App() {
           <Route path="listings/new" element={<NewListingPickerPage />} />
           <Route path="listings/new/:slug" element={<NewListingPage />} />
           <Route path="reviews" element={<ReviewsPage />} />
+          <Route path="listings" element={<ListingsPage />} />
           <Route path="listings/mine" element={<MyListingsPage />} />
           <Route path="listings/:slug" element={<ListingsPage />} />
           <Route path="listing/:id" element={<ListingPage />} />
