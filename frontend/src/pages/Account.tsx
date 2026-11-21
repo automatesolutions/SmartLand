@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { LoaderCircle, LogOut, RotateCcw, UserRound } from 'lucide-react'
+import { ChevronRight, LoaderCircle, LogOut, Mail, RotateCcw, UserRound } from 'lucide-react'
 import { ApiError } from '../lib/api'
 import { signIn, signOut, useUser } from '../lib/auth'
 import { retrySync, useSavedReports, useSyncState } from '../lib/reports'
@@ -12,6 +12,41 @@ import { GoogleSignIn } from '../components/GoogleSignIn'
 import { useGoogleAvailable } from '../lib/google'
 
 type Mode = 'login' | 'register'
+
+const SUPPORT_EMAIL = 'support@smartland.app'
+
+function MadeBy() {
+  return (
+    <section data-reveal aria-label="About SmartLand" className="flex flex-col gap-sm">
+      <div className="flex items-center gap-md rounded-lg border border-hairline bg-surface p-md">
+        <img
+          src="/brand/bezalel.webp"
+          alt="NG-BEZALEL STAINLESS CRAFTERS logo"
+          width={64}
+          height={62}
+          className="shrink-0 rounded-md bg-[#141414]"
+        />
+        <div className="min-w-0">
+          <p>
+            Made by <strong className="font-semibold">ZALEL LABS</strong>. We build software, cybersecurity, and AI products.
+          </p>
+          <p className="mt-xs text-caption text-ink-secondary">ZALEL LABS is part of NG-BEZALEL STAINLESS CRAFTERS.</p>
+        </div>
+      </div>
+      <a
+        href={`mailto:${SUPPORT_EMAIL}?subject=SmartLand%20support`}
+        className="press flex min-h-tap items-center gap-md rounded-lg border border-hairline bg-surface p-md hover:bg-surface-raised"
+      >
+        <Mail size={20} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">Get help</span>
+          <span className="block truncate text-caption text-ink-secondary">Email {SUPPORT_EMAIL}</span>
+        </span>
+        <ChevronRight size={18} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+      </a>
+    </section>
+  )
+}
 
 const SYNC_COPY = {
   local: '',
@@ -225,6 +260,8 @@ export function AccountPage() {
           </form>
           </>
         )}
+
+        <MadeBy />
       </div>
     </div>
   )
