@@ -17,7 +17,7 @@ const SUPPORT_EMAIL = 'support@smartland.app'
 
 function MadeBy() {
   return (
-    <section data-reveal aria-label="About SmartLand" className="flex flex-col gap-sm">
+    <section aria-label="About SmartLand" className="flex flex-col gap-sm">
       <div className="flex items-center gap-md rounded-lg border border-hairline bg-surface p-md">
         <img
           src="/brand/bezalel.webp"
@@ -78,7 +78,7 @@ function SignedIn() {
           Try syncing again
         </Button>
       )}
-      <div className="flex flex-col gap-sm xs:flex-row">
+      <div className="flex flex-col gap-sm xs:flex-row xs:flex-wrap">
         <ButtonLink to="/reports">Open saved reports</ButtonLink>
         <ButtonLink to="/listings/mine" variant="secondary">
           Your listings
@@ -88,13 +88,15 @@ function SignedIn() {
             Review documents
           </ButtonLink>
         )}
-        <Button variant="plain" onClick={signOut} icon={<LogOut size={18} aria-hidden />}>
+      </div>
+      <div className="flex flex-col items-start gap-xs border-t border-hairline pt-md">
+        <Button variant="plain" className="-ml-sm" onClick={signOut} icon={<LogOut size={18} aria-hidden />}>
           Sign out
         </Button>
+        <p className="text-caption text-ink-secondary">
+          When you sign out, your reports stay in your account and leave this device.
+        </p>
       </div>
-      <p className="text-caption text-ink-secondary">
-        When you sign out, your reports stay in your account and leave this device.
-      </p>
     </div>
   )
 }
