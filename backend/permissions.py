@@ -16,7 +16,10 @@ ALLOWED: dict[str, set[str]] = {
     "members.manage": {"owner", "admin"},
     "listing.post_as_org": {"owner", "admin", "member"},
     "listing.edit_any": {"owner", "admin"},
-    "workspace.open": {"owner", "admin", "member", "guest"},
+    # Team workspace: guests read, members chat and work tasks, owners and admins run the channels
+    "workspace.view": {"owner", "admin", "member", "guest"},
+    "workspace.post": {"owner", "admin", "member"},
+    "channels.manage": {"owner", "admin"},
     # Guests see only the leads assigned to them
     "leads.view": {"owner", "admin", "member", "guest"},
     "leads.edit": {"owner", "admin", "member"},

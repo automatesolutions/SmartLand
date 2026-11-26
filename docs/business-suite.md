@@ -1,6 +1,6 @@
 # SmartLand Business Suite: plan
 
-Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoint 1 built. Branch `feat/business-suite` from `main` at e562292.
+Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1 and 2 built; Checkpoint 3 is the in-app team workspace (Q9). Branch `feat/business-suite` from `main` at e562292.
 Written 2026-11-26 from the Business Suite prompt. `docs/business-suite-plan.md` wasn't in the repo, so this plan uses the prompt alone.
 
 ## What exists today
@@ -198,7 +198,9 @@ One helper, `can(user, action, org_id)`, in `backend/permissions.py`. Every busi
 | `leads.view` | yes | yes | yes | assigned only |
 | `leads.edit` | yes | yes | yes | no |
 | `leads.delete` | yes | yes | no | no |
-| `workspace.open` (Cloqui) | yes | yes | yes | yes |
+| `workspace.view` (team chat and tasks) | yes | yes | yes | yes |
+| `workspace.post` | yes | yes | yes | no |
+| `channels.manage` | yes | yes | no | no |
 
 Rules on top of the table:
 
@@ -230,46 +232,37 @@ Below the form: "SmartLand processes your details under the Data Privacy Act of 
 
 Retention: a daily cleanup removes the contact details of leads closed more than 2 years ago and keeps the stage history. Admins can delete a lead and its contact at any time.
 
-## 5. Cloqui handoff contract
+## 5. Team workspace (in SmartLand)
 
-SmartLand's half. Cloqui's half is built in the Cloqui repo (3.2), not from here.
+Decided 2026-11-26 (Q9): the team workspace lives inside SmartLand. There's no Cloqui link, no handoff token, and no extra env keys.
 
-### Handoff (browser opens the workspace)
+Tables (`migrations/003_workspace.sql`):
 
-`POST /api/business/workspace/handoff` with `{ "org_id": "..." }`. Signed-in members only, `can(user, 'workspace.open', org_id)`. Rate limit `10/minute` per user.
-
-Refuses with 403 and "Confirm your email to open the workspace." when `users.email_verified` is 0.
-
-Returns `{ "url": "<CLOQUI_URL>/api/handoff", "token": "<jwt>" }`. The secret stays on the server.
-
-Token: HS256 signed with `CLOQUI_HANDOFF_SECRET_SMARTLAND`.
-
-| Claim | Value |
+| Table | What it holds |
 |---|---|
-| `app` | `smartland` |
-| `org_id`, `org_name` | from `orgs` |
-| `user_id`, `email` | from `users` |
-| `email_verified` | `true` (never issued otherwise) |
-| `role` | the member's role |
-| `iat`, `exp` | now, now plus 60 s |
-| `jti` | `uuid4().hex`, new each call |
-| `iss`, `aud` | `smartland`, `cloqui-handoff` (proposed addition: Cloqui should check both. Tell the Cloqui session if you agree) |
+| `ws_channels` | `kind` is `channel` (open to the whole org) or `dm` (two people). Channel names are unique per org. Each pair of people has one DM (`dm_key`). `archived_at` stops posting and hides the channel |
+| `ws_dm_members` | The two people in a DM |
+| `ws_messages` | Body up to 4,000 characters, with mentions stored as `<@user_id>`. Edits set `edited_at`. Deletes keep the row with an empty body |
+| `ws_mentions` | Who each message mentions. Only people in the org count |
+| `ws_reads` | When each person last read each channel, for new-message counts |
+| `ws_tasks` | Title, notes, assignee, due date, open or done, optional lead and listing links |
 
-Frontend: on **Open workspace**, the click handler opens a blank tab named `cloqui` first (so popup blockers allow it), then fetches the token, then submits a hidden `<form method="post" target="cloqui">` with one `token` field. The token travels in the POST body, never in a URL, so it isn't in history or server logs.
+Rules:
 
-### Server to server (Checkpoint C)
+- Every route calls `can()`. Outsiders get 404. Personal CRMs have no workspace (422).
+- `workspace.view` (all roles) reads. `workspace.post` (owner, admin, member) posts, edits own messages, and works tasks. `channels.manage` (owner, admin) adds, renames, and archives channels, and removes channel messages.
+- **#general** is made on first use and can't be renamed or archived.
+- DMs are only for the two people in them. Owners and admins can't read or delete in them. Leaving the org ends access.
+- A task's assignee must be on the team. Its lead and listing must belong to the org. Its maker, or an owner or admin, can delete it.
 
-`backend/cloqui_client.py`, using `httpx` with a 5 s timeout. Each call signs a fresh token: same secret, `aud: cloqui-api`, `iss: smartland`, `app: smartland`, `org_id`, 60 s expiry, new `jti`.
+Live updates: no WebSockets, because the server runs as one Cloud Run instance and an open socket keeps it billed the whole time.
 
-- `create_circle(org_id, external_ref)` → `POST /api/apps/circles`
-- `create_task(org_id, title, notes, link, circle_ref=None)` → `POST /api/apps/tasks`
-- `summary(org_id)` → `GET /api/apps/summary?org_id=`
+- The open chat polls `GET .../messages?since=<cursor>` every 4 seconds while the tab is visible. The server takes the cursor before it reads, so nothing is missed, and the browser drops repeats by id. A poll also returns edits and deletes.
+- The channel list polls every 15 seconds. The nav badge (new DMs plus new mentions) polls every 30 seconds.
 
-If Cloqui is down or slow, `summary` returns `None` and `/business` shows "Workspace is offline right now." The rest of the page keeps working.
+Rough cost: 10 people chatting 8 hours a day make about 2 million requests a month. That's near Cloud Run's free monthly allowance, so expect a few cents to about $1 a month. Recheck current prices before deploy.
 
-### Env keys (names only)
-
-`backend/.env`: `CLOQUI_HANDOFF_SECRET_SMARTLAND`, `CLOQUI_URL`. Production: same two in `deploy.ps1`, passed as Cloud Run env vars from your shell like `SMARTLAND_JWT_SECRET`. A Secret Manager move is possible later and costs about $0.06 per secret a month.
+Not in this version: file attachments, reactions, threads, and email or push alerts (each needs storage or an email sender, so each needs a cost check first).
 
 ## 6. Screens
 
@@ -279,7 +272,9 @@ All copy follows the my-tone skill. Layout follows `DESIGN.md`.
 |---|---|
 | `/account` | Your profile as now, plus a **Business** section: your orgs with your role, **Open** for each, and **Create a business account** |
 | `/business/new` | Name, kind, PRC license (shown and required for brokerages), **Create business account** |
-| `/business` | Overview of the current org: name and license, **Open workspace**, follow-ups due today and overdue, lead counts per stage, Cloqui panel (unread messages, open tasks) |
+| `/business` | Overview of the current org: name and license, follow-ups due today and overdue, lead counts per stage, Team chat (new DMs and mentions), Tasks (yours due today or overdue), Team |
+| `/business/workspace` | Team chat: channels and DMs on the left, the open conversation on the right, @mention suggestions as you type |
+| `/business/tasks` | Open or done, only mine, **Add task**. Leads have their own tasks panel |
 | `/business/team` | Members with roles. Owner and admins see **Invite**, a role menu per member, and **Remove**. Pending invites with **Copy link** and **Cancel** |
 | `/invite/:token` | "{Inviter} invited you to {org} as {role}." Signs you in first if needed. **Join {org}** |
 | `/business/leads` | Board (one column per stage, drag and drop) and list (sortable table). Toggle between them. Each card has a **Move to** menu for keyboard and touch. **Add lead** |
@@ -305,14 +300,12 @@ Drag and drop uses native HTML5 drag events, no new library. The **Move to** men
 | `backend/permissions.py` (new) | `can()` and the role table |
 | `backend/business.py` (new) | `APIRouter` for `/api/business/*` and `/api/invites/*` |
 | `backend/inquiries.py` (new) | `POST /api/listings/{id}/inquiries` |
-| `backend/cloqui.py` (new) | Handoff route and token signing |
-| `backend/cloqui_client.py` (new) | Server-to-server client (Checkpoint C) |
+| `backend/workspace.py`, `backend/workspace_repo.py` (new) | Team chat and tasks (section 5) |
 | `backend/main.py` | Import from `deps.py`, include the routers, add `org_id` to `ListingIn` with a `can()` check |
 | `backend/store.py` | `email_verified` column, set it in `google_user`. `org_id` on listings. Org-aware owner checks |
 | `backend/requirements-dev.txt` (new) | `pytest` |
 | `backend/tests/conftest.py` (new) | Temp `DATABASE_PATH` per test, `TestClient`, user and org factories |
 | `Dockerfile` | Copy the new modules and `migrations/` |
-| `deploy.ps1` | Pass `CLOQUI_URL` and `CLOQUI_HANDOFF_SECRET_SMARTLAND` |
 | `README.md` | Business suite section and the new env keys |
 
 ### Frontend
@@ -357,16 +350,18 @@ Checkpoint 3:
 - The token has every claim, the right `app`, and `exp - iat == 60`.
 - Two calls give two different `jti`.
 - The secret never appears in any response.
-- Cloqui client calls with the client mocked: success, timeout shows offline, wrong org refused.
+- Team workspace: roles, #general, DMs private to the two people, mentions and unread counts, polling with edits and deletes, task links inside the org, and 404 for outsiders on every route.
 
 ## 9. Decisions (2026-11-26)
 
 - **Q1. Bucket:** `SMARTLAND_BUCKET` is set on production, so Litestream keeps the SQLite file between deploys.
-- **Q2. Workspace sign-in:** only verified emails (Google sign-ins today) can open the Cloqui workspace. Email confirmation for password accounts waits for an email-sender cost check.
+- **Q2. Workspace sign-in:** only verified emails (Google sign-ins today) could open the Cloqui workspace (dropped with Q9). Email confirmation for password accounts waits for an email-sender cost check.
 - **Q3. Solo sellers get the full CRM.** Each seller gets a private org with `kind = 'personal'`, created the first time they need it (their first inquiry, or opening the CRM). All leads then live in an org, so `can()` covers everyone the same way. A personal org has one member, can't invite anyone, never shows on listings, and is hidden from the business account list. Solo listings keep `org_id` null. An inquiry on a solo listing goes to the poster's personal org.
 - **Q4. Follow-ups:** one `follow_up_on` date per lead. No `follow_ups` table.
 - **Q5. Invites:** the owner or an admin copies the invite link and sends it. No invite emails yet.
 - **Q6. pytest** is installed in `backend/venv`. The venv stays out of every commit.
+- **Q8. Workspace for personal CRMs:** none. Only business accounts get team chat and tasks (422 for a personal CRM).
+- **Q9. No Cloqui (2026-11-26).** You don't run Cloqui, so the team workspace is built inside SmartLand: channels, direct messages, @mentions, and tasks. The Cloqui handoff code was removed before commit.
 - **Q7. Two-way messages (Checkpoint 2).** Each inquiry is a thread (`lead_messages`). A buyer who asks while signed in reads replies on `/messages` and can answer there. A buyer who asks signed out gets replies by phone or email only, and the team can't send them in-app messages. Notes stay private to the team. No push or email alerts for new messages until an email-sender cost check. A new-message count shows in the nav and on leads.
 
 Invites only need the signed-in email to match the invite's email, not a verified one: the link itself is the secret, and it works once.

@@ -3,7 +3,8 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { LandPlot, Menu, Moon, Sun, X } from 'lucide-react'
 import { useTheme, type ThemeChoice } from '../lib/theme'
 import { useUser } from '../lib/auth'
-import { MESSAGES_READ, messagesApi } from '../lib/api'
+import { MESSAGES_READ, messagesApi, workspaceApi } from '../lib/api'
+import { WORKSPACE_READ, useVisibleInterval } from '../lib/workspace'
 import { ButtonLink } from './Button'
 
 const THEME_LABEL: Record<ThemeChoice, string> = {
@@ -74,10 +75,36 @@ function useUnreadMessages(pathname: string): number {
   return state && user && state.userId === user.id ? state.count : 0
 }
 
+/** New DMs and @mentions in your team chats, checked on each page change and every 30 seconds */
+function useTeamUnread(pathname: string): number {
+  const user = useUser()
+  const [state, setState] = useState<{ userId: string; count: number } | null>(null)
+  const [tick, setTick] = useState(0)
+  useVisibleInterval(() => setTick((n) => n + 1), 30000, !!user)
+  useEffect(() => {
+    const onRead = () => setTick((n) => n + 1)
+    window.addEventListener(WORKSPACE_READ, onRead)
+    return () => window.removeEventListener(WORKSPACE_READ, onRead)
+  }, [])
+  useEffect(() => {
+    if (!user) return
+    const controller = new AbortController()
+    workspaceApi
+      .unread(controller.signal)
+      .then(({ count }) => setState({ userId: user.id, count }))
+      .catch(() => {
+        // The count is a hint; the team chat shows the real list
+      })
+    return () => controller.abort()
+  }, [user, pathname, tick])
+  return state && user && state.userId === user.id ? state.count : 0
+}
+
 function GlobalNav() {
   const user = useUser()
   const { pathname } = useLocation()
   const unread = useUnreadMessages(pathname)
+  const teamUnread = useTeamUnread(pathname)
   // The tray belongs to the page it was opened on, so navigating closes it
   const [openOn, setOpenOn] = useState<string | null>(null)
   const open = openOn === pathname
@@ -90,7 +117,7 @@ function GlobalNav() {
     ...(user
       ? [
           { to: '/messages', label: unread ? `Messages (${unread} new)` : 'Messages' },
-          { to: '/business', label: 'Leads' },
+          { to: '/business', label: teamUnread ? `Business (${teamUnread} new)` : 'Business' },
         ]
       : []),
     { to: '/account', label: user ? 'Account' : 'Sign in' },
@@ -166,6 +193,8 @@ const SUBNAV_TITLES: [RegExp, string][] = [
   [/^\/reviews/, 'Document reviews'],
   [/^\/business\/leads/, 'Leads'],
   [/^\/business\/team/, 'Team'],
+  [/^\/business\/workspace/, 'Team chat'],
+  [/^\/business\/tasks/, 'Tasks'],
   [/^\/business/, 'Business'],
   [/^\/messages/, 'Messages'],
   [/^\/invite/, 'Join a business account'],

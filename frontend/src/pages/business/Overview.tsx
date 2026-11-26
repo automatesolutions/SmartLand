@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { Building2, CalendarClock, ChevronRight, Inbox, Plus, UsersRound } from 'lucide-react'
-import type { Crm, Org } from '../../lib/api'
+import { Building2, CalendarClock, ChevronRight, Inbox, ListChecks, MessagesSquare, Plus, UsersRound } from 'lucide-react'
+import { workspaceApi, type Crm, type Org } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { canManage, dueLeads, followUpLabel, orgLine, orgTitle, today, useCrm, useCurrentOrg, useMyOrgs } from '../../lib/business'
 import { ButtonLink } from '../../components/Button'
@@ -62,6 +63,59 @@ function LeadsCard({ crm }: { crm: Crm }) {
   )
 }
 
+/** Team chat and tasks: new DMs and mentions, and your open tasks due by today */
+function TeamCards({ org }: { org: Org }) {
+  const [counts, setCounts] = useState<{ orgId: string; chat: number; due: number; open: number } | null>(null)
+
+  useEffect(() => {
+    const controller = new AbortController()
+    Promise.all([workspaceApi.unread(controller.signal), workspaceApi.tasks(org.id, { status: 'open', mine: true }, controller.signal)])
+      .then(([unread, tasks]) =>
+        setCounts({
+          orgId: org.id,
+          chat: unread.by_org[org.id] ?? 0,
+          open: tasks.length,
+          due: tasks.filter((t) => t.due_on && t.due_on <= today()).length,
+        }),
+      )
+      .catch(() => {
+        // The cards still link through without counts
+      })
+    return () => controller.abort()
+  }, [org.id])
+
+  const c = counts?.orgId === org.id ? counts : null
+  return (
+    <>
+      <Link to="/business/workspace" className={card}>
+        <MessagesSquare size={22} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">
+            Team chat
+            {c && c.chat > 0 && <span className="ml-xs rounded-pill bg-accent-fill px-xs text-caption text-on-accent">{c.chat} new</span>}
+          </span>
+          <span className="block text-caption text-ink-secondary">Channels and direct messages for your team. Type @ to mention someone.</span>
+        </span>
+        <ChevronRight size={18} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+      </Link>
+      <Link to="/business/tasks" className={card}>
+        <ListChecks size={22} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">Tasks</span>
+          <span className="block text-caption text-ink-secondary">
+            {!c
+              ? 'Your team’s to-do list.'
+              : c.open === 0
+                ? 'Nothing assigned to you.'
+                : `${c.open} open for you${c.due ? `, ${c.due} due today or overdue` : ''}.`}
+          </span>
+        </span>
+        <ChevronRight size={18} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+      </Link>
+    </>
+  )
+}
+
 function OrgHome({ org }: { org: Org }) {
   const { crm, failed, reload } = useCrm(org.id)
   const personal = org.kind === 'personal'
@@ -83,6 +137,8 @@ function OrgHome({ org }: { org: Org }) {
           <LeadsCard crm={crm} />
         </>
       )}
+
+      {!personal && <TeamCards org={org} />}
 
       {!personal && (
         <Link to="/business/team" className={card}>

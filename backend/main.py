@@ -27,6 +27,7 @@ import orgs_repo
 import permissions
 import storage
 import store
+import workspace
 from deps import authenticate, is_admin, issue_token, limiter, optional_user, require_admin
 
 load_dotenv()
@@ -58,6 +59,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 app.include_router(business.router)
 # CRM: inquiries, leads, and buyer messages (crm.py)
 app.include_router(crm.router)
+# Team workspace: channels, DMs, mentions, and tasks (workspace.py)
+app.include_router(workspace.router)
 
 
 # Database Connections -------------------------------------------------------

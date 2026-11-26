@@ -773,3 +773,107 @@ export function errorCopy(err: unknown): { title: string; body: string } {
       }
   }
 }
+
+// Team workspace (backend/workspace.py) -------------------------------------------------
+
+export interface WsChannel {
+  id: string
+  kind: 'channel' | 'dm'
+  /** Channels only, without the # */
+  name: string | null
+  topic: string | null
+  /** Messages from others since you last read it */
+  unread: number
+  /** Of those, the ones that @mention you */
+  mentions: number
+  last_message_at: string | null
+  /** DMs only: the other person */
+  with?: { id: string; name: string } | null
+}
+
+export interface WsMember {
+  id: string
+  name: string
+  role: OrgRole
+}
+
+export interface Workspace {
+  channels: WsChannel[]
+  members: WsMember[]
+  role: OrgRole
+}
+
+export interface WsMessage {
+  id: string
+  channel_id: string
+  author: { id: string; name: string } | null
+  /** Mentions appear as <@user_id> */
+  body: string
+  created_at: string
+  edited_at: string | null
+  deleted: boolean
+}
+
+export interface Task {
+  id: string
+  title: string
+  notes: string | null
+  assignee: { id: string; name: string } | null
+  /** YYYY-MM-DD */
+  due_on: string | null
+  status: 'open' | 'done'
+  lead: { id: string; name: string } | null
+  listing: { id: string; title: string } | null
+  created_by: string | null
+  created_at: string
+  done_at: string | null
+}
+
+export interface NewTaskInput {
+  title: string
+  notes?: string | null
+  assignee_id?: string | null
+  due_on?: string | null
+  lead_id?: string | null
+  listing_id?: string | null
+}
+
+export type TaskChange = Partial<{ title: string; notes: string | null; assignee_id: string | null; due_on: string | null; status: 'open' | 'done' }>
+
+const wsPath = (orgId: string) => `${oid(orgId)}/workspace`
+
+export const workspaceApi = {
+  load: (orgId: string, signal?: AbortSignal) => request<Workspace>(wsPath(orgId), {}, signal),
+  createChannel: (orgId: string, name: string, topic: string | null) =>
+    request<WsChannel>(`${wsPath(orgId)}/channels`, { method: 'POST', body: JSON.stringify({ name, topic }) }),
+  updateChannel: (orgId: string, channelId: string, change: Partial<{ name: string; topic: string | null; archived: boolean }>) =>
+    request<{ ok: true }>(`${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}`, { method: 'PATCH', body: JSON.stringify(change) }),
+  openDm: (orgId: string, userId: string) => request<WsChannel>(`${wsPath(orgId)}/dms`, { method: 'POST', body: JSON.stringify({ user_id: userId }) }),
+  /** The newest page, an older page (`before`), or what changed since the last cursor (`since`) */
+  messages: (orgId: string, channelId: string, q: { since?: string; before?: string } = {}, signal?: AbortSignal) => {
+    const params = new URLSearchParams(Object.entries(q).filter(([, v]) => v) as [string, string][])
+    return request<{ messages: WsMessage[]; cursor: string }>(
+      `${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}/messages${params.size ? `?${params}` : ''}`,
+      {},
+      signal,
+    )
+  },
+  post: (orgId: string, channelId: string, body: string) =>
+    request<WsMessage>(`${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}/messages`, { method: 'POST', body: JSON.stringify({ body }) }),
+  edit: (orgId: string, messageId: string, body: string) =>
+    request<WsMessage>(`${wsPath(orgId)}/messages/${encodeURIComponent(messageId)}`, { method: 'PATCH', body: JSON.stringify({ body }) }),
+  remove: (orgId: string, messageId: string) => request<void>(`${wsPath(orgId)}/messages/${encodeURIComponent(messageId)}`, { method: 'DELETE' }),
+  /** New DMs plus new @mentions, for the nav badge */
+  unread: (signal?: AbortSignal) => request<{ count: number; by_org: Record<string, number> }>('/api/business/workspace/unread', {}, signal),
+  tasks: (orgId: string, q: { status?: 'open' | 'done'; mine?: boolean; lead_id?: string } = {}, signal?: AbortSignal) => {
+    const params = new URLSearchParams()
+    if (q.status) params.set('status', q.status)
+    if (q.mine) params.set('mine', 'true')
+    if (q.lead_id) params.set('lead_id', q.lead_id)
+    return request<Task[]>(`${wsPath(orgId)}/tasks${params.size ? `?${params}` : ''}`, {}, signal)
+  },
+  addTask: (orgId: string, input: NewTaskInput) => request<Task>(`${wsPath(orgId)}/tasks`, { method: 'POST', body: JSON.stringify(input) }),
+  updateTask: (orgId: string, taskId: string, change: TaskChange) =>
+    request<Task>(`${wsPath(orgId)}/tasks/${encodeURIComponent(taskId)}`, { method: 'PATCH', body: JSON.stringify(change) }),
+  removeTask: (orgId: string, taskId: string) => request<void>(`${wsPath(orgId)}/tasks/${encodeURIComponent(taskId)}`, { method: 'DELETE' }),
+}

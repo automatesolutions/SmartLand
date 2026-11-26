@@ -9,6 +9,7 @@ import { Button } from '../../components/Button'
 import { Conversation } from '../../components/Conversation'
 import { Banner, EmptyState, Skeleton } from '../../components/States'
 import { SignInFor } from './Shared'
+import { LeadTasks } from './Tasks'
 
 const select = 'h-tap w-full rounded-sm border border-hairline bg-surface px-sm text-ink focus-visible:border-focus disabled:opacity-60'
 
@@ -338,6 +339,7 @@ export function LeadPage() {
             </p>
           </Panel>
           <Details lead={lead} crm={crm} onChange={async (change) => set(await crmApi.update(lead.org_id, lead.id, change))} />
+          <LeadTasks orgId={lead.org_id} leadId={lead.id} />
           {canManage(crm?.role) && <DeleteLead lead={lead} />}
         </div>
       </div>
