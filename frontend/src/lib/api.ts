@@ -716,6 +716,9 @@ export interface ThreadDetail extends Thread {
   messages: Message[]
 }
 
+/** Fired on window after a thread loads, so the nav's new-message count refreshes */
+export const MESSAGES_READ = 'smartland:messages-read'
+
 const tid = (id: string) => `/api/messages/${encodeURIComponent(id)}`
 
 export const messagesApi = {

@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { LandPlot, Menu, Moon, Sun, X } from 'lucide-react'
 import { useTheme, type ThemeChoice } from '../lib/theme'
 import { useUser } from '../lib/auth'
-import { messagesApi } from '../lib/api'
+import { MESSAGES_READ, messagesApi } from '../lib/api'
 import { ButtonLink } from './Button'
 
 const THEME_LABEL: Record<ThemeChoice, string> = {
@@ -53,6 +53,13 @@ const trayLink = ({ isActive }: { isActive: boolean }) =>
 function useUnreadMessages(pathname: string): number {
   const user = useUser()
   const [state, setState] = useState<{ userId: string; count: number } | null>(null)
+  const [readAt, setReadAt] = useState(0)
+  // A thread you open marks its replies as read: count again once it has
+  useEffect(() => {
+    const onRead = () => setReadAt(Date.now())
+    window.addEventListener(MESSAGES_READ, onRead)
+    return () => window.removeEventListener(MESSAGES_READ, onRead)
+  }, [])
   useEffect(() => {
     if (!user) return
     const controller = new AbortController()
@@ -63,7 +70,7 @@ function useUnreadMessages(pathname: string): number {
         // The count is a hint; the Messages page shows the real list
       })
     return () => controller.abort()
-  }, [user, pathname])
+  }, [user, pathname, readAt])
   return state && user && state.userId === user.id ? state.count : 0
 }
 

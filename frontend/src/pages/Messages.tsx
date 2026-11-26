@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, FileQuestion, MessagesSquare, RotateCw, UserRound } from 'lucide-react'
-import { ApiError, messagesApi, type Thread, type ThreadDetail } from '../lib/api'
+import { ApiError, MESSAGES_READ, messagesApi, type Thread, type ThreadDetail } from '../lib/api'
 import { useUser } from '../lib/auth'
 import { formatDate } from '../lib/format'
 import { Button, ButtonLink } from '../components/Button'
@@ -112,7 +112,10 @@ export function ThreadPage() {
     const controller = new AbortController()
     messagesApi
       .get(id, controller.signal)
-      .then((thread) => setLoaded({ id, thread }))
+      .then((thread) => {
+        setLoaded({ id, thread })
+        window.dispatchEvent(new Event(MESSAGES_READ))
+      })
       .catch((err) => {
         if ((err as Error).name !== 'AbortError') setFailure({ id, err })
       })

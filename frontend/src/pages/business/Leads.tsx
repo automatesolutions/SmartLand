@@ -12,11 +12,14 @@ import { LoadFailed, OrgSwitcher, SignInFor } from './Shared'
 type View = 'board' | 'list'
 const VIEW_KEY = 'smartland:leads-view'
 
+// Phones start on the list, which fits the screen; the board scrolls sideways
 function readView(): View {
+  const fallback: View = window.matchMedia('(max-width: 639px)').matches ? 'list' : 'board'
   try {
-    return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'board'
+    const saved = localStorage.getItem(VIEW_KEY)
+    return saved === 'list' || saved === 'board' ? saved : fallback
   } catch {
-    return 'board'
+    return fallback
   }
 }
 
