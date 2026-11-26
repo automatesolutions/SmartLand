@@ -3,16 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="Buy land from owners and licensed brokers who show the title, not a chain of middlemen. Check what land is worth anywhere in the Philippines." />
     <meta name="color-scheme" content="light" />
-    <meta name="theme-color" content="#f5f5f7" />
+    <!-- Black in both themes, to match the header -->
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="SmartLand" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <title>SmartLand</title>
     <script>
       // Apply a saved dark choice before first paint so there is no flash
       try {
         if (localStorage.getItem('smartland:theme') === 'dark') document.documentElement.dataset.theme = 'dark';
       } catch (e) {}
+      // Chrome and Edge can offer to install before React loads. Keep the offer for lib/install.ts
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        window.__installPrompt = e;
+      });
     </script>
   </head>
   <body>

@@ -8,6 +8,7 @@ import { useReveal } from '../lib/motion'
 import { Button, ButtonLink } from '../components/Button'
 import { TextField } from '../components/Fields'
 import { Banner } from '../components/States'
+import { InstallAppButton } from '../components/InstallAppButton'
 import { GoogleSignIn } from '../components/GoogleSignIn'
 import { useGoogleAvailable } from '../lib/google'
 import { orgLine, pickOrg, useMyOrgs } from '../lib/business'
@@ -312,6 +313,7 @@ export function AccountPage() {
           </>
         )}
 
+        <InstallAppButton variant="row" />
         <MadeBy />
       </div>
     </div>

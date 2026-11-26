@@ -683,7 +683,7 @@ export function CheckPage() {
           )}
         </div>
 
-        <div className="frosted sticky bottom-0 z-20 flex flex-col gap-xs border-t border-hairline px-md py-sm sm:flex-row sm:items-center sm:justify-between sm:px-lg lg:px-xl">
+        <div className="frosted sticky bottom-0 z-20 flex flex-col gap-xs border-t border-hairline px-md pt-sm pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:flex-row sm:items-center sm:justify-between sm:px-lg lg:px-xl">
           <p className="hidden text-caption text-ink-secondary sm:block">
             {previewReady ? 'Opens at once. Nothing is saved until you choose to.' : 'Takes a few seconds. Nothing is saved until you choose to.'}
           </p>

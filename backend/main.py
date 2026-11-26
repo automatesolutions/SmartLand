@@ -892,7 +892,13 @@ async def health():
 # Serve the built web app when STATIC_DIR points at frontend/dist (set in the Docker image)
 STATIC_DIR = os.getenv("STATIC_DIR")
 if STATIC_DIR and os.path.isdir(STATIC_DIR):
+    import mimetypes
+
     from fastapi.staticfiles import StaticFiles
+
+    # Python doesn't know these everywhere; browsers want the right type for the install manifest
+    mimetypes.add_type("application/manifest+json", ".webmanifest")
+    mimetypes.add_type("image/x-icon", ".ico")
 
     app.mount("/assets", StaticFiles(directory=os.path.join(STATIC_DIR, "assets")), name="assets")
 

@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { BadgeCheck, FileText, UserRound } from 'lucide-react'
+import { InstallAppButton } from '../components/InstallAppButton'
 import { ButtonLink } from '../components/Button'
 import { GRADE_ORDER, gradeInfo } from '../lib/format'
 import { useReveal } from '../lib/motion'
@@ -43,6 +44,7 @@ export function HomePage() {
     <div ref={pageRef}>
       <section className="flex min-h-[calc(100dvh-var(--spacing-nav))] flex-col bg-canvas">
         <div className="gutter mx-auto flex w-full max-w-reading flex-col items-center gap-md pt-xxl text-center sm:pt-section">
+          <InstallAppButton variant="banner" />
           <h1 data-reveal className="text-display-md xs:text-display-lg">
             If the seller won’t show the title, you’re probably paying five people who never owned the land.
           </h1>
