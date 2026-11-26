@@ -1,6 +1,6 @@
 import { useRef, useState, type FormEvent } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { ChevronRight, LoaderCircle, LogOut, Mail, RotateCcw, UserRound } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { Briefcase, ChevronRight, LoaderCircle, LogOut, Mail, Plus, RotateCcw, UserRound } from 'lucide-react'
 import { ApiError } from '../lib/api'
 import { signIn, signOut, useUser } from '../lib/auth'
 import { retrySync, useSavedReports, useSyncState } from '../lib/reports'
@@ -10,6 +10,7 @@ import { TextField } from '../components/Fields'
 import { Banner } from '../components/States'
 import { GoogleSignIn } from '../components/GoogleSignIn'
 import { useGoogleAvailable } from '../lib/google'
+import { orgLine, pickOrg, useMyOrgs } from '../lib/business'
 
 type Mode = 'login' | 'register'
 
@@ -55,6 +56,54 @@ const SYNC_COPY = {
   error: "We couldn't reach your account. Reports you save here will upload later.",
 }
 
+/** Your business accounts, and a way to make one */
+function BusinessAccounts() {
+  const { orgs, failed, reload } = useMyOrgs()
+  return (
+    <section aria-labelledby="business-heading" className="flex flex-col gap-sm border-t border-hairline pt-md">
+      <div className="flex flex-col gap-xxs">
+        <h2 id="business-heading" className="font-semibold">
+          Business
+        </h2>
+        <p className="text-caption text-ink-secondary">For brokerages, developers, and agencies: post listings under your business name and work leads as a team.</p>
+      </div>
+      {failed && !orgs ? (
+        <p className="text-caption text-ink-secondary">
+          We couldn't load your business accounts.{' '}
+          <button type="button" onClick={reload} className="press text-accent">
+            Try again
+          </button>
+        </p>
+      ) : (
+        orgs &&
+        orgs.length > 0 && (
+          <ul className="flex flex-col gap-xs">
+            {orgs.map((o) => (
+              <li key={o.id}>
+                <Link
+                  to="/business"
+                  onClick={() => pickOrg(o.id)}
+                  className="press flex min-h-tap items-center gap-md rounded-lg border border-hairline bg-surface p-md hover:bg-surface-raised"
+                >
+                  <Briefcase size={20} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate font-semibold">{o.name}</span>
+                    <span className="block truncate text-caption text-ink-secondary">{orgLine(o)}</span>
+                  </span>
+                  <ChevronRight size={18} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )
+      )}
+      <ButtonLink to="/business/new" variant="secondary" className="self-start" icon={<Plus size={18} aria-hidden />}>
+        Create a business account
+      </ButtonLink>
+    </section>
+  )
+}
+
 function SignedIn() {
   const user = useUser()!
   const reports = useSavedReports()
@@ -89,6 +138,7 @@ function SignedIn() {
           </ButtonLink>
         )}
       </div>
+      <BusinessAccounts />
       <div className="flex flex-col items-start gap-xs border-t border-hairline pt-md">
         <Button variant="plain" className="-ml-sm" onClick={signOut} icon={<LogOut size={18} aria-hidden />}>
           Sign out

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react'
 import {
   BadgeCheck,
+  Briefcase,
   Building2,
   CircleAlert,
   CircleCheck,
@@ -67,8 +68,8 @@ const TITLE_BADGE: Record<TitleState, { text: string; icon: LucideIcon; tone: ke
   none: { text: 'No title shown', icon: FileX2, tone: 'caution' },
 }
 
-/** "Owner", "Licensed broker · PRC 1234567", and the title's status */
-export function TrustBadges({ listing }: { listing: Pick<Listing, 'seller_type' | 'prc_license' | 'title_state' | 'category'> }) {
+/** "Owner", "Licensed broker · PRC 1234567", the business account, and the title's status */
+export function TrustBadges({ listing }: { listing: Pick<Listing, 'seller_type' | 'prc_license' | 'title_state' | 'category'> & { org?: Listing['org'] } }) {
   const rent = categoryByKey(listing.category).rent
   const title = TITLE_BADGE[listing.title_state]
   // Rentals don't need a title to be shown, so they only get the badge when there is one
@@ -93,6 +94,11 @@ export function TrustBadges({ listing }: { listing: Pick<Listing, 'seller_type' 
       {listing.seller_type === 'bank' && (
         <Badge icon={Landmark} tone="neutral">
           Bank or Pag-IBIG
+        </Badge>
+      )}
+      {listing.org && (
+        <Badge icon={Briefcase} tone="neutral">
+          {listing.org.prc_license ? `${listing.org.name} · PRC ${listing.org.prc_license}` : listing.org.name}
         </Badge>
       )}
       {showTitle && (

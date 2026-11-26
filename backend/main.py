@@ -1,10 +1,8 @@
 import hashlib
 import os
 import re
-import secrets
 import time
 from collections import OrderedDict
-from datetime import datetime, timedelta, timezone
 from typing import Literal
 from urllib.parse import quote
 
@@ -12,36 +10,29 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, Form, HTTPException, Query, Request, Response, UploadFile
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import BaseModel, Field, model_validator
 from loguru import logger
-from slowapi import Limiter, _rate_limit_exceeded_handler
-from slowapi.util import get_remote_address
+from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 import motor.motor_asyncio
 import asyncpg
 import jwt
 import httpx
 
+import business
 import listing_rules
+import orgs_repo
+import permissions
 import storage
 import store
+from deps import authenticate, is_admin, issue_token, limiter, optional_user, require_admin
 
 load_dotenv()
 
 AI_SERVICE_URL = os.getenv("AI_SERVICE_URL", "http://localhost:8002/predict")
 AI_BASE_URL = re.sub(r"/predict/?$", "", AI_SERVICE_URL)
 
-# A missing or placeholder secret gets a random one, so tokens can't be forged.
-# Sign-ins then last only until the server restarts, so set JWT_SECRET in production.
-JWT_SECRET = os.getenv("JWT_SECRET", "")
-if not JWT_SECRET or JWT_SECRET.startswith("your_"):
-    JWT_SECRET = secrets.token_urlsafe(32)
-    logger.warning("JWT_SECRET is not set. Using a temporary secret: sign-ins reset when the server restarts.")
-TOKEN_DAYS = 30
-
 app = FastAPI()
-security = HTTPBearer(auto_error=False)
 
 # Logging setup
 logger.add("error.log", level="ERROR")
@@ -57,58 +48,12 @@ app.add_middleware(
 )
 
 
-def _user_id_from_header(request: Request) -> str | None:
-    auth = request.headers.get("authorization", "")
-    if not auth.lower().startswith("bearer "):
-        return None
-    try:
-        return jwt.decode(auth[7:], JWT_SECRET, algorithms=["HS256"]).get("sub")
-    except jwt.PyJWTError:
-        return None
-
-
-def rate_key(request: Request) -> str:
-    # Signed-in people get their own bucket; guests share one per IP
-    user_id = _user_id_from_header(request)
-    return f"user:{user_id}" if user_id else get_remote_address(request)
-
-
-# Rate limiting
-limiter = Limiter(key_func=rate_key)
+# Rate limiting (deps.limiter)
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-
-# JWT Authentication ---------------------------------------------------------
-
-def issue_token(user: dict) -> str:
-    now = datetime.now(timezone.utc)
-    return jwt.encode({"sub": user["id"], "email": user["email"], "iat": now, "exp": now + timedelta(days=TOKEN_DAYS)}, JWT_SECRET, algorithm="HS256")
-
-
-def _decode(credentials: HTTPAuthorizationCredentials | None) -> dict | None:
-    if credentials is None:
-        return None
-    try:
-        payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=["HS256"])
-    except jwt.PyJWTError as e:
-        logger.warning(f"Invalid JWT token: {e}")
-        raise HTTPException(status_code=401, detail="Invalid or expired token")
-    user = store.get_user(payload.get("sub", ""))
-    if not user:
-        raise HTTPException(status_code=401, detail="Account not found")
-    return user
-
-
-async def optional_user(credentials: HTTPAuthorizationCredentials | None = Depends(security)) -> dict | None:
-    return _decode(credentials)
-
-
-async def authenticate(credentials: HTTPAuthorizationCredentials | None = Depends(security)) -> dict:
-    user = _decode(credentials)
-    if user is None:
-        raise HTTPException(status_code=401, detail="Sign in required")
-    return user
+# Business accounts (business.py)
+app.include_router(business.router)
 
 
 # Database Connections -------------------------------------------------------
@@ -543,20 +488,6 @@ DocumentType = Literal["title", "rights", "tax_declaration", "tax_clearance", "s
 
 # Uploaded files are kept by storage.py: a local folder (UPLOAD_DIR) or a
 # Cloud Storage bucket (STORAGE_BUCKET). See README.md.
-# Comma-separated emails of the people who review documents
-ADMIN_EMAILS = {e.strip().lower() for e in os.getenv("ADMIN_EMAILS", "").split(",") if e.strip()}
-
-
-def is_admin(user: dict | None) -> bool:
-    return bool(user) and user["email"].lower() in ADMIN_EMAILS
-
-
-async def require_admin(user: dict = Depends(authenticate)) -> dict:
-    if not is_admin(user):
-        raise HTTPException(status_code=403, detail="Only reviewers can do this")
-    return user
-
-
 class ListingIn(BaseModel):
     category: ListingCategory
     title: str = Field(min_length=5, max_length=120)
@@ -581,6 +512,8 @@ class ListingIn(BaseModel):
     # Sale listings only: "attached" when the land title or proof of rights comes
     # with the listing, "none" when the seller confirms they have none to show
     title_status: Literal["attached", "none"] | None = None
+    # Post for a business account you're on. None posts as yourself.
+    org_id: str | None = Field(default=None, max_length=40)
 
     @model_validator(mode="after")
     def check(self):
@@ -629,7 +562,16 @@ def _photo_view(photo: dict) -> dict:
     }
 
 
-def _with_trust(listing: dict, viewer: dict | None = None, phone: bool = True, photos: list[dict] | None = None) -> dict:
+def _org_view(org: dict | None) -> dict | None:
+    """The business account a listing was posted for, as buyers see it"""
+    if org is None or org["kind"] == "personal":
+        return None
+    return {k: org[k] for k in ("id", "name", "kind", "prc_license")}
+
+
+def _with_trust(
+    listing: dict, viewer: dict | None = None, phone: bool = True, photos: list[dict] | None = None, orgs: dict[str, dict] | None = None
+) -> dict:
     docs = store.list_documents(listing["id"])
     private = listing.get("mine") or is_admin(viewer)
     cred = listing_rules.credibility(listing, docs)
@@ -642,6 +584,10 @@ def _with_trust(listing: dict, viewer: dict | None = None, phone: bool = True, p
         "title_state": listing_rules.title_state(cred),
         "photos": [_photo_view(p) for p in photos],
     }
+    org_id = listing.get("org_id")
+    if orgs is None:
+        orgs = orgs_repo.orgs_by_id([org_id]) if org_id else {}
+    out["org"] = _org_view(orgs.get(org_id)) if org_id else None
     if not phone:
         # Search results leave out phone numbers, so the list can't be harvested for contacts
         out.pop("contact_phone", None)
@@ -686,10 +632,11 @@ async def search_listings(
     """Active listings near a point, nearest first, with the count per category"""
     found = store.listings_near(lat, lon, radius_km, category)
     photos = store.photos_for([x["id"] for x in found["listings"]])
+    orgs = orgs_repo.orgs_by_id([x["org_id"] for x in found["listings"]])
     return {
         **found,
         "radius_km": radius_km,
-        "listings": [_with_trust(x, phone=False, photos=photos.get(x["id"], [])) for x in found["listings"]],
+        "listings": [_with_trust(x, phone=False, photos=photos.get(x["id"], []), orgs=orgs) for x in found["listings"]],
     }
 
 
@@ -703,6 +650,9 @@ async def get_listing(listing_id: str, user: dict | None = Depends(optional_user
     listing = store.get_listing(listing_id, user["id"] if user else None)
     if listing is None:
         raise HTTPException(status_code=404, detail="This listing was removed or never existed")
+    # The org's owner and admins manage its listings like their own
+    if user and not listing["mine"] and listing.get("org_id"):
+        listing["mine"] = permissions.may(user, "listing.edit_any", listing["org_id"])
     return _with_trust(listing, user)
 
 
@@ -722,18 +672,31 @@ async def create_listing(request: Request, body: ListingIn, user: dict = Depends
     data = body.model_dump(exclude={"authorized"})
     if data["seller_type"] != "broker":
         data["prc_license"] = None
+    if data["org_id"]:
+        permissions.can(user, "listing.post_as_org", data["org_id"])
+        if orgs_repo.get_org(data["org_id"])["kind"] == "personal":
+            data["org_id"] = None
     return _with_trust(store.create_listing(user["id"], data), user)
+
+
+def _editable_by(user: dict, listing_id: str) -> str:
+    """The poster's user id, if `user` may edit the listing. Otherwise 404."""
+    poster = store.listing_poster(listing_id)
+    if not permissions.can_edit_listing(user, poster):
+        raise HTTPException(status_code=404, detail="Listing not found")
+    return poster["user_id"]
 
 
 @app.patch("/api/listings/{listing_id}")
 async def update_listing(listing_id: str, body: ListingChange, user: dict = Depends(authenticate)):
+    poster_id = _editable_by(user, listing_id)
     listing = None
     if body.price is not None:
-        listing = store.set_listing_price(user["id"], listing_id, body.price)
+        listing = store.set_listing_price(poster_id, listing_id, body.price)
         if listing is None:
             raise HTTPException(status_code=404, detail="Listing not found")
     if body.status is not None:
-        listing = store.set_listing_status(user["id"], listing_id, body.status)
+        listing = store.set_listing_status(poster_id, listing_id, body.status)
         if listing is None:
             raise HTTPException(status_code=404, detail="Listing not found")
     if listing is None:
@@ -743,7 +706,7 @@ async def update_listing(listing_id: str, body: ListingChange, user: dict = Depe
 
 @app.delete("/api/listings/{listing_id}", status_code=204)
 async def delete_listing(listing_id: str, user: dict = Depends(authenticate)):
-    if store.set_listing_status(user["id"], listing_id, "removed") is None:
+    if store.set_listing_status(_editable_by(user, listing_id), listing_id, "removed") is None:
         raise HTTPException(status_code=404, detail="Listing not found")
     return Response(status_code=204)
 
@@ -759,8 +722,7 @@ async def upload_document(
 ):
     """Adds a document to your own listing. It stays private: buyers see only
     its kind, review status, and fingerprint."""
-    if store.listing_owner(listing_id) != user["id"]:
-        raise HTTPException(status_code=404, detail="Listing not found")
+    _editable_by(user, listing_id)
     if len(store.list_documents(listing_id)) >= listing_rules.MAX_DOCUMENTS:
         raise HTTPException(status_code=422, detail=f"A listing can have up to {listing_rules.MAX_DOCUMENTS} documents.")
     data = await file.read(listing_rules.MAX_DOCUMENT_BYTES + 1)
@@ -787,8 +749,7 @@ async def upload_photo(
 ):
     """Adds a public photo to your own listing. `alt` describes the photo for
     people who can't see it. Title documents never go here: they stay private."""
-    if store.listing_owner(listing_id) != user["id"]:
-        raise HTTPException(status_code=404, detail="Listing not found")
+    _editable_by(user, listing_id)
     if len(store.list_photos(listing_id)) >= listing_rules.MAX_PHOTOS:
         raise HTTPException(status_code=422, detail=f"A listing can have up to {listing_rules.MAX_PHOTOS} photos.")
     data = await file.read(listing_rules.MAX_PHOTO_BYTES + 1)
@@ -820,7 +781,7 @@ async def photo_file(listing_id: str, photo_id: str):
 
 @app.delete("/api/listings/{listing_id}/photos/{photo_id}", status_code=204)
 async def delete_photo(listing_id: str, photo_id: str, user: dict = Depends(authenticate)):
-    if store.listing_owner(listing_id) != user["id"] or not store.delete_photo(listing_id, photo_id):
+    if not permissions.can_edit_listing(user, store.listing_poster(listing_id)) or not store.delete_photo(listing_id, photo_id):
         raise HTTPException(status_code=404, detail="Photo not found")
     return Response(status_code=204)
 
@@ -831,7 +792,7 @@ async def document_file(listing_id: str, doc_id: str, user: dict = Depends(authe
     doc = store.get_document(doc_id)
     if doc is None or doc["listing_id"] != listing_id:
         raise HTTPException(status_code=404, detail="Document not found")
-    if store.listing_owner(listing_id) != user["id"] and not is_admin(user):
+    if not permissions.can_edit_listing(user, store.listing_poster(listing_id)) and not is_admin(user):
         raise HTTPException(status_code=404, detail="Document not found")
     data = storage.files.read(f"{doc['sha256']}.{listing_rules.ALLOWED_TYPES[doc['mime']]}")
     if data is None:

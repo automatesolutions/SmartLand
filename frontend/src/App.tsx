@@ -15,6 +15,10 @@ import { ListingPage } from './pages/Listing'
 import { NewListingPage, NewListingPickerPage } from './pages/NewListing'
 import { ReviewsPage } from './pages/Reviews'
 import { MyListingsPage } from './pages/MyListings'
+import { BusinessPage } from './pages/business/Overview'
+import { NewOrgPage } from './pages/business/NewOrg'
+import { TeamPage } from './pages/business/Team'
+import { InvitePage } from './pages/Invite'
 
 const TITLES: [RegExp, string][] = [
   [/^\/$/, 'SmartLand: know what land is worth'],
@@ -28,6 +32,10 @@ const TITLES: [RegExp, string][] = [
   [/^\/listings\//, 'Listings · SmartLand'],
   [/^\/listing\//, 'Listing · SmartLand'],
   [/^\/reviews/, 'Document reviews · SmartLand'],
+  [/^\/business\/new/, 'Create a business account · SmartLand'],
+  [/^\/business\/team/, 'Team · SmartLand'],
+  [/^\/business/, 'Business account · SmartLand'],
+  [/^\/invite\//, 'Join a business account · SmartLand'],
 ]
 
 function DocumentTitle() {
@@ -69,6 +77,10 @@ export default function App() {
           <Route path="listings/mine" element={<MyListingsPage />} />
           <Route path="listings/:slug" element={<ListingsPage />} />
           <Route path="listing/:id" element={<ListingPage />} />
+          <Route path="business" element={<BusinessPage />} />
+          <Route path="business/new" element={<NewOrgPage />} />
+          <Route path="business/team" element={<TeamPage />} />
+          <Route path="invite/:token" element={<InvitePage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

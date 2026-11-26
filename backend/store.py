@@ -10,17 +10,15 @@ import math
 import os
 import secrets
 import sqlite3
-import threading
 import uuid
-from datetime import datetime, timezone
 
+import db
 import listing_rules
 
-DATABASE_PATH = os.getenv("DATABASE_PATH", os.path.join(os.path.dirname(__file__), "smartland.db"))
+DATABASE_PATH = db.DATABASE_PATH
 PBKDF2_ITERATIONS = 600_000
 
-_lock = threading.Lock()
-_conn: sqlite3.Connection | None = None
+_lock = db.lock
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS users (
@@ -129,23 +127,20 @@ def _migrate(conn: sqlite3.Connection) -> None:
     conn.commit()
 
 
+def _setup(conn: sqlite3.Connection) -> None:
+    conn.executescript(SCHEMA)
+    _migrate(conn)
+
+
+db.on_open(_setup)
+
+
 def _db() -> sqlite3.Connection:
-    global _conn
-    if _conn is None:
-        os.makedirs(os.path.dirname(os.path.abspath(DATABASE_PATH)), exist_ok=True)
-        _conn = sqlite3.connect(DATABASE_PATH, check_same_thread=False)
-        _conn.row_factory = sqlite3.Row
-        _conn.execute("PRAGMA foreign_keys = ON")
-        # Write-ahead log: what Litestream copies to the bucket (see start.sh)
-        _conn.execute("PRAGMA journal_mode = WAL")
-        _conn.execute("PRAGMA busy_timeout = 5000")
-        _conn.executescript(SCHEMA)
-        _migrate(_conn)
-    return _conn
+    return db.conn()
 
 
 def _now() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return db.now()
 
 
 # Passwords ------------------------------------------------------------------
@@ -168,7 +163,7 @@ def verify_password(password: str, stored: str) -> bool:
 # Users ----------------------------------------------------------------------
 
 def _public_user(row: sqlite3.Row) -> dict:
-    return {"id": row["id"], "email": row["email"], "name": row["name"]}
+    return {"id": row["id"], "email": row["email"], "name": row["name"], "email_verified": bool(row["email_verified"])}
 
 
 def create_user(email: str, password: str, name: str | None) -> dict | None:
@@ -183,7 +178,7 @@ def create_user(email: str, password: str, name: str | None) -> dict | None:
             _db().commit()
         except sqlite3.IntegrityError:
             return None
-    return {"id": user_id, "email": email.lower(), "name": name}
+    return {"id": user_id, "email": email.lower(), "name": name, "email_verified": False}
 
 
 def authenticate(email: str, password: str) -> dict | None:
@@ -210,11 +205,11 @@ def google_user(sub: str, email: str, name: str | None) -> dict:
         if row is None:
             row = conn.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
             if row is not None:
-                conn.execute("UPDATE users SET google_sub = ?, name = COALESCE(name, ?) WHERE id = ?", (sub, name, row["id"]))
+                conn.execute("UPDATE users SET google_sub = ?, name = COALESCE(name, ?), email_verified = 1 WHERE id = ?", (sub, name, row["id"]))
             else:
                 user_id = uuid.uuid4().hex
                 conn.execute(
-                    "INSERT INTO users (id, email, name, password_hash, created_at, google_sub) VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO users (id, email, name, password_hash, created_at, google_sub, email_verified) VALUES (?, ?, ?, ?, ?, ?, 1)",
                     (user_id, email, name, NO_PASSWORD, _now(), sub),
                 )
             conn.commit()
@@ -296,7 +291,7 @@ def shared_report(token: str) -> dict | None:
 
 LISTING_FIELDS = (
     "category", "title", "description", "price", "lot_sqm", "floor_sqm", "lat", "lon", "place", "town",
-    "province", "seller_type", "prc_license", "contact_name", "contact_phone", "details", "title_status",
+    "province", "seller_type", "prc_license", "contact_name", "contact_phone", "details", "title_status", "org_id",
 )
 
 
@@ -354,6 +349,13 @@ def listing_owner(listing_id: str) -> str | None:
     with _lock:
         row = _db().execute("SELECT user_id FROM listings WHERE id = ? AND status != 'removed'", (listing_id,)).fetchone()
     return row["user_id"] if row else None
+
+
+def listing_poster(listing_id: str) -> dict | None:
+    """Who posted a listing, and the org it was posted for (None for solo sellers)"""
+    with _lock:
+        row = _db().execute("SELECT user_id, org_id FROM listings WHERE id = ? AND status != 'removed'", (listing_id,)).fetchone()
+    return {"user_id": row["user_id"], "org_id": row["org_id"]} if row else None
 
 
 def listings_near(lat: float, lon: float, radius_km: float, category: str | None = None, limit: int = 100) -> dict:

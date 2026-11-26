@@ -106,7 +106,7 @@ export interface AnalyzeResult {
   geo_data?: (Partial<Place> & { amenities?: Amenity[] }) | null
 }
 
-export type ApiErrorKind = 'offline' | 'slow' | 'server' | 'rate-limited' | 'invalid' | 'not-found' | 'unauthorized' | 'conflict'
+export type ApiErrorKind = 'offline' | 'slow' | 'server' | 'rate-limited' | 'invalid' | 'not-found' | 'unauthorized' | 'forbidden' | 'conflict'
 
 export class ApiError extends Error {
   kind: ApiErrorKind
@@ -154,6 +154,7 @@ async function request<T>(path: string, init: RequestInit = {}, signal?: AbortSi
     if (authToken) onUnauthorized?.()
     throw new ApiError('unauthorized', 'Not signed in', detail)
   }
+  if (res.status === 403) throw new ApiError('forbidden', 'Not allowed', detail)
   if (res.status === 404) throw new ApiError('not-found', 'Not found', detail)
   if (res.status === 409) throw new ApiError('conflict', 'Conflict', detail)
   if (res.status === 429) throw new ApiError('rate-limited', 'Too many requests')
@@ -267,6 +268,8 @@ export interface User {
   name: string | null
   /** Can review the documents sellers upload */
   is_admin?: boolean
+  /** Google sign-ins are verified. Password accounts aren't confirmed yet. */
+  email_verified?: boolean
 }
 
 export function signInRequest(mode: 'login' | 'register', email: string, password: string, name?: string) {
@@ -349,6 +352,8 @@ export interface ListingInput {
   authorized: boolean
   /** Sale listings: the title comes with the listing, or the seller confirmed they have none to show */
   title_status?: 'attached' | 'none' | null
+  /** Post for a business account you're on. Null posts as yourself. */
+  org_id?: string | null
 }
 
 /** What anyone sees about a document. The file itself is private. */
@@ -385,6 +390,8 @@ export interface ListingPhoto {
 
 export interface Listing extends Omit<ListingInput, 'authorized' | 'contact_phone'> {
   id: string
+  /** The business account it was posted for */
+  org: ListingOrg | null
   title_state: TitleState
   photos: ListingPhoto[]
   status: 'active' | 'sold'
@@ -510,6 +517,69 @@ export const reviewApi = {
       method: 'POST',
       body: JSON.stringify({ status, note: note || null }),
     }),
+}
+
+// Business accounts (backend/business.py) -----------------------------------------------
+
+export type OrgKind = 'brokerage' | 'developer' | 'agency' | 'other'
+export type OrgRole = 'owner' | 'admin' | 'member' | 'guest'
+export type InviteRole = Exclude<OrgRole, 'owner'>
+
+export interface Org {
+  id: string
+  name: string
+  /** `personal` is a seller's own CRM, with no team */
+  kind: OrgKind | 'personal'
+  prc_license: string | null
+  created_at: string
+  role: OrgRole
+  /** Only in the list of your orgs */
+  members?: number
+}
+
+export type ListingOrg = Pick<Org, 'id' | 'name' | 'prc_license'> & { kind: OrgKind }
+
+export interface Member {
+  id: string
+  email: string
+  name: string | null
+  role: OrgRole
+  joined_at: string
+}
+
+export interface Invite {
+  id: string
+  email: string
+  role: InviteRole
+  created_at: string
+  expires_at: string
+}
+
+export interface InvitePreview {
+  email: string
+  role: InviteRole
+  expires_at: string
+  org_name: string
+  inviter: string
+}
+
+const oid = (id: string) => `/api/business/orgs/${encodeURIComponent(id)}`
+
+export const businessApi = {
+  mine: () => request<Org[]>('/api/business/orgs/mine'),
+  get: (id: string, signal?: AbortSignal) => request<Org>(oid(id), {}, signal),
+  create: (input: { name: string; kind: OrgKind; prc_license: string | null }) =>
+    request<Org>('/api/business/orgs', { method: 'POST', body: JSON.stringify(input) }),
+  members: (id: string, signal?: AbortSignal) => request<{ members: Member[]; invites: Invite[] }>(`${oid(id)}/members`, {}, signal),
+  /** The token comes back this once. Share `path` with the person you invite. */
+  invite: (id: string, email: string, role: InviteRole) =>
+    request<Invite & { token: string; path: string }>(`${oid(id)}/invites`, { method: 'POST', body: JSON.stringify({ email, role }) }),
+  cancelInvite: (id: string, inviteId: string) => request<void>(`${oid(id)}/invites/${encodeURIComponent(inviteId)}`, { method: 'DELETE' }),
+  setRole: (id: string, userId: string, role: InviteRole) =>
+    request<{ user_id: string; role: InviteRole }>(`${oid(id)}/members/${encodeURIComponent(userId)}`, { method: 'PATCH', body: JSON.stringify({ role }) }),
+  removeMember: (id: string, userId: string) => request<void>(`${oid(id)}/members/${encodeURIComponent(userId)}`, { method: 'DELETE' }),
+  invitePreview: (token: string, signal?: AbortSignal) => request<InvitePreview>(`/api/invites/${encodeURIComponent(token)}`, {}, signal),
+  acceptInvite: (token: string) => request<{ org_id: string }>(`/api/invites/${encodeURIComponent(token)}/accept`, { method: 'POST' }),
 }
 
 export const api = {

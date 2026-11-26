@@ -15,6 +15,7 @@ import {
 } from '../lib/api'
 import { useUser } from '../lib/auth'
 import { useGoogleAvailable } from '../lib/google'
+import { pickOrg, useMyOrgs } from '../lib/business'
 import { CATEGORIES, SELLER_LABEL, categoryBySlug, readNear, useListingSchema, type CategorySpec } from '../lib/listings'
 import { Button, ButtonLink } from '../components/Button'
 import { TextArea, TextField } from '../components/Fields'
@@ -227,6 +228,10 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
   const [contactName, setContactName] = useState('')
   const [phone, setPhone] = useState('')
   const [authorized, setAuthorized] = useState(false)
+  // Business accounts you may post for. Guests can't post.
+  const postable = (useMyOrgs().orgs ?? []).filter((o) => o.role !== 'guest')
+  const [postAs, setPostAs] = useState('')
+  const postOrg = postable.find((o) => o.id === postAs) ?? null
   const [staged, setStaged] = useState<Partial<Record<DocumentType, File>>>({})
   // Sale listings: the seller confirmed they have no title or proof of rights to show
   const [noTitle, setNoTitle] = useState(false)
@@ -378,6 +383,7 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
       details: values,
       authorized,
       title_status: spec.rent ? null : hasTitleDoc ? 'attached' : 'none',
+      org_id: postOrg?.id ?? null,
     }
     setFailure(null)
     setProgress('Posting your listing')
@@ -669,6 +675,37 @@ function ListingForm({ category, schema }: { category: CategorySpec; schema: Lis
       </Section>
 
       <Section title={spec.rent ? 'Who’s renting it out' : 'Who’s selling'}>
+        {postable.length > 0 && (
+          <fieldset className="flex flex-col gap-xs">
+            <legend className="pb-xs font-semibold">Post as</legend>
+            <div className="flex flex-wrap gap-xs">
+              {[{ id: '', name: 'Yourself' }, ...postable].map((o) => (
+                <label
+                  key={o.id || 'me'}
+                  className={`press inline-flex min-h-tap cursor-pointer items-center rounded-pill bg-surface px-md text-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-focus ${postAs === o.id ? 'border-2 border-focus font-semibold' : 'border border-hairline'}`}
+                >
+                  <input
+                    type="radio"
+                    name="post-as"
+                    value={o.id}
+                    checked={postAs === o.id}
+                    onChange={() => {
+                      setPostAs(o.id)
+                      if (o.id) pickOrg(o.id)
+                    }}
+                    className="sr-only"
+                  />
+                  {o.name}
+                </label>
+              ))}
+            </div>
+            <p className="text-caption text-ink-secondary">
+              {postOrg
+                ? `Buyers see ${postOrg.name}${postOrg.prc_license ? ` and PRC license ${postOrg.prc_license}` : ''} on the listing. ${postOrg.name}’s owner and admins can change it too.`
+                : 'Only you can change this listing.'}
+            </p>
+          </fieldset>
+        )}
         <fieldset className="flex flex-col gap-xs">
           <legend className="pb-xs font-semibold">You are the</legend>
           <div className="flex flex-wrap gap-xs">

@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ChevronLeft, ExternalLink, FileQuestion, Phone, RotateCw, Search, Trash2, UserRound } from 'lucide-react'
+import { Briefcase, ChevronLeft, ExternalLink, FileQuestion, Phone, RotateCw, Search, Trash2, UserRound } from 'lucide-react'
 import { ApiError, listingsApi, type Listing } from '../lib/api'
 import { formatDate, formatPeso } from '../lib/format'
 import { SELLER_LABEL, categoryByKey, formatArea, formatDetail, listingPrice, nearParams, pricePerSqm, useListingSchema } from '../lib/listings'
@@ -230,6 +230,8 @@ export function ListingPage() {
               ))}
             <Row label="Seller">{SELLER_LABEL[l.seller_type]}</Row>
             {l.prc_license && <Row label="PRC license">{l.prc_license}</Row>}
+            {l.org && <Row label="Business">{l.org.name}</Row>}
+            {l.org?.prc_license && l.org.prc_license !== l.prc_license && <Row label="Business PRC license">{l.org.prc_license}</Row>}
           </dl>
           {l.description && (
             <div className="flex flex-col gap-xs">
@@ -265,6 +267,12 @@ export function ListingPage() {
           ) : (
             <section aria-label="Contact the seller" className="flex flex-col gap-sm rounded-lg border border-hairline bg-surface p-md sm:p-lg">
               <TrustBadges listing={l} />
+              {l.org && (
+                <p className="inline-flex items-center gap-xs text-ink-secondary">
+                  <Briefcase size={18} aria-hidden />
+                  {l.org.name}
+                </p>
+              )}
               <p className="inline-flex items-center gap-xs font-semibold">
                 <UserRound size={18} className="text-ink-secondary" aria-hidden />
                 {l.contact_name}
@@ -273,6 +281,18 @@ export function ListingPage() {
                 <a href={`tel:${l.contact_phone.replace(/[^\d+]/g, '')}`} className="press inline-flex min-h-tap items-center justify-center gap-xs rounded-pill bg-accent-fill px-btn-x text-on-accent">
                   <Phone size={18} aria-hidden />
                   Call {l.contact_phone}
+                </a>
+              )}
+              {l.org?.prc_license && l.org.prc_license !== l.prc_license && (
+                <a
+                  href="https://online.prc.gov.ph/Verification"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="press -ml-xxs inline-flex min-h-tap items-center gap-xxs self-start px-xxs text-caption text-accent"
+                >
+                  Look up PRC license {l.org.prc_license}
+                  <ExternalLink size={14} aria-hidden />
+                  <span className="sr-only">(opens in a new tab)</span>
                 </a>
               )}
               {l.seller_type === 'broker' && l.prc_license && (
