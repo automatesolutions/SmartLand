@@ -195,6 +195,7 @@ const SUBNAV_TITLES: [RegExp, string][] = [
   [/^\/business\/team/, 'Team'],
   [/^\/business\/workspace/, 'Team chat'],
   [/^\/business\/tasks/, 'Tasks'],
+  [/^\/business\/performance/, 'Performance'],
   [/^\/business/, 'Business'],
   [/^\/messages/, 'Messages'],
   [/^\/invite/, 'Join a business account'],

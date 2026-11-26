@@ -11,6 +11,7 @@ from pydantic import BaseModel, Field, model_validator
 from slowapi.util import get_remote_address
 
 import crm_repo
+from performance import RefIn
 import orgs_repo
 import store
 from deps import authenticate, limiter, optional_user
@@ -46,6 +47,8 @@ class InquiryIn(ContactFields):
     consent: bool
     # Hidden from people. Bots fill it in.
     website: str = ""
+    # Where the buyer came from (lib/utm.ts), kept on a new lead
+    ref: RefIn | None = None
 
     @model_validator(mode="after")
     def check(self):
@@ -128,6 +131,7 @@ def inquire(request: Request, listing_id: str, body: InquiryIn, user: dict | Non
         message=body.message,
         buyer_id=user["id"] if user else None,
         consent_version=CONSENT_VERSION,
+        ref=body.ref.model_dump() if body.ref and body.ref.source else None,
     )
     # Only a signed-in buyer gets the thread back, to read replies in Messages
     return {"sent": True, "thread_id": lead_id if user else None, "seller": seller}

@@ -24,6 +24,8 @@ ALLOWED: dict[str, set[str]] = {
     "leads.view": {"owner", "admin", "member", "guest"},
     "leads.edit": {"owner", "admin", "member"},
     "leads.delete": {"owner", "admin"},
+    # Visits and inquiries per listing and source. Guests see only their own leads, so not this.
+    "performance.view": {"owner", "admin", "member"},
 }
 
 NOT_FOUND = "Business account not found"

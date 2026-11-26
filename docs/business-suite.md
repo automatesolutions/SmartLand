@@ -1,6 +1,6 @@
 # SmartLand Business Suite: plan
 
-Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1 and 2 built; Checkpoint 3 is the in-app team workspace (Q9). Branch `feat/business-suite` from `main` at e562292.
+Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1, 2, and 3 (the in-app team workspace, Q9) built and deployed. Checkpoint 7 (performance and UTM tracking) built 2026-11-27. Checkpoints 4 to 6 are costed in section 10 and wait for a yes; free tiers come first. Branch `feat/business-suite` from `main` at e562292.
 Written 2026-11-26 from the Business Suite prompt. `docs/business-suite-plan.md` wasn't in the repo, so this plan uses the prompt alone.
 
 ## What exists today
@@ -370,9 +370,29 @@ Checkpoint 3:
 
 Invites only need the signed-in email to match the invite's email, not a verified one: the link itself is the secret, and it works once.
 
-## 10. Later checkpoints (plan only)
+## 10. Later checkpoints
 
-Each gets its own estimate before any work.
+Costed 2026-11-27 at published prices (Cloudflare R2, LiveKit Cloud, Higgsfield, Cloud Run Tier 2). Free tiers come first, with caps enforced in code. Order: 7, then 4, 6 in Template mode, and 5 last.
+
+| Checkpoint | At launch, with caps | At about 200 active businesses |
+|---|---|---|
+| 4. Videos (R2) | $0: 10 GB free, free playback | About $3 a month, plus about $3 a month for each month videos are kept |
+| 5. Huddles and live (LiveKit) | $0: Build plan, 5,000 participant minutes and 50 GB a month, no card | About $150 a month: Ship at $50, plus bandwidth at $0.12 per GB |
+| 6. AutoShorts | $0: Template mode on a Cloud Run job, under $0.01 a Short | Under $1 a month; AI mode capped at 20 Higgsfield credits, about $1 |
+| 7. Performance and UTM | $0 | $0 |
+
+AutoShorts Studio and Cloqui aren't available, so 4 and 6 are planned as SmartLand features, and Shorts render on a separate Cloud Run job so the one web instance stays free for chat and pages.
+
+### 7. Performance and UTM tracking (built)
+
+- **Share links**: a listing's poster sees a Share links panel with links tagged `utm_source`, `utm_medium`, and `utm_campaign=listing` for Facebook, TikTok, Instagram, YouTube, Messenger, and a flyer QR code (`qrcode`, loaded only when asked for). The performance page offers the same links for every listing on the account.
+- **Where a visitor came from** (`frontend/src/lib/utm.ts`): UTM tags first, then `fbclid`, `ttclid`, or `gclid`, then the referrer host. It's kept in `sessionStorage` for the session, and the tags are removed from the address bar so a copied link doesn't credit the wrong source.
+- **Visits** (`POST /api/listings/{id}/visits`): once per listing per browser session, never for the poster or anyone on the listing's business. Stored as daily totals per listing, Philippine day, source, medium, and campaign (`listing_visits`). No IP address, cookie, or visitor ID. Limited to 60 an hour per IP. Totals older than 2 years are removed on startup.
+- **Leads**: a new inquiry keeps the buyer's source in `leads.utm_source`, `utm_medium`, and `utm_campaign`. A repeat inquiry that joins the lead keeps the first source. Leads show "From Facebook" on the board, the list, and the lead page.
+- **Page** (`GET /api/business/orgs/{id}/performance?days=7|30|90`, `/business/performance`): visits, inquiries, and the share of visits that asked, by source and by listing. Owners, admins, and members (`performance.view`); guests don't. Personal CRMs cover the seller's own listings.
+- **Not yet**: views, likes, and shares from TikTok, YouTube, and Facebook. Those need developer accounts and app reviews (below).
+
+### Earlier notes
 
 - **4. Videos in circles**: Cloqui's recorder and private R2 playback. Cloudflare R2 is $0.015 per GB a month with free egress, and 10 GB free. I'll size it from expected minutes per org.
 - **5. Huddles and private live**: LiveKit rooms. LiveKit Cloud's free tier covers a small number of participant minutes. Per-org minute caps go in before launch.

@@ -5,6 +5,7 @@ import { ApiError, crmApi, type Activity, type Crm, type Lead, type LeadChange }
 import { useUser } from '../../lib/auth'
 import { canManage, canWorkLeads, today, useCrm } from '../../lib/business'
 import { formatDate } from '../../lib/format'
+import { sourceLabel } from '../../lib/utm'
 import { Button } from '../../components/Button'
 import { Conversation } from '../../components/Conversation'
 import { Banner, EmptyState, Skeleton } from '../../components/States'
@@ -275,6 +276,7 @@ export function LeadPage() {
           ) : (
             ' · Added by hand'
           )}
+          {lead.ref && ` · From ${sourceLabel(lead.ref.source)}`}
         </p>
       </header>
 

@@ -103,13 +103,14 @@ npm run dev        # http://localhost:3001
 
 Build for production with `npm run build` in `frontend/`. Output goes to `frontend/dist/`.
 
-### Business accounts, leads, and the team workspace
+### Business accounts, leads, the team workspace, and performance
 
 The full plan is in `docs/business-suite.md`.
 
 - **Business accounts.** Brokerages, developers, and agencies create one from Account. Members have one of four roles: owner, admin, member, or guest. Owners and admins invite people by copying a one-time link that expires in 7 days. Brokerages give the broker's PRC license, shown on every listing posted for the business.
 - **Leads.** A buyer taps "Message the seller" on a listing. The message becomes a lead on the business's board at `/business/leads`, or on the seller's own board for listings posted as themselves. Buyers who were signed in read replies at `/messages`. Contact details are cleared 2 years after a lead closes (Data Privacy Act of 2012).
 - **Team chat and tasks.** Each business has a workspace at `/business/workspace`: #general plus channels owners and admins add, direct messages between two teammates, and @mentions. Open chats check for new messages every 4 seconds while the tab is visible; the nav badge counts new direct messages and mentions. Tasks at `/business/tasks` have an assignee, a due date, and an optional link to a lead or listing. Guests can read but not post. Owners and admins can't read other people's direct messages.
+- **Performance.** `/business/performance` shows visits and inquiries per listing over 7, 30, or 90 days, and where they came from. Sellers copy tagged share links for Facebook, TikTok, Instagram, YouTube, Messenger, or a flyer QR code from their listing. Visits are daily totals with nothing that identifies a visitor, and visits from the seller's own team don't count.
 
 Run the backend tests from `backend/` with `venv\Scripts\python -m pytest` (install `requirements-dev.txt` first).
 

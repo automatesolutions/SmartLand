@@ -24,6 +24,8 @@ import crm
 import crm_repo
 import listing_rules
 import orgs_repo
+import performance
+import performance_repo
 import permissions
 import storage
 import store
@@ -61,6 +63,8 @@ app.include_router(business.router)
 app.include_router(crm.router)
 # Team workspace: channels, DMs, mentions, and tasks (workspace.py)
 app.include_router(workspace.router)
+# Listing visits by source, and the performance page (performance.py)
+app.include_router(performance.router)
 
 
 # Database Connections -------------------------------------------------------
@@ -96,6 +100,10 @@ async def startup_event():
             logger.info(f"Cleared contact details of {cleared} old leads")
     except Exception as e:
         logger.warning(f"Lead cleanup failed: {e}")
+    try:
+        performance_repo.purge_old()
+    except Exception as e:
+        logger.warning(f"Visit cleanup failed: {e}")
 
 
 # Pydantic Models for Validation ---------------------------------------------

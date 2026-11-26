@@ -86,11 +86,13 @@ def add_inquiry(
     message: str,
     buyer_id: str | None,
     consent_version: str,
+    ref: dict | None = None,
 ) -> tuple[str, bool]:
     """Files a buyer's inquiry as a lead in the first stage. Returns (lead id, created).
 
     A signed-in buyer with an open lead on this listing, or anyone repeating the same
     phone or email within DEDUPE_HOURS, adds to that lead's thread instead.
+    `ref` is where the buyer came from ({source, medium, campaign}); a repeat keeps the first.
     """
     phone = normalize_phone(phone)
     email = email.lower() if email else None
@@ -120,9 +122,11 @@ def add_inquiry(
             (contact_id, org_id, buyer_id, name, phone, email, now, consent_version, now, now),
         )
         c.execute(
-            """INSERT INTO leads (id, org_id, contact_id, listing_id, stage_id, assignee_id, source, message, created_at, updated_at)
-               VALUES (?, ?, ?, ?, ?, ?, 'inquiry', ?, ?, ?)""",
-            (lead_id, org_id, contact_id, listing_id, first, assignee_id, message, now, now),
+            """INSERT INTO leads (id, org_id, contact_id, listing_id, stage_id, assignee_id, source, message,
+                                  utm_source, utm_medium, utm_campaign, created_at, updated_at)
+               VALUES (?, ?, ?, ?, ?, ?, 'inquiry', ?, ?, ?, ?, ?, ?)""",
+            (lead_id, org_id, contact_id, listing_id, first, assignee_id, message,
+             ref and ref["source"], ref and (ref["medium"] or None), ref and (ref["campaign"] or None), now, now),
         )
         _log(c, lead_id, None, "created", {"source": "inquiry"})
         _message(c, lead_id, "buyer", buyer_id, message)
@@ -282,6 +286,8 @@ def _summary(r) -> dict:
         "listing": {"id": r["listing_id"], "title": r["listing_title"], "status": r["listing_status"]} if r["listing_title"] else None,
         "assignee": {"id": r["assignee_id"], "name": r["assignee_name"] or r["assignee_email"]} if r["assignee_id"] else None,
         "source": r["source"],
+        # Where an inquiry's buyer came from, such as {"source": "facebook", ...}; null for direct visits and manual leads
+        "ref": {"source": r["utm_source"], "medium": r["utm_medium"], "campaign": r["utm_campaign"]} if r["utm_source"] else None,
         "follow_up_on": r["follow_up_on"],
         "unread": r["unread"],
         "created_at": r["created_at"],

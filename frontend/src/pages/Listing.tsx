@@ -12,6 +12,8 @@ import { TextArea, TextField } from '../components/Fields'
 import { Banner, EmptyState, Skeleton } from '../components/States'
 import { CopyCheck, CredibilityCard, DocumentList, ListingRecord, TrustBadges } from '../components/Trust'
 import { PhotoGallery, PhotoManager } from '../components/Photos'
+import { ShareLinks } from '../components/ShareLinks'
+import { currentRef, firstVisit } from '../lib/utm'
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -160,6 +162,7 @@ function AskSeller({ listing }: { listing: Listing }) {
         message: message.trim(),
         consent,
         website,
+        ref: currentRef(),
       })
       setSent({ thread: res.thread_id })
     } catch (err) {
@@ -242,6 +245,15 @@ export function ListingPage() {
 
   const l = listing?.id === id ? listing.data : null
   const err = failure?.id === id ? failure.err : null
+  const counted = l && !l.mine ? l.id : null
+
+  // One visit per listing per session, for the seller's performance page. Never the seller's own.
+  useEffect(() => {
+    if (!counted || !firstVisit(counted)) return
+    listingsApi.visit(counted, currentRef()).catch(() => {
+      // A missed count never gets in the buyer's way
+    })
+  }, [counted])
 
   if (!l && err) {
     const gone = err instanceof ApiError && err.kind === 'not-found'
@@ -378,10 +390,13 @@ export function ListingPage() {
 
         <div className="flex flex-col gap-lg">
           {l.mine ? (
-            <OwnerControls
-              listing={l}
-              onChange={(next) => (next ? setListing({ id, data: next }) : navigate('/listings/mine', { replace: true }))}
-            />
+            <>
+              <OwnerControls
+                listing={l}
+                onChange={(next) => (next ? setListing({ id, data: next }) : navigate('/listings/mine', { replace: true }))}
+              />
+              <ShareLinks listingId={l.id} title={l.title} />
+            </>
           ) : (
             <section aria-label="Contact the seller" className="flex flex-col gap-sm rounded-lg border border-hairline bg-surface p-md sm:p-lg">
               <TrustBadges listing={l} />

@@ -29,7 +29,7 @@ export function PrivacyPage() {
         <p className="text-ink-secondary">
           How SmartLand handles your details when you message a seller, under the Data Privacy Act of 2012 (Republic Act No. 10173).
         </p>
-        <p className="text-caption text-ink-secondary">Last updated November 26, 2026</p>
+        <p className="text-caption text-ink-secondary">Last updated November 27, 2026</p>
       </header>
 
       <Part title="Who we are">
@@ -43,6 +43,14 @@ export function PrivacyPage() {
         <p>When you message a seller about a listing, we keep your name, the phone number or email you give, and your messages.</p>
         <p>If you’re signed in, we link your messages to your account, so you can read the seller’s replies in SmartLand.</p>
         <p>We don’t ask for your address, birthday, or ID.</p>
+      </Part>
+
+      <Part title="Counting visits">
+        <p>
+          When you open a listing, we add 1 to that day’s visit count for it, with where you came from, such as Facebook or a flyer. We keep only
+          the daily totals, with nothing that identifies you, and no cookie.
+        </p>
+        <p>If you message the seller, we keep where you came from with your message, so the seller knows which post reached you.</p>
       </Part>
 
       <Part title="Why we collect it">

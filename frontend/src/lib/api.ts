@@ -504,6 +504,8 @@ export const listingsApi = {
     return upload<ListingPhoto>(`${lid(id)}/photos`, form, onProgress)
   },
   /** A buyer's message to the seller. Signed-in buyers get a thread id to read replies. */
+  /** Counts a visit. Visits by the listing's own team aren't counted. */
+  visit: (id: string, ref: Ref) => request<void>(`${lid(id)}/visits`, { method: 'POST', body: JSON.stringify(ref) }),
   inquire: (id: string, input: InquiryInput) =>
     request<{ sent: true; thread_id: string | null; seller: string }>(`${lid(id)}/inquiries`, { method: 'POST', body: JSON.stringify(input) }),
   deletePhoto: (id: string, photoId: string) => request<void>(`${lid(id)}/photos/${encodeURIComponent(photoId)}`, { method: 'DELETE' }),
@@ -597,6 +599,15 @@ export interface InquiryInput {
   consent: boolean
   /** Hidden field that only bots fill in */
   website: string
+  /** Where the buyer came from (lib/utm.ts) */
+  ref?: Ref | null
+}
+
+/** Where a visitor came from: UTM tags, or a source worked out from the referrer */
+export interface Ref {
+  source: string
+  medium: string
+  campaign: string
 }
 
 export interface Stage {
@@ -615,6 +626,8 @@ export interface LeadSummary {
   listing: { id: string; title: string; status: string } | null
   assignee: { id: string; name: string } | null
   source: 'inquiry' | 'manual'
+  /** Where an inquiry's buyer came from; null for direct visits and manual leads */
+  ref: { source: string; medium: string | null; campaign: string | null } | null
   /** YYYY-MM-DD */
   follow_up_on: string | null
   /** Buyer messages the team hasn't read */
@@ -876,4 +889,26 @@ export const workspaceApi = {
   updateTask: (orgId: string, taskId: string, change: TaskChange) =>
     request<Task>(`${wsPath(orgId)}/tasks/${encodeURIComponent(taskId)}`, { method: 'PATCH', body: JSON.stringify(change) }),
   removeTask: (orgId: string, taskId: string) => request<void>(`${wsPath(orgId)}/tasks/${encodeURIComponent(taskId)}`, { method: 'DELETE' }),
+}
+
+// Performance (backend/performance.py) --------------------------------------------------
+
+export type PerformanceDays = 7 | 30 | 90
+
+export interface Performance {
+  days: PerformanceDays
+  /** First day counted, YYYY-MM-DD in Philippine time */
+  since: string
+  totals: { visits: number; inquiries: number }
+  /** The account's listings, most visited first */
+  listings: { id: string; title: string; status: string; visits: number; inquiries: number }[]
+  /** "direct" when the visitor had no tags and no outside referrer */
+  sources: { source: string; visits: number; inquiries: number }[]
+  /** Days with at least one visit */
+  daily: { day: string; visits: number }[]
+}
+
+export const performanceApi = {
+  load: (orgId: string, days: PerformanceDays, signal?: AbortSignal) =>
+    request<Performance>(`${oid(orgId)}/performance?days=${days}`, {}, signal),
 }

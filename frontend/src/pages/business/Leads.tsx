@@ -4,6 +4,7 @@ import { CalendarClock, Columns3, List, LoaderCircle, MessageCircle, Plus, UserR
 import { ApiError, crmApi, errorCopy, type Crm, type LeadSummary, type Org, type Stage } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { canWorkLeads, followUpLabel, today, useCrm, useCurrentOrg, useMyOrgs } from '../../lib/business'
+import { sourceLabel } from '../../lib/utm'
 import { Button } from '../../components/Button'
 import { TextArea, TextField } from '../../components/Fields'
 import { Banner, Skeleton } from '../../components/States'
@@ -121,6 +122,7 @@ function Board({ crm, editable, onMove }: { crm: Crm; editable: boolean; onMove:
                         <Unread n={l.unread} />
                       </span>
                       {l.listing && <span className="truncate text-caption text-ink-secondary">{l.listing.title}</span>}
+                      {l.ref && <span className="truncate text-caption text-ink-secondary">From {sourceLabel(l.ref.source)}</span>}
                       <span className="flex flex-wrap items-center gap-x-sm gap-y-xxs">
                         <FollowUp on={l.follow_up_on} />
                         {l.assignee && (
@@ -161,6 +163,7 @@ function ListView({ crm, editable, onMove }: { crm: Crm; editable: boolean; onMo
             </span>
             <span className="truncate text-caption text-ink-secondary">
               {l.listing ? l.listing.title : 'Added by hand'}
+              {l.ref ? ` · From ${sourceLabel(l.ref.source)}` : ''}
               {l.assignee ? ` · ${l.assignee.name}` : ''}
             </span>
             <FollowUp on={l.follow_up_on} />

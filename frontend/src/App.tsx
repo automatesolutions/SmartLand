@@ -23,6 +23,7 @@ import { LeadsPage } from './pages/business/Leads'
 import { LeadPage } from './pages/business/Lead'
 import { WorkspacePage } from './pages/business/Workspace'
 import { TasksPage } from './pages/business/Tasks'
+import { PerformancePage } from './pages/business/Performance'
 import { MessagesPage, ThreadPage } from './pages/Messages'
 import { PrivacyPage } from './pages/Privacy'
 
@@ -43,6 +44,7 @@ const TITLES: [RegExp, string][] = [
   [/^\/business\/leads/, 'Leads · SmartLand'],
   [/^\/business\/workspace/, 'Team chat · SmartLand'],
   [/^\/business\/tasks/, 'Tasks · SmartLand'],
+  [/^\/business\/performance/, 'Performance · SmartLand'],
   [/^\/business/, 'Business account · SmartLand'],
   [/^\/invite\//, 'Join a business account · SmartLand'],
   [/^\/messages/, 'Messages · SmartLand'],
@@ -95,6 +97,7 @@ export default function App() {
           <Route path="business/leads/:id" element={<LeadPage />} />
           <Route path="business/workspace" element={<WorkspacePage />} />
           <Route path="business/tasks" element={<TasksPage />} />
+          <Route path="business/performance" element={<PerformancePage />} />
           <Route path="invite/:token" element={<InvitePage />} />
           <Route path="messages" element={<MessagesPage />} />
           <Route path="messages/:id" element={<ThreadPage />} />
