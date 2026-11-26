@@ -224,11 +224,15 @@ Inquiries on sold listings are refused. Search results keep dropping phone numbe
 
 ### Consent text (Data Privacy Act of 2012)
 
-Checkbox label, version `2026-11-v1`:
+Checkbox label, version `2026-11-v2` (v1 said "keep them for up to 2 years", which didn't match how retention works):
 
-> I agree that SmartLand shares my name, contact details, and message with this seller so they can reply about this property. They and SmartLand keep them for up to 2 years, and I can ask SmartLand to delete them at any time.
+> I agree that SmartLand shares my name, contact details, and message with this seller, and their team if they have one, so they can reply about this property. SmartLand keeps them until 2 years after the seller closes my inquiry. I can withdraw this and ask SmartLand to delete them at any time.
 
-Below the form: "SmartLand processes your details under the Data Privacy Act of 2012 (Republic Act No. 10173)." with a link to a privacy notice. The privacy notice page doesn't exist yet. I'll draft it in Checkpoint 2 for your review. A lawyer should read it before launch.
+Below the form: "SmartLand processes your details under the Data Privacy Act of 2012 (Republic Act No. 10173)." with a link to `/privacy`. The notice covers what the implementing rules ask a notice to say: who we are and how to reach us (support@smartland.app), what we collect, why and on what basis, who sees it, storage in Google Cloud Singapore (outside the Philippines), retention, security, and the data subject's rights. A lawyer should read it before launch.
+
+Open privacy items:
+- A Data Protection Officer, registered with the National Privacy Commission, once SmartLand meets the registration thresholds. The notice doesn't name one yet.
+- Inquiries a seller never closes are kept until the seller deletes them. A cap, such as clearing inquiries with no activity for 2 years, would close that gap.
 
 Retention: a daily cleanup removes the contact details of leads closed more than 2 years ago and keeps the stage history. Admins can delete a lead and its contact at any time.
 

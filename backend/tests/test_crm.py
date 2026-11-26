@@ -88,7 +88,7 @@ def test_signed_in_buyer_can_skip_contact_fields(client, person):
     lead_id = board(client, personal(client, ana)["id"], ana)["leads"][0]["id"]
     detail = client.get(f"/api/business/orgs/{personal(client, ana)['id']}/leads/{lead_id}", headers=ana.headers).json()
     assert detail["contact"]["email"] == "ben@example.com"
-    assert detail["contact"]["consent_version"] == "2026-11-v1"
+    assert detail["contact"]["consent_version"] == "2026-11-v2"
 
 
 def test_honeypot_keeps_nothing(client, person):

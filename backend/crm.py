@@ -19,7 +19,7 @@ from permissions import can
 router = APIRouter()
 
 # Bump when the consent wording in the inquiry form changes (frontend/src/pages/Listing.tsx)
-CONSENT_VERSION = "2026-11-v1"
+CONSENT_VERSION = "2026-11-v2"
 
 PHONE = r"^\+?[\d\s()-]{7,20}$"
 EMAIL = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"

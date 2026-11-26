@@ -11,10 +11,9 @@ import { Banner } from '../components/States'
 import { GoogleSignIn } from '../components/GoogleSignIn'
 import { useGoogleAvailable } from '../lib/google'
 import { orgLine, pickOrg, useMyOrgs } from '../lib/business'
+import { SUPPORT_EMAIL } from '../lib/support'
 
 type Mode = 'login' | 'register'
-
-const SUPPORT_EMAIL = 'support@smartland.app'
 
 function MadeBy() {
   return (

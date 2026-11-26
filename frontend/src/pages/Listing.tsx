@@ -195,8 +195,9 @@ function AskSeller({ listing }: { listing: Listing }) {
       <label className="flex cursor-pointer items-start gap-sm">
         <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 size-5 shrink-0 accent-accent-fill" />
         <span className="text-caption">
-          I agree that SmartLand shares my name, contact details, and message with this seller so they can reply about this property. They and SmartLand
-          keep them for up to 2 years, and I can ask SmartLand to delete them at any time.
+          I agree that SmartLand shares my name, contact details, and message with this seller, and their team if they have one, so they can reply about
+          this property. SmartLand keeps them until 2 years after the seller closes my inquiry. I can withdraw this and ask SmartLand to delete them at
+          any time.
         </span>
       </label>
       <p className="text-caption text-ink-secondary">
