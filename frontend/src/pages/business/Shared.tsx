@@ -45,13 +45,13 @@ export function LoadFailed({ what, onRetry }: { what: string; onRetry: () => voi
   )
 }
 
-/** Picks which business account the business pages show, when you're on more than one */
+/** Picks which account the business pages show, when you're on more than one */
 export function OrgSwitcher({ orgs, current }: { orgs: Org[]; current: Org }) {
   if (orgs.length < 2) return null
   return (
     <div className="flex flex-col gap-xs">
       <label htmlFor="org-switcher" className="text-caption font-semibold">
-        Business account
+        Showing
       </label>
       <select
         id="org-switcher"
@@ -61,7 +61,7 @@ export function OrgSwitcher({ orgs, current }: { orgs: Org[]; current: Org }) {
       >
         {orgs.map((o) => (
           <option key={o.id} value={o.id}>
-            {o.name}
+            {o.kind === 'personal' ? 'Your own listings' : o.name}
           </option>
         ))}
       </select>

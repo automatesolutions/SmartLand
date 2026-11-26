@@ -20,6 +20,8 @@ import jwt
 import httpx
 
 import business
+import crm
+import crm_repo
 import listing_rules
 import orgs_repo
 import permissions
@@ -54,6 +56,8 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # Business accounts (business.py)
 app.include_router(business.router)
+# CRM: inquiries, leads, and buyer messages (crm.py)
+app.include_router(crm.router)
 
 
 # Database Connections -------------------------------------------------------
@@ -82,6 +86,13 @@ async def connect_databases():
 @app.on_event("startup")
 async def startup_event():
     await connect_databases()
+    # Data Privacy Act of 2012: clear contact details of leads closed over 2 years ago
+    try:
+        cleared = crm_repo.purge_expired()
+        if cleared:
+            logger.info(f"Cleared contact details of {cleared} old leads")
+    except Exception as e:
+        logger.warning(f"Lead cleanup failed: {e}")
 
 
 # Pydantic Models for Validation ---------------------------------------------

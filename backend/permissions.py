@@ -17,6 +17,10 @@ ALLOWED: dict[str, set[str]] = {
     "listing.post_as_org": {"owner", "admin", "member"},
     "listing.edit_any": {"owner", "admin"},
     "workspace.open": {"owner", "admin", "member", "guest"},
+    # Guests see only the leads assigned to them
+    "leads.view": {"owner", "admin", "member", "guest"},
+    "leads.edit": {"owner", "admin", "member"},
+    "leads.delete": {"owner", "admin"},
 }
 
 NOT_FOUND = "Business account not found"

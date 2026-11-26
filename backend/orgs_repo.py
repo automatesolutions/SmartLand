@@ -32,6 +32,15 @@ def create_org(user_id: str, name: str, kind: str, prc_license: str | None) -> d
     return get_org(org_id)
 
 
+def personal_org(user_id: str) -> dict:
+    """A seller's own CRM, made the first time they need it. Only they are on it."""
+    with db.lock:
+        row = db.conn().execute("SELECT * FROM orgs WHERE created_by = ? AND kind = 'personal'", (user_id,)).fetchone()
+        if row is None:
+            return create_org(user_id, "Personal CRM", "personal", None)
+    return _org(row)
+
+
 def get_org(org_id: str) -> dict | None:
     with db.lock:
         row = db.conn().execute("SELECT * FROM orgs WHERE id = ?", (org_id,)).fetchone()

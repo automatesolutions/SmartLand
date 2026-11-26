@@ -19,6 +19,10 @@ import { BusinessPage } from './pages/business/Overview'
 import { NewOrgPage } from './pages/business/NewOrg'
 import { TeamPage } from './pages/business/Team'
 import { InvitePage } from './pages/Invite'
+import { LeadsPage } from './pages/business/Leads'
+import { LeadPage } from './pages/business/Lead'
+import { MessagesPage, ThreadPage } from './pages/Messages'
+import { PrivacyPage } from './pages/Privacy'
 
 const TITLES: [RegExp, string][] = [
   [/^\/$/, 'SmartLand: know what land is worth'],
@@ -34,8 +38,11 @@ const TITLES: [RegExp, string][] = [
   [/^\/reviews/, 'Document reviews · SmartLand'],
   [/^\/business\/new/, 'Create a business account · SmartLand'],
   [/^\/business\/team/, 'Team · SmartLand'],
+  [/^\/business\/leads/, 'Leads · SmartLand'],
   [/^\/business/, 'Business account · SmartLand'],
   [/^\/invite\//, 'Join a business account · SmartLand'],
+  [/^\/messages/, 'Messages · SmartLand'],
+  [/^\/privacy/, 'Privacy notice · SmartLand'],
 ]
 
 function DocumentTitle() {
@@ -80,7 +87,12 @@ export default function App() {
           <Route path="business" element={<BusinessPage />} />
           <Route path="business/new" element={<NewOrgPage />} />
           <Route path="business/team" element={<TeamPage />} />
+          <Route path="business/leads" element={<LeadsPage />} />
+          <Route path="business/leads/:id" element={<LeadPage />} />
           <Route path="invite/:token" element={<InvitePage />} />
+          <Route path="messages" element={<MessagesPage />} />
+          <Route path="messages/:id" element={<ThreadPage />} />
+          <Route path="privacy" element={<PrivacyPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

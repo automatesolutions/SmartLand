@@ -503,6 +503,9 @@ export const listingsApi = {
     form.set('file', file)
     return upload<ListingPhoto>(`${lid(id)}/photos`, form, onProgress)
   },
+  /** A buyer's message to the seller. Signed-in buyers get a thread id to read replies. */
+  inquire: (id: string, input: InquiryInput) =>
+    request<{ sent: true; thread_id: string | null; seller: string }>(`${lid(id)}/inquiries`, { method: 'POST', body: JSON.stringify(input) }),
   deletePhoto: (id: string, photoId: string) => request<void>(`${lid(id)}/photos/${encodeURIComponent(photoId)}`, { method: 'DELETE' }),
   documentFile: (listingId: string, docId: string) => requestBlob(`${lid(listingId)}/documents/${encodeURIComponent(docId)}/file`),
   /** Barangay, town, and province for a pinned spot, without the full lookup */
@@ -580,6 +583,146 @@ export const businessApi = {
   removeMember: (id: string, userId: string) => request<void>(`${oid(id)}/members/${encodeURIComponent(userId)}`, { method: 'DELETE' }),
   invitePreview: (token: string, signal?: AbortSignal) => request<InvitePreview>(`/api/invites/${encodeURIComponent(token)}`, {}, signal),
   acceptInvite: (token: string) => request<{ org_id: string }>(`/api/invites/${encodeURIComponent(token)}/accept`, { method: 'POST' }),
+  /** Your own CRM for leads on your solo listings, made the first time you open it */
+  personal: () => request<Org>('/api/business/personal', { method: 'POST' }),
+}
+
+// CRM (backend/crm.py) -------------------------------------------------------------------
+
+export interface InquiryInput {
+  name: string
+  phone: string | null
+  email: string | null
+  message: string
+  consent: boolean
+  /** Hidden field that only bots fill in */
+  website: string
+}
+
+export interface Stage {
+  id: string
+  name: string
+  position: number
+  outcome: 'won' | 'lost' | null
+}
+
+export interface LeadSummary {
+  id: string
+  org_id: string
+  contact_name: string
+  stage_id: string
+  stage: string
+  listing: { id: string; title: string; status: string } | null
+  assignee: { id: string; name: string } | null
+  source: 'inquiry' | 'manual'
+  /** YYYY-MM-DD */
+  follow_up_on: string | null
+  /** Buyer messages the team hasn't read */
+  unread: number
+  created_at: string
+  updated_at: string
+  closed_at: string | null
+  last_message_at: string | null
+}
+
+export type Activity =
+  | { id: string; kind: 'created'; body: { source: 'inquiry' | 'manual' }; actor: string | null; created_at: string }
+  | { id: string; kind: 'inquiry'; body: Record<string, never>; actor: null; created_at: string }
+  | { id: string; kind: 'note'; body: { text: string }; actor: string | null; created_at: string }
+  | { id: string; kind: 'stage'; body: { from: string | null; to: string }; actor: string | null; created_at: string }
+  | { id: string; kind: 'assigned'; body: { to: string | null }; actor: string | null; created_at: string }
+  | { id: string; kind: 'follow_up'; body: { on: string | null }; actor: string | null; created_at: string }
+
+export interface Message {
+  id: string
+  sender: 'buyer' | 'team'
+  /** Who on the team wrote it. Null for the buyer. */
+  author: string | null
+  body: string
+  created_at: string
+}
+
+export interface Lead extends LeadSummary {
+  contact: {
+    id: string
+    name: string
+    phone: string | null
+    email: string | null
+    /** The buyer asked while signed in, so they can read replies in SmartLand */
+    has_account: boolean
+    consent_at: string | null
+    consent_version: string | null
+  }
+  message: string | null
+  activities: Activity[]
+  messages: Message[]
+}
+
+export interface CrmMember {
+  id: string
+  name: string
+  role: OrgRole
+}
+
+export interface Crm {
+  stages: Stage[]
+  leads: LeadSummary[]
+  members: CrmMember[]
+  role: OrgRole
+}
+
+export interface NewLeadInput {
+  name: string
+  phone: string | null
+  email: string | null
+  listing_id: string | null
+  note: string | null
+  assignee_id: string | null
+  follow_up_on: string | null
+}
+
+export type LeadChange = Partial<{ stage_id: string; assignee_id: string | null; follow_up_on: string | null }>
+
+const leadPath = (orgId: string, leadId: string) => `${oid(orgId)}/leads/${encodeURIComponent(leadId)}`
+
+export const crmApi = {
+  board: (orgId: string, signal?: AbortSignal) => request<Crm>(`${oid(orgId)}/crm`, {}, signal),
+  /** A lead by id alone; the answer says which org it's in */
+  find: (leadId: string, signal?: AbortSignal) => request<Lead>(`/api/business/leads/${encodeURIComponent(leadId)}`, {}, signal),
+  add: (orgId: string, input: NewLeadInput) => request<Lead>(`${oid(orgId)}/leads`, { method: 'POST', body: JSON.stringify(input) }),
+  update: (orgId: string, leadId: string, change: LeadChange) =>
+    request<Lead>(leadPath(orgId, leadId), { method: 'PATCH', body: JSON.stringify(change) }),
+  note: (orgId: string, leadId: string, text: string) =>
+    request<Lead>(`${leadPath(orgId, leadId)}/notes`, { method: 'POST', body: JSON.stringify({ text }) }),
+  reply: (orgId: string, leadId: string, text: string) =>
+    request<Lead>(`${leadPath(orgId, leadId)}/messages`, { method: 'POST', body: JSON.stringify({ text }) }),
+  remove: (orgId: string, leadId: string) => request<void>(leadPath(orgId, leadId), { method: 'DELETE' }),
+}
+
+// Buyer messages ----------------------------------------------------------------------
+
+export interface Thread {
+  id: string
+  listing: { id: string; title: string } | null
+  /** The seller's name, with the business name for business listings */
+  seller: string
+  last_message: string | null
+  last_message_at: string
+  /** Seller messages you haven't read */
+  unread: number
+}
+
+export interface ThreadDetail extends Thread {
+  messages: Message[]
+}
+
+const tid = (id: string) => `/api/messages/${encodeURIComponent(id)}`
+
+export const messagesApi = {
+  list: (signal?: AbortSignal) => request<Thread[]>('/api/messages', {}, signal),
+  unread: (signal?: AbortSignal) => request<{ count: number }>('/api/messages/unread', {}, signal),
+  get: (id: string, signal?: AbortSignal) => request<ThreadDetail>(tid(id), {}, signal),
+  send: (id: string, text: string) => request<ThreadDetail>(tid(id), { method: 'POST', body: JSON.stringify({ text }) }),
 }
 
 export const api = {

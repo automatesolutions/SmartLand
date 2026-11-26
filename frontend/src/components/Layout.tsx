@@ -3,6 +3,7 @@ import { Link, Outlet, useLocation } from 'react-router-dom'
 import { LandPlot, Menu, Moon, Sun, X } from 'lucide-react'
 import { useTheme, type ThemeChoice } from '../lib/theme'
 import { useUser } from '../lib/auth'
+import { messagesApi } from '../lib/api'
 import { ButtonLink } from './Button'
 
 const THEME_LABEL: Record<ThemeChoice, string> = {
@@ -33,6 +34,8 @@ const NAV_MATCH: Record<string, (path: string) => boolean> = {
   '/listings/new': (p) => p.startsWith('/listings/new'),
   '/check': (p) => p.startsWith('/check'),
   '/reports': (p) => p.startsWith('/reports'),
+  '/messages': (p) => p.startsWith('/messages'),
+  '/business': (p) => p.startsWith('/business'),
   '/account': (p) => p.startsWith('/account'),
 }
 
@@ -46,9 +49,28 @@ const trayLink = ({ isActive }: { isActive: boolean }) =>
     isActive ? 'text-on-tile' : 'text-on-tile-secondary hover:text-on-tile'
   }`
 
+/** Seller replies you haven't read, checked again on each page change */
+function useUnreadMessages(pathname: string): number {
+  const user = useUser()
+  const [state, setState] = useState<{ userId: string; count: number } | null>(null)
+  useEffect(() => {
+    if (!user) return
+    const controller = new AbortController()
+    messagesApi
+      .unread(controller.signal)
+      .then(({ count }) => setState({ userId: user.id, count }))
+      .catch(() => {
+        // The count is a hint; the Messages page shows the real list
+      })
+    return () => controller.abort()
+  }, [user, pathname])
+  return state && user && state.userId === user.id ? state.count : 0
+}
+
 function GlobalNav() {
   const user = useUser()
   const { pathname } = useLocation()
+  const unread = useUnreadMessages(pathname)
   // The tray belongs to the page it was opened on, so navigating closes it
   const [openOn, setOpenOn] = useState<string | null>(null)
   const open = openOn === pathname
@@ -58,6 +80,12 @@ function GlobalNav() {
     { to: '/listings/new', label: 'Post a listing' },
     { to: '/check', label: 'Check a price' },
     { to: '/reports', label: 'Saved' },
+    ...(user
+      ? [
+          { to: '/messages', label: unread ? `Messages (${unread} new)` : 'Messages' },
+          { to: '/business', label: 'Leads' },
+        ]
+      : []),
     { to: '/account', label: user ? 'Account' : 'Sign in' },
   ]
   const isActive = (to: string) => NAV_MATCH[to]?.(pathname) ?? false
@@ -129,6 +157,12 @@ const SUBNAV_TITLES: [RegExp, string][] = [
   [/^\/listings(\/|$)/, 'Listings'],
   [/^\/listing\//, 'Listing'],
   [/^\/reviews/, 'Document reviews'],
+  [/^\/business\/leads/, 'Leads'],
+  [/^\/business\/team/, 'Team'],
+  [/^\/business/, 'Business'],
+  [/^\/messages/, 'Messages'],
+  [/^\/invite/, 'Join a business account'],
+  [/^\/privacy/, 'Privacy notice'],
 ]
 
 function SubNav() {
@@ -167,6 +201,7 @@ const FOOTER = [
       { to: '/reports', label: 'Saved reports' },
       { to: '/account', label: 'Account' },
       { to: '/#how', label: 'How it works' },
+      { to: '/privacy', label: 'Privacy notice' },
     ],
   },
   {

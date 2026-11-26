@@ -224,7 +224,7 @@ Inquiries on sold listings are refused. Search results keep dropping phone numbe
 
 Checkbox label, version `2026-11-v1`:
 
-> I agree that SmartLand shares my name, contact details, and message with this seller so they can reply about this property. They and SmartLand keep it for up to 2 years, and you can ask us to delete it at any time at support@smartland.app.
+> I agree that SmartLand shares my name, contact details, and message with this seller so they can reply about this property. They and SmartLand keep them for up to 2 years, and I can ask SmartLand to delete them at any time.
 
 Below the form: "SmartLand processes your details under the Data Privacy Act of 2012 (Republic Act No. 10173)." with a link to a privacy notice. The privacy notice page doesn't exist yet. I'll draft it in Checkpoint 2 for your review. A lawyer should read it before launch.
 
@@ -367,6 +367,7 @@ Checkpoint 3:
 - **Q4. Follow-ups:** one `follow_up_on` date per lead. No `follow_ups` table.
 - **Q5. Invites:** the owner or an admin copies the invite link and sends it. No invite emails yet.
 - **Q6. pytest** is installed in `backend/venv`. The venv stays out of every commit.
+- **Q7. Two-way messages (Checkpoint 2).** Each inquiry is a thread (`lead_messages`). A buyer who asks while signed in reads replies on `/messages` and can answer there. A buyer who asks signed out gets replies by phone or email only, and the team can't send them in-app messages. Notes stay private to the team. No push or email alerts for new messages until an email-sender cost check. A new-message count shows in the nav and on leads.
 
 Invites only need the signed-in email to match the invite's email, not a verified one: the link itself is the secret, and it works once.
 

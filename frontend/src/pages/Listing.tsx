@@ -1,12 +1,14 @@
-import { useEffect, useState, type ReactNode } from 'react'
-import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Briefcase, ChevronLeft, ExternalLink, FileQuestion, Phone, RotateCw, Search, Trash2, UserRound } from 'lucide-react'
+import { useEffect, useState, type FormEvent, type ReactNode } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Briefcase, ChevronLeft, ExternalLink, FileQuestion, LoaderCircle, MessageCircle, Phone, RotateCw, Search, Send, Trash2, UserRound } from 'lucide-react'
 import { ApiError, listingsApi, type Listing } from '../lib/api'
+import { useUser } from '../lib/auth'
 import { formatDate, formatPeso } from '../lib/format'
 import { SELLER_LABEL, categoryByKey, formatArea, formatDetail, listingPrice, nearParams, pricePerSqm, useListingSchema } from '../lib/listings'
 import { Button, ButtonLink } from '../components/Button'
 import { ListingChecks } from '../components/ListingChecks'
 import { MapView } from '../components/Map'
+import { TextArea, TextField } from '../components/Fields'
 import { Banner, EmptyState, Skeleton } from '../components/States'
 import { CopyCheck, CredibilityCard, DocumentList, ListingRecord, TrustBadges } from '../components/Trust'
 import { PhotoGallery, PhotoManager } from '../components/Photos'
@@ -98,6 +100,121 @@ function OwnerControls({ listing, onChange }: { listing: Listing; onChange: (l: 
       </div>
       {failed && <p className="text-caption text-critical">That didn't go through. Check your connection, then try again.</p>}
     </section>
+  )
+}
+
+/** "Message the seller": the buyer's details and message go to the seller's leads */
+function AskSeller({ listing }: { listing: Listing }) {
+  const user = useUser()
+  const [open, setOpen] = useState(false)
+  const [name, setName] = useState(user?.name ?? '')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState(user?.email ?? '')
+  const [message, setMessage] = useState(`Hi, I’m interested in “${listing.title}”. Is it still available?`)
+  const [consent, setConsent] = useState(false)
+  // Hidden from people. Bots fill it in.
+  const [website, setWebsite] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [sent, setSent] = useState<{ thread: string | null } | null>(null)
+
+  if (sent) {
+    return (
+      <Banner tone="positive" title={`We sent your message to ${listing.contact_name}`}>
+        {sent.thread ? (
+          <>
+            Their reply shows up in{' '}
+            <Link to={`/messages/${sent.thread}`} className="text-accent">
+              Messages
+            </Link>
+            .
+          </>
+        ) : (
+          'They’ll contact you by phone or email. Sign in before you message a seller next time, and you can read their replies in SmartLand.'
+        )}
+      </Banner>
+    )
+  }
+
+  if (!open) {
+    return (
+      <Button variant="secondary" icon={<MessageCircle size={18} aria-hidden />} onClick={() => setOpen(true)}>
+        Message the seller
+      </Button>
+    )
+  }
+
+  async function onSubmit(e: FormEvent) {
+    e.preventDefault()
+    if (name.trim().length < 2) return setError('Enter your name.')
+    if (!user && !phone.trim() && !email.trim()) return setError('Add a phone number or an email, so the seller can reply.')
+    if (!message.trim()) return setError('Write a message to the seller.')
+    if (!consent) return setError('Tick the box to agree to share your details with the seller.')
+    setBusy(true)
+    setError(null)
+    try {
+      const res = await listingsApi.inquire(listing.id, {
+        name: name.trim(),
+        phone: phone.trim() || null,
+        email: email.trim() || null,
+        message: message.trim(),
+        consent,
+        website,
+      })
+      setSent({ thread: res.thread_id })
+    } catch (err) {
+      setError(
+        err instanceof ApiError && err.kind === 'rate-limited'
+          ? 'You’ve sent a lot of messages today. Try again tomorrow, or call the seller.'
+          : err instanceof ApiError && err.detail && (err.kind === 'invalid' || err.kind === 'conflict')
+            ? err.detail
+            : err instanceof ApiError && err.kind === 'invalid'
+              ? 'Check your phone number and email, then try again.'
+              : 'Check your connection, then try again.',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <form onSubmit={onSubmit} noValidate aria-busy={busy} aria-labelledby="ask-heading" className="flex flex-col gap-md border-t border-hairline pt-md">
+      <h2 id="ask-heading" className="font-semibold">
+        Message {listing.contact_name}
+      </h2>
+      <TextField label="Your name" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required />
+      <TextField label="Phone" hint={user ? 'Optional.' : 'Add a phone number, an email, or both.'} type="tel" inputMode="tel" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+      <TextField label="Email" type="email" inputMode="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" />
+      <TextArea label="Message" value={message} onChange={(e) => setMessage(e.target.value)} maxLength={1000} required />
+      <div aria-hidden className="absolute -left-[9999px] size-px overflow-hidden">
+        <label>
+          Website
+          <input tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
+        </label>
+      </div>
+      <label className="flex cursor-pointer items-start gap-sm">
+        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 size-5 shrink-0 accent-accent-fill" />
+        <span className="text-caption">
+          I agree that SmartLand shares my name, contact details, and message with this seller so they can reply about this property. They and SmartLand
+          keep them for up to 2 years, and I can ask SmartLand to delete them at any time.
+        </span>
+      </label>
+      <p className="text-caption text-ink-secondary">
+        SmartLand processes your details under the Data Privacy Act of 2012 (Republic Act No. 10173).{' '}
+        <Link to="/privacy" className="text-accent">
+          Read the privacy notice
+        </Link>
+        .
+      </p>
+      {error && (
+        <p role="alert" className="text-caption text-critical">
+          {error}
+        </p>
+      )}
+      <Button type="submit" disabled={busy} className="self-start" icon={busy ? <LoaderCircle size={18} className="animate-spin" aria-hidden /> : <Send size={18} aria-hidden />}>
+        {busy ? 'Sending' : 'Send message'}
+      </Button>
+    </form>
   )
 }
 
@@ -283,6 +400,7 @@ export function ListingPage() {
                   Call {l.contact_phone}
                 </a>
               )}
+              {l.status === 'active' && <AskSeller key={l.id} listing={l} />}
               {l.org?.prc_license && l.org.prc_license !== l.prc_license && (
                 <a
                   href="https://online.prc.gov.ph/Verification"
