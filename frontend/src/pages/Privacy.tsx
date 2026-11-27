@@ -53,6 +53,14 @@ export function PrivacyPage() {
         <p>If you message the seller, we keep where you came from with your message, so the seller knows which post reached you.</p>
       </Part>
 
+      <Part title="Listing videos">
+        <p>
+          If you post a listing and add a video, anyone can watch it on the listing. We store videos with Cloudflare, in its Asia-Pacific region, outside
+          the Philippines. When you remove a video or the listing, we delete the video.
+        </p>
+        <p>Record the property, not people who haven’t agreed to be in it. Don’t show the title or other documents. Add those under Documents, where they stay private.</p>
+      </Part>
+
       <Part title="Why we collect it">
         <p>
           So the seller, and the people on their team, can reply to you about that property. You agree to this when you tick the box on the form. We use

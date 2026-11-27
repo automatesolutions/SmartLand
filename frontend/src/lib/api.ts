@@ -329,6 +329,8 @@ export interface ListingSchema {
   max_photo_mb: number
   max_photos: number
   photo_types: string[]
+  /** Walkthrough videos. Off until video storage is set up on the server. */
+  video: { enabled: boolean; max_mb: number; max_seconds: number; max_per_listing: number; types: string[] }
 }
 
 export interface ListingInput {
@@ -388,6 +390,16 @@ export interface ListingPhoto {
   url: string
 }
 
+/** A walkthrough video. The link expires after an hour, so reload the listing for a fresh one. */
+export interface ListingVideo {
+  id: string
+  url: string
+  mime: string
+  size: number
+  duration_s: number | null
+  created_at: string
+}
+
 export interface Listing extends Omit<ListingInput, 'authorized' | 'contact_phone'> {
   id: string
   /** The business account it was posted for */
@@ -404,6 +416,12 @@ export interface Listing extends Omit<ListingInput, 'authorized' | 'contact_phon
   contact_phone?: string
   /** Only in search results */
   distance_km?: number
+  /** Only on a single listing */
+  videos?: ListingVideo[]
+  /** The seller's team, and SmartLand reviewers */
+  can_remove_videos?: boolean
+  /** Only for the seller's team */
+  video_space_left_mb?: number
 }
 
 export interface ListingSearch {
@@ -445,10 +463,21 @@ async function requestBlob(path: string): Promise<Blob> {
  * fetch can't report upload progress, so this uses XMLHttpRequest.
  */
 function upload<T>(path: string, form: FormData, onProgress?: (fraction: number) => void): Promise<T> {
+  return send<T>('POST', path, form, { auth: true }, onProgress)
+}
+
+function send<T>(
+  method: string,
+  url: string,
+  body: XMLHttpRequestBodyInit,
+  opts: { auth: boolean; headers?: Record<string, string> },
+  onProgress?: (fraction: number) => void,
+): Promise<T> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', path)
-    if (authToken) xhr.setRequestHeader('Authorization', `Bearer ${authToken}`)
+    xhr.open(method, url)
+    if (opts.auth && authToken) xhr.setRequestHeader('Authorization', `Bearer ${authToken}`)
+    for (const [k, v] of Object.entries(opts.headers ?? {})) xhr.setRequestHeader(k, v)
     xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(e.loaded / e.total)
     xhr.onerror = () => reject(new ApiError('offline', 'Network request failed'))
     xhr.onload = () => {
@@ -462,16 +491,17 @@ function upload<T>(path: string, form: FormData, onProgress?: (fraction: number)
       const st = xhr.status
       if (st >= 200 && st < 300) return resolve(body as T)
       if (st === 401) {
-        if (authToken) onUnauthorized?.()
+        if (opts.auth && authToken) onUnauthorized?.()
         return reject(new ApiError('unauthorized', 'Not signed in', detail))
       }
+      if (st === 403) return reject(new ApiError('forbidden', 'Not allowed', detail))
       if (st === 404) return reject(new ApiError('not-found', 'Not found', detail))
       if (st === 429) return reject(new ApiError('rate-limited', 'Too many requests'))
       if (st === 413 || st === 415 || st === 422) return reject(new ApiError('invalid', 'The server rejected the file', detail))
       if (st === 502 || st === 503 || st === 504) return reject(new ApiError('offline', `Unavailable (${st})`))
       reject(new ApiError('server', `Error ${st}`, detail))
     }
-    xhr.send(form)
+    xhr.send(body)
   })
 }
 
@@ -503,12 +533,27 @@ export const listingsApi = {
     form.set('file', file)
     return upload<ListingPhoto>(`${lid(id)}/photos`, form, onProgress)
   },
-  /** A buyer's message to the seller. Signed-in buyers get a thread id to read replies. */
   /** Counts a visit. Visits by the listing's own team aren't counted. */
   visit: (id: string, ref: Ref) => request<void>(`${lid(id)}/visits`, { method: 'POST', body: JSON.stringify(ref) }),
+  /** A buyer's message to the seller. Signed-in buyers get a thread id to read replies. */
   inquire: (id: string, input: InquiryInput) =>
     request<{ sent: true; thread_id: string | null; seller: string }>(`${lid(id)}/inquiries`, { method: 'POST', body: JSON.stringify(input) }),
   deletePhoto: (id: string, photoId: string) => request<void>(`${lid(id)}/photos/${encodeURIComponent(photoId)}`, { method: 'DELETE' }),
+  /**
+   * Adds a video in three steps: the server checks the caps and gives an upload
+   * link, the file goes straight to storage, then the server checks the file.
+   */
+  uploadVideo: async (id: string, file: Blob, durationS: number | null, onProgress?: (fraction: number) => void) => {
+    const mime = file.type.split(';')[0]
+    const start = await request<{ id: string; upload: { method: string; url: string; headers: Record<string, string> } }>(`${lid(id)}/videos`, {
+      method: 'POST',
+      body: JSON.stringify({ mime, size: file.size, duration_s: durationS }),
+    })
+    // The storage link carries its own signature: no sign-in token goes to it
+    await send<void>(start.upload.method, start.upload.url, file, { auth: false, headers: start.upload.headers }, onProgress)
+    return request<ListingVideo>(`${lid(id)}/videos/${encodeURIComponent(start.id)}/complete`, { method: 'POST' })
+  },
+  deleteVideo: (id: string, videoId: string) => request<void>(`${lid(id)}/videos/${encodeURIComponent(videoId)}`, { method: 'DELETE' }),
   documentFile: (listingId: string, docId: string) => requestBlob(`${lid(listingId)}/documents/${encodeURIComponent(docId)}/file`),
   /** Barangay, town, and province for a pinned spot, without the full lookup */
   reverse: (lat: number, lon: number, signal?: AbortSignal) =>

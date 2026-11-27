@@ -13,6 +13,8 @@ _scratch = tempfile.mkdtemp(prefix="smartland-tests-")
 os.environ["DATABASE_PATH"] = os.path.join(_scratch, "boot.db")
 os.environ["UPLOAD_DIR"] = os.path.join(_scratch, "uploads")
 os.environ["JWT_SECRET"] = "test-secret-not-for-production"
+# Videos on disk, even when this computer has R2 keys set: tests never call Cloudflare
+os.environ["VIDEO_STORAGE"] = "local"
 
 from fastapi.testclient import TestClient  # noqa: E402
 

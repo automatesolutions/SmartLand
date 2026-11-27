@@ -13,6 +13,7 @@ import { Banner, EmptyState, Skeleton } from '../components/States'
 import { CopyCheck, CredibilityCard, DocumentList, ListingRecord, TrustBadges } from '../components/Trust'
 import { PhotoGallery, PhotoManager } from '../components/Photos'
 import { ShareLinks } from '../components/ShareLinks'
+import { VideoList, VideoManager } from '../components/Videos'
 import { currentRef, firstVisit } from '../lib/utm'
 
 function Row({ label, children }: { label: string; children: ReactNode }) {
@@ -342,6 +343,7 @@ export function ListingPage() {
       <div className="gutter mx-auto grid max-w-reading gap-lg py-xl md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
         <div className="flex flex-col gap-lg">
           <PhotoGallery photos={l.photos} />
+          <VideoList listing={l} onChange={(videos) => setListing({ id, data: { ...l, videos } })} />
           <MapView lat={l.lat} lon={l.lon} label={l.title} className="h-72 rounded-lg border border-hairline sm:h-80" />
           <dl>
             <Row label="Where">
@@ -372,6 +374,22 @@ export function ListingPage() {
           {schema && (
             <>
               {l.mine && <PhotoManager listing={l} schema={schema} onChange={(photos) => setListing({ id, data: { ...l, photos } })} />}
+              {l.mine && schema.video?.enabled && (
+                <VideoManager
+                  listing={l}
+                  schema={schema}
+                  onAdded={(video) =>
+                    setListing({
+                      id,
+                      data: {
+                        ...l,
+                        videos: [...(l.videos ?? []), video],
+                        video_space_left_mb: Math.max(0, (l.video_space_left_mb ?? 0) - Math.ceil(video.size / (1024 * 1024))),
+                      },
+                    })
+                  }
+                />
+              )}
               <DocumentList listing={l} schema={schema} onChange={refresh} />
               {!l.mine && <CopyCheck documents={l.documents} schema={schema} />}
               <ListingRecord listingId={l.id} schema={schema} version={version} />

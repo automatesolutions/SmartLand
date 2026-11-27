@@ -1,6 +1,6 @@
 # SmartLand Business Suite: plan
 
-Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1, 2, and 3 (the in-app team workspace, Q9) built and deployed. Checkpoint 7 (performance and UTM tracking) built 2026-11-27. Checkpoints 4 to 6 are costed in section 10 and wait for a yes; free tiers come first. Branch `feat/business-suite` from `main` at e562292.
+Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1, 2, and 3 (the in-app team workspace, Q9) built and deployed. Checkpoint 7 (performance and UTM tracking) built 2026-11-27. Checkpoint 4 (listing videos on R2's free tier) built 2026-11-27, tested with local storage. Checkpoints 5 and 6 are costed in section 10 and wait for a yes; free tiers come first. Branch `feat/business-suite` from `main` at e562292.
 Written 2026-11-26 from the Business Suite prompt. `docs/business-suite-plan.md` wasn't in the repo, so this plan uses the prompt alone.
 
 ## What exists today
@@ -382,6 +382,16 @@ Costed 2026-11-27 at published prices (Cloudflare R2, LiveKit Cloud, Higgsfield,
 | 7. Performance and UTM | $0 | $0 |
 
 AutoShorts Studio and Cloqui aren't available, so 4 and 6 are planned as SmartLand features, and Shorts render on a separate Cloud Run job so the one web instance stays free for chat and pages.
+
+### 4. Listing videos on R2 (built)
+
+- **What**: walkthrough videos on a listing. The seller records in the browser (`MediaRecorder`, back camera, 720p at about 2 Mbps, so about 15 MB a minute) or chooses a video from the phone. Anyone viewing the listing can play them.
+- **Upload in three steps** (`backend/videos.py`): `POST /api/listings/{id}/videos` checks the caps and returns a signed PUT link that lasts an hour. The phone uploads straight to storage, then calls `.../videos/{vid}/complete`. The server checks the real size and the file's first bytes (MP4, MOV, or WebM) before showing it. Rows are in `listing_videos` (migration 005).
+- **Playback**: a signed GET link per page load, valid for an hour. The bucket stays private.
+- **Caps that keep R2 inside its free 10 GB**: 100 MB and 3 minutes per video, 3 per listing, 1 GB per uploader (`VIDEO_USER_CAP_MB`), and new uploads stop when the site holds 9 GB (`VIDEO_SITE_CAP_MB`). An upload in progress counts at its declared size. Uploads that never finish are deleted after 3 hours. Removing a listing deletes its videos.
+- **Who removes a video**: whoever can edit the listing (the poster, or the business's owner and admins), and SmartLand reviewers (`ADMIN_EMAILS`).
+- **Storage** (`backend/video_storage.py`): `VIDEO_STORAGE=r2` with `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_BUCKET`. `local` keeps files in `uploads/videos` behind signed links to the app's own routes. Unset means `local` on a computer and off on Cloud Run, so the feature stays hidden until R2 is turned on on purpose. Tests always use `local`.
+- **Known limit**: R2 can't cap the size of a signed PUT. The server deletes anything larger than declared when the upload finishes, but within the hour a seller could replace their own finished video using the same link. The cost of that is small (storage is $0.015 per GB a month) and limited to sellers who are signed in.
 
 ### 7. Performance and UTM tracking (built)
 

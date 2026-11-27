@@ -29,6 +29,7 @@ import performance_repo
 import permissions
 import storage
 import store
+import videos
 import workspace
 from deps import authenticate, is_admin, issue_token, limiter, optional_user, require_admin
 
@@ -65,6 +66,8 @@ app.include_router(crm.router)
 app.include_router(workspace.router)
 # Listing visits by source, and the performance page (performance.py)
 app.include_router(performance.router)
+# Walkthrough videos on listings, stored in R2 (videos.py)
+app.include_router(videos.router)
 
 
 # Database Connections -------------------------------------------------------
@@ -104,6 +107,10 @@ async def startup_event():
         performance_repo.purge_old()
     except Exception as e:
         logger.warning(f"Visit cleanup failed: {e}")
+    try:
+        videos.clear_stale()
+    except Exception as e:
+        logger.warning(f"Video cleanup failed: {e}")
 
 
 # Pydantic Models for Validation ---------------------------------------------
@@ -641,6 +648,7 @@ async def listing_schema():
         "max_photo_mb": listing_rules.MAX_PHOTO_BYTES // (1024 * 1024),
         "max_photos": listing_rules.MAX_PHOTOS,
         "photo_types": list(listing_rules.PHOTO_TYPES),
+        "video": videos.config(),
     }
 
 
@@ -675,7 +683,13 @@ async def get_listing(listing_id: str, user: dict | None = Depends(optional_user
     # The org's owner and admins manage its listings like their own
     if user and not listing["mine"] and listing.get("org_id"):
         listing["mine"] = permissions.may(user, "listing.edit_any", listing["org_id"])
-    return _with_trust(listing, user)
+    out = _with_trust(listing, user)
+    out["videos"] = videos.views(listing_id)
+    # The seller's team, and reviewers who take down what breaks the rules
+    out["can_remove_videos"] = bool(listing["mine"] or is_admin(user))
+    if listing["mine"]:
+        out["video_space_left_mb"] = videos.space_left_mb(user["id"])
+    return out
 
 
 @app.get("/api/listings/{listing_id}/record")
@@ -730,6 +744,8 @@ async def update_listing(listing_id: str, body: ListingChange, user: dict = Depe
 async def delete_listing(listing_id: str, user: dict = Depends(authenticate)):
     if store.set_listing_status(_editable_by(user, listing_id), listing_id, "removed") is None:
         raise HTTPException(status_code=404, detail="Listing not found")
+    # A removed listing's videos go too, which frees their space
+    videos.remove_for_listing(listing_id)
     return Response(status_code=204)
 
 
