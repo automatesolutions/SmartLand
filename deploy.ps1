@@ -66,10 +66,28 @@ if ($Bucket) {
   $storageVars = "DATABASE_PATH=/tmp/smartland.db;UPLOAD_DIR=/tmp/uploads"
 }
 
+# Listing videos go to Cloudflare R2. The keys come from your Windows user
+# settings by name, so their values never sit in this file or in git.
+function Get-Setting($name) {
+  $value = [Environment]::GetEnvironmentVariable($name)
+  if (-not $value) { $value = [Environment]::GetEnvironmentVariable($name, "User") }
+  return $value
+}
+$r2Names = "R2_ACCOUNT_ID", "R2_ACCESS_KEY_ID", "R2_SECRET_ACCESS_KEY", "R2_BUCKET"
+$r2Missing = $r2Names | Where-Object { -not (Get-Setting $_) }
+if ($r2Missing) {
+  Write-Warning "Listing videos stay off. Missing: $($r2Missing -join ', ')"
+  $videoVars = "VIDEO_STORAGE=off"
+} else {
+  Write-Host "Listing videos are stored in R2 bucket $(Get-Setting 'R2_BUCKET')"
+  $videoVars = ($r2Names | ForEach-Object { "$_=$(Get-Setting $_)" }) -join ";"
+  $videoVars = "VIDEO_STORAGE=r2;$videoVars"
+}
+
 # One instance: accounts live in a SQLite file, which instances can't share
 gcloud run deploy smartland-web --source "$root" --project $Project --region $Region `
   --allow-unauthenticated --memory 512Mi --max-instances 1 --quiet `
-  --set-env-vars "^;^AI_SERVICE_URL=$aiUrl/predict;CORS_ORIGIN=*;JWT_SECRET=$JwtSecret;$storageVars;ADMIN_EMAILS=$AdminEmails;GOOGLE_CLIENT_ID=$GoogleClientId"
+  --set-env-vars "^;^AI_SERVICE_URL=$aiUrl/predict;CORS_ORIGIN=*;JWT_SECRET=$JwtSecret;$storageVars;ADMIN_EMAILS=$AdminEmails;GOOGLE_CLIENT_ID=$GoogleClientId;$videoVars"
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
 $webUrl = gcloud run services describe smartland-web --project $Project --region $Region --format "value(status.url)"
