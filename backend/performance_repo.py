@@ -45,7 +45,9 @@ def report(org: dict, owner_id: str, days: int) -> dict:
             f"""SELECT li.id, li.title, li.status,
                        COALESCE((SELECT SUM(v.visits) FROM listing_visits v WHERE v.listing_id = li.id AND v.day >= :day), 0) AS visits,
                        (SELECT COUNT(*) FROM leads l WHERE l.listing_id = li.id AND l.org_id = :org AND l.source = 'inquiry'
-                          AND l.created_at >= :ts) AS inquiries
+                          AND l.created_at >= :ts) AS inquiries,
+                       (SELECT COUNT(*) FROM listing_videos lv WHERE lv.listing_id = li.id AND lv.status = 'ready') AS videos,
+                       (SELECT p.id FROM photos p WHERE p.listing_id = li.id ORDER BY p.position LIMIT 1) AS cover_id
                 FROM listings li WHERE li.id IN ({mine})
                 ORDER BY visits DESC, inquiries DESC, li.created_at DESC""",
             args,
@@ -72,7 +74,13 @@ def report(org: dict, owner_id: str, days: int) -> dict:
         by_source.setdefault(r["source"], {"source": r["source"], "visits": 0, "inquiries": 0})["visits"] = r["n"]
     for r in inquiries:
         by_source.setdefault(r["source"], {"source": r["source"], "visits": 0, "inquiries": 0})["inquiries"] = r["n"]
-    rows = [dict(r) for r in listings]
+    rows = []
+    for r in listings:
+        row = dict(r)
+        cover = row.pop("cover_id")
+        # The same public photo route the listing page uses
+        row["cover_url"] = f"/api/listings/{row['id']}/photos/{cover}" if cover else None
+        rows.append(row)
     return {
         "days": days,
         "since": since_day,

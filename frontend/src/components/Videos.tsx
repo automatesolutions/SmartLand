@@ -305,9 +305,16 @@ export function VideoManager({ listing, schema, onAdded }: { listing: Listing; s
   }
 
   const busy = progress !== null
+  const sectionRef = useRef<HTMLElement>(null)
+
+  // The Business page links here with #add-video. The listing loads after the page,
+  // so the browser can't scroll to it on its own.
+  useEffect(() => {
+    if (window.location.hash === '#add-video') sectionRef.current?.scrollIntoView({ block: 'start' })
+  }, [])
 
   return (
-    <section aria-labelledby="videos-title" className="flex flex-col gap-md rounded-lg border border-hairline bg-surface p-md sm:p-lg">
+    <section ref={sectionRef} id="add-video" aria-labelledby="videos-title" className="flex scroll-mt-[7rem] flex-col gap-md rounded-lg border border-hairline bg-surface p-md sm:p-lg">
       <div className="flex flex-col gap-xxs">
         <h2 id="videos-title" className="text-tagline font-semibold">
           Videos

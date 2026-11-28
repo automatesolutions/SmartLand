@@ -946,7 +946,7 @@ export interface Performance {
   since: string
   totals: { visits: number; inquiries: number }
   /** The account's listings, most visited first */
-  listings: { id: string; title: string; status: string; visits: number; inquiries: number }[]
+  listings: { id: string; title: string; status: string; visits: number; inquiries: number; videos: number; cover_url: string | null }[]
   /** "direct" when the visitor had no tags and no outside referrer */
   sources: { source: string; visits: number; inquiries: number }[]
   /** Days with at least one visit */

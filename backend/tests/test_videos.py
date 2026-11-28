@@ -11,7 +11,7 @@ import deps
 import video_storage
 import videos
 from tests.conftest import add_member, make_org
-from tests.test_crm import post_listing
+from tests.test_crm import personal, post_listing
 
 MP4 = b"\x00\x00\x00\x18ftypmp42" + b"\x00" * 2000
 WEBM = b"\x1a\x45\xdf\xa3" + b"\x00" * 2000
@@ -193,3 +193,17 @@ def test_r2_links_are_signed_here_without_calling_cloudflare():
     assert q["X-Amz-Expires"] == ["3600"] and "content-type" in q["X-Amz-SignedHeaders"][0]
     play = parse_qs(urlparse(r2.play_link("listings/a/b.mp4", "video/mp4")).query)
     assert play["response-content-type"] == ["video/mp4"] and "X-Amz-Signature" in play
+
+
+def test_business_page_counts_videos_per_listing(client, person):
+    seller = person("seller@example.com")
+    listing = post_listing(client, seller)
+    upload(client, listing, seller)
+    upload(client, listing, seller)
+    # Started but never finished: not counted
+    start(client, listing, seller)
+
+    mine = personal(client, seller)
+    res = client.get(f"/api/business/orgs/{mine['id']}/performance", params={"days": 7}, headers=seller.headers)
+    [row] = res.json()["listings"]
+    assert (row["id"], row["videos"], row["cover_url"]) == (listing["id"], 2, None)
