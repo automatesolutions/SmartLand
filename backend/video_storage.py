@@ -25,6 +25,14 @@ import store
 LINK_SECONDS = 3600
 
 
+def disposition(filename: str) -> str:
+    """Opens in the browser when it can (PDFs, photos), and saves under the original name otherwise"""
+    from urllib.parse import quote
+
+    plain = "".join(ch if 32 <= ord(ch) < 127 and ch not in '"\\' else "_" for ch in filename)
+    return f"inline; filename=\"{plain}\"; filename*=UTF-8''{quote(filename)}"
+
+
 class LocalVideos:
     """Files on disk, behind short-lived signed links to this app's own routes in videos.py"""
 
@@ -41,8 +49,10 @@ class LocalVideos:
             raise ValueError("Video key points outside the video folder")
         return path
 
-    def _token(self, op: str, key: str, mime: str, max_bytes: int = 0) -> str:
+    def _token(self, op: str, key: str, mime: str, max_bytes: int = 0, name: str | None = None) -> str:
         claims = {"op": op, "key": key, "mime": mime, "max": max_bytes, "exp": int(time.time()) + LINK_SECONDS}
+        if name:
+            claims["name"] = name
         return jwt.encode(claims, self._secret, algorithm="HS256")
 
     def read_token(self, token: str, op: str) -> dict | None:
@@ -55,8 +65,9 @@ class LocalVideos:
     def upload_link(self, key: str, mime: str, max_bytes: int) -> dict:
         return {"url": f"/api/videos/upload?t={self._token('put', key, mime, max_bytes)}", "headers": {"Content-Type": mime}}
 
-    def play_link(self, key: str, mime: str) -> str:
-        return f"/api/videos/file?t={self._token('get', key, mime)}"
+    def play_link(self, key: str, mime: str, filename: str | None = None) -> str:
+        """A link that opens the file. With `filename`, the browser saves it under that name."""
+        return f"/api/videos/file?t={self._token('get', key, mime, name=filename)}"
 
     def size(self, key: str) -> int | None:
         path = self.path(key)
@@ -106,10 +117,11 @@ class R2Videos:
         )
         return {"url": url, "headers": {"Content-Type": mime}}
 
-    def play_link(self, key: str, mime: str) -> str:
-        return self.client.generate_presigned_url(
-            "get_object", Params={"Bucket": self.bucket, "Key": key, "ResponseContentType": mime}, ExpiresIn=LINK_SECONDS
-        )
+    def play_link(self, key: str, mime: str, filename: str | None = None) -> str:
+        params = {"Bucket": self.bucket, "Key": key, "ResponseContentType": mime}
+        if filename:
+            params["ResponseContentDisposition"] = disposition(filename)
+        return self.client.generate_presigned_url("get_object", Params=params, ExpiresIn=LINK_SECONDS)
 
     def size(self, key: str) -> int | None:
         from botocore.exceptions import ClientError

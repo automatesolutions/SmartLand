@@ -22,6 +22,9 @@ import httpx
 import business
 import calls
 import calls_repo
+import meetings
+import team_files
+import team_files_repo
 import crm
 import crm_repo
 import listing_rules
@@ -72,6 +75,9 @@ app.include_router(performance.router)
 app.include_router(videos.router)
 # Huddles and live tours over LiveKit (calls.py)
 app.include_router(calls.router)
+# Files in team chat (team_files.py), and calls booked with buyers (meetings.py)
+app.include_router(team_files.router)
+app.include_router(meetings.router)
 
 
 # Database Connections -------------------------------------------------------
@@ -120,6 +126,10 @@ async def startup_event():
         calls_repo.purge_old()
     except Exception as e:
         logger.warning(f"Call cleanup failed: {e}")
+    try:
+        team_files_repo.clear_unsent()
+    except Exception as e:
+        logger.warning(f"Team file cleanup failed: {e}")
 
 
 # Pydantic Models for Validation ---------------------------------------------

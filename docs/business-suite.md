@@ -404,6 +404,13 @@ AutoShorts Studio and Cloqui aren't available, so 4 and 6 are planned as SmartLa
 - **Off unless configured**: `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET`. Without all three, the buttons stay hidden and the routes answer 503. `deploy.ps1` reads them by name from your user settings.
 - **The app**: `livekit-client` loads only when a call opens (`components/Call.tsx` lazy-loads `CallRoom.tsx`, about 148 KB gzipped).
 
+### 5b. Calls with buyers, and files in team chat (built)
+
+- **Calls in the conversation** (`backend/meetings.py`): on a lead, **Live tour** (back camera), **Video call** (front camera), and **Voice call** all open the lead's one call (a `calls` row of kind `tour`). The first person in writes "I started a call. Join it here in Messages." into the conversation when the buyer has an account, and the buyer joins from their Messages (`POST /api/messages/{id}/call`, identity `b:<user id>`). Buyers without an account still join from a link.
+- **Asking and booking** (`lead_meetings`, migration 007): a buyer asks for a video or voice call, as soon as possible or at a time, with an optional note (10 a day, 3 open per conversation). The team accepts, picks another time, or declines; the team can also book a time. Each change is written into the conversation so the other side sees a new message. A booked call can be opened by either side from 10 minutes before until an hour after. Both sides can add it to their calendar with an .ics file made in the browser. The Business page lists requests waiting for an answer and calls booked in the next 2 weeks.
+- **Files in team chat** (`backend/team_files.py`, `ws_files`): PDFs, photos, Word, Excel, PowerPoint, and text, up to 5 per message and 20 MB each. Same three steps as videos, in the same storage, with the first bytes checked against the type. Each download link is signed and lasts an hour; DM files stay between the two people. 1 GB per business (`TEAM_FILES_ORG_CAP_MB`), and they count toward the site's 9 GB stop with videos. Deleting a message deletes its files; files attached but never sent are removed after 6 hours.
+- **Business page**: the Huddles tile is folded into Team chat, which shows a huddle that's on.
+
 ### 7. Performance and UTM tracking (built)
 
 - **Share links**: a listing's poster sees a Share links panel with links tagged `utm_source`, `utm_medium`, and `utm_campaign=listing` for Facebook, TikTok, Instagram, YouTube, Messenger, and a flyer QR code (`qrcode`, loaded only when asked for). The performance page offers the same links for every listing on the account.

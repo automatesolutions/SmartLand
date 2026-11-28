@@ -13,8 +13,8 @@ export type LeaveReason = 'left' | 'ended' | 'time' | 'failed'
 export interface CallRoomProps {
   pass: CallPass
   title: string
-  /** voice: microphone only. back-camera: microphone and the back camera, for showing a property. */
-  start: 'voice' | 'back-camera'
+  /** voice: microphone only. front-camera: a face-to-face call. back-camera: showing a property. */
+  start: 'voice' | 'front-camera' | 'back-camera'
   screenShare: boolean
   onLeave: (reason: LeaveReason) => void
   /** Shown as "End for everyone" when set */
@@ -161,9 +161,9 @@ export default function CallRoom({ pass, title, start, screenShare, onLeave, onE
         } catch {
           setProblem('We couldn’t use your microphone, so others can’t hear you. Allow it in your browser’s settings, then turn it on. You can still listen.')
         }
-        if (start === 'back-camera') {
+        if (start !== 'voice') {
           try {
-            await room.localParticipant.setCameraEnabled(true, { facingMode: 'environment' })
+            await room.localParticipant.setCameraEnabled(true, { facingMode: start === 'back-camera' ? 'environment' : 'user' })
           } catch {
             setProblem('We couldn’t use your camera. Allow it in your browser’s settings, then turn it on.')
           }

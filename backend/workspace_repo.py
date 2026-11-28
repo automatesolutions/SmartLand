@@ -6,6 +6,7 @@ import re
 import secrets
 
 import db
+import team_files_repo
 
 MENTION = re.compile(r"<@([A-Za-z0-9_-]{1,64})>")
 PAGE = 100
@@ -155,7 +156,15 @@ def _message(r) -> dict:
         "created_at": r["created_at"],
         "edited_at": r["edited_at"],
         "deleted": deleted,
+        "files": [],
     }
+
+
+def _with_files(c, msgs: list[dict]) -> list[dict]:
+    found = team_files_repo.for_messages(c, [m["id"] for m in msgs if not m["deleted"]])
+    for m in msgs:
+        m["files"] = found.get(m["id"], [])
+    return msgs
 
 
 def messages(channel_id: str, since: str | None = None, before: str | None = None) -> list[dict]:
@@ -168,14 +177,14 @@ def messages(channel_id: str, since: str | None = None, before: str | None = Non
                 _MSG_SELECT + " WHERE m.channel_id = ? AND (m.created_at > ? OR m.edited_at > ? OR m.deleted_at > ?) ORDER BY m.created_at, m.rowid",
                 (channel_id, since, since, since),
             ).fetchall()
-            return [_message(r) for r in rows]
+            return _with_files(c, [_message(r) for r in rows])
         sql = _MSG_SELECT + " WHERE m.channel_id = ?"
         args: list = [channel_id]
         if before:
             sql += " AND m.created_at < ?"
             args.append(before)
         rows = c.execute(sql + " ORDER BY m.created_at DESC, m.rowid DESC LIMIT ?", (*args, PAGE)).fetchall()
-    return [_message(r) for r in reversed(rows)]
+        return _with_files(c, [_message(r) for r in reversed(rows)])
 
 
 def get_message(org_id: str, message_id: str):
@@ -193,15 +202,16 @@ def _set_mentions(c, message_id: str, user_ids: set[str]) -> None:
         c.execute("INSERT INTO ws_mentions (message_id, user_id) VALUES (?, ?)", (message_id, uid))
 
 
-def post(channel_id: str, author_id: str, body: str, mentions: set[str]) -> dict:
+def post(channel_id: str, author_id: str, body: str, mentions: set[str], file_ids: list[str] | None = None) -> dict:
     mid = _id()
     now = db.now()
     with db.transaction() as c:
         c.execute("INSERT INTO ws_messages (id, channel_id, author_id, body, created_at) VALUES (?, ?, ?, ?, ?)", (mid, channel_id, author_id, body, now))
         _set_mentions(c, mid, mentions)
+        team_files_repo.attach(c, mid, file_ids or [])
         _read(c, channel_id, author_id, now)
         row = c.execute(_MSG_SELECT + " WHERE m.id = ?", (mid,)).fetchone()
-    return _message(row)
+        return _with_files(c, [_message(row)])[0]
 
 
 def edit(message_id: str, body: str, mentions: set[str]) -> dict:
@@ -209,7 +219,7 @@ def edit(message_id: str, body: str, mentions: set[str]) -> dict:
         c.execute("UPDATE ws_messages SET body = ?, edited_at = ? WHERE id = ?", (body, db.now(), message_id))
         _set_mentions(c, message_id, mentions)
         row = c.execute(_MSG_SELECT + " WHERE m.id = ?", (message_id,)).fetchone()
-    return _message(row)
+        return _with_files(c, [_message(row)])[0]
 
 
 def delete(message_id: str) -> None:

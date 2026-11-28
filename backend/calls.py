@@ -20,6 +20,7 @@ from loguru import logger
 from pydantic import BaseModel, Field, model_validator
 
 import calls_repo as repo
+import crm_repo
 import livekit_api
 import orgs_repo
 import store
@@ -186,6 +187,9 @@ def join_call(request: Request, org_id: str, call_id: str, user: dict = Depends(
     _check_minutes(org_id)
     limit = HUDDLE_PEOPLE if call["kind"] == "huddle" else TOUR_PEOPLE
     _check_room(call, _me(user), limit)
+    # The first person into a buyer call tells a buyer with an account, in their Messages
+    if call["kind"] == "tour" and not repo.ever_joined(call["id"]) and crm_repo.buyer_has_account(call["lead_id"]):
+        crm_repo.team_reply(org_id, call["lead_id"], user["id"], "I started a call. Join it here in Messages.")
     return _pass(call, _me(user), _name(user), limit=limit, screen=call["kind"] == "huddle")
 
 

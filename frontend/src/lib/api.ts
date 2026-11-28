@@ -872,6 +872,21 @@ export interface WsMessage {
   created_at: string
   edited_at: string | null
   deleted: boolean
+  files: WsFile[]
+}
+
+/** A file attached to a team chat message. Open it with workspaceApi.openFile for a link that lasts an hour. */
+export interface WsFile {
+  id: string
+  name: string
+  mime: string
+  size: number
+}
+
+export interface TeamFilesConfig {
+  enabled: boolean
+  max_mb: number
+  types: string[]
 }
 
 export interface Task {
@@ -918,8 +933,22 @@ export const workspaceApi = {
       signal,
     )
   },
-  post: (orgId: string, channelId: string, body: string) =>
-    request<WsMessage>(`${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}/messages`, { method: 'POST', body: JSON.stringify({ body }) }),
+  post: (orgId: string, channelId: string, body: string, fileIds: string[] = []) =>
+    request<WsMessage>(`${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}/messages`, {
+      method: 'POST',
+      body: JSON.stringify({ body, file_ids: fileIds }),
+    }),
+  filesConfig: () => request<TeamFilesConfig>('/api/business/workspace/files/config'),
+  /** Upload in three steps: ask for a link, upload straight to storage, then let the server check it */
+  attach: async (orgId: string, channelId: string, file: File, mime: string, onProgress?: (fraction: number) => void) => {
+    const start = await request<{ id: string; upload: { method: string; url: string; headers: Record<string, string> } }>(
+      `${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}/files`,
+      { method: 'POST', body: JSON.stringify({ name: file.name, mime, size: file.size }) },
+    )
+    await send<void>(start.upload.method, start.upload.url, file, { auth: false, headers: start.upload.headers }, onProgress)
+    return request<WsFile>(`${wsPath(orgId)}/files/${encodeURIComponent(start.id)}/complete`, { method: 'POST' })
+  },
+  openFile: (orgId: string, fileId: string) => request<{ url: string; name: string; mime: string }>(`${wsPath(orgId)}/files/${encodeURIComponent(fileId)}`),
   edit: (orgId: string, messageId: string, body: string) =>
     request<WsMessage>(`${wsPath(orgId)}/messages/${encodeURIComponent(messageId)}`, { method: 'PATCH', body: JSON.stringify({ body }) }),
   remove: (orgId: string, messageId: string) => request<void>(`${wsPath(orgId)}/messages/${encodeURIComponent(messageId)}`, { method: 'DELETE' }),
@@ -1021,4 +1050,62 @@ export const callsApi = {
     request<CallPass>(`${tourPath(token)}/join`, { method: 'POST', body: JSON.stringify({ name, consent: true }) }),
   leaveTour: (token: string, identity: string) =>
     request<void>(`${tourPath(token)}/leave`, { method: 'POST', body: JSON.stringify({ identity }), keepalive: true }),
+}
+
+// Calls with buyers: requests and bookings (backend/meetings.py) ---------------------------
+
+export interface Meeting {
+  id: string
+  kind: 'video' | 'voice'
+  status: 'requested' | 'scheduled' | 'canceled'
+  /** Null: as soon as you can */
+  starts_at: string | null
+  /** "Tue, Dec 2 at 3:00 PM", or "as soon as you can" */
+  when: string
+  asked_by: 'buyer' | 'team'
+  note: string | null
+  /** From 10 minutes before until an hour after a booked time */
+  joinable: boolean
+}
+
+export interface UpcomingMeeting extends Meeting {
+  lead_id: string
+  contact_name: string
+  listing_title: string | null
+}
+
+export interface BuyerCalls {
+  enabled: boolean
+  /** Set when there's a call to join: someone's in it, or a booked time has come */
+  call: { live: boolean; people: number } | null
+  meetings: Meeting[]
+}
+
+export interface MeetingInput {
+  kind: 'video' | 'voice'
+  starts_at: string | null
+  note?: string | null
+}
+
+const leadMeetings = (orgId: string, leadId: string) => `${oid(orgId)}/leads/${encodeURIComponent(leadId)}/meetings`
+const threadPath = (threadId: string) => `/api/messages/${encodeURIComponent(threadId)}`
+
+export const meetingsApi = {
+  forLead: (orgId: string, leadId: string, signal?: AbortSignal) => request<Meeting[]>(leadMeetings(orgId, leadId), {}, signal),
+  book: (orgId: string, leadId: string, input: MeetingInput) =>
+    request<Meeting>(leadMeetings(orgId, leadId), { method: 'POST', body: JSON.stringify(input) }),
+  /** Accept (now, or at `starts_at`), move, or cancel */
+  answer: (orgId: string, leadId: string, meetingId: string, status: 'scheduled' | 'canceled', startsAt?: string) =>
+    request<Meeting>(`${leadMeetings(orgId, leadId)}/${encodeURIComponent(meetingId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status, starts_at: startsAt ?? null }),
+    }),
+  upcoming: (orgId: string, signal?: AbortSignal) => request<UpcomingMeeting[]>(`${oid(orgId)}/meetings`, {}, signal),
+  // The buyer's side, in their Messages
+  buyer: (threadId: string, signal?: AbortSignal) => request<BuyerCalls>(`${threadPath(threadId)}/calls`, {}, signal),
+  ask: (threadId: string, input: MeetingInput) => request<Meeting>(`${threadPath(threadId)}/meetings`, { method: 'POST', body: JSON.stringify(input) }),
+  cancel: (threadId: string, meetingId: string) =>
+    request<void>(`${threadPath(threadId)}/meetings/${encodeURIComponent(meetingId)}`, { method: 'DELETE' }),
+  join: (threadId: string) => request<CallPass>(`${threadPath(threadId)}/call`, { method: 'POST' }),
+  leave: (threadId: string) => request<void>(`${threadPath(threadId)}/call/leave`, { method: 'POST', keepalive: true }),
 }

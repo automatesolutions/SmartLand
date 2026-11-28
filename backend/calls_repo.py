@@ -92,6 +92,11 @@ def people(call_id: str) -> list[dict]:
     return [dict(r) for r in rows]
 
 
+def ever_joined(call_id: str) -> bool:
+    with db.transaction() as c:
+        return c.execute("SELECT 1 FROM call_people WHERE call_id = ? LIMIT 1", (call_id,)).fetchone() is not None
+
+
 def join(call_id: str, identity: str, name: str) -> None:
     """Counts someone in from now, unless they're already counted"""
     with db.transaction() as c:

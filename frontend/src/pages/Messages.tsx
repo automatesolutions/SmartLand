@@ -5,6 +5,7 @@ import { ApiError, MESSAGES_READ, messagesApi, type Thread, type ThreadDetail } 
 import { useUser } from '../lib/auth'
 import { formatDate } from '../lib/format'
 import { Button, ButtonLink } from '../components/Button'
+import { BuyerCalls } from '../components/BuyerCalls'
 import { Conversation } from '../components/Conversation'
 import { EmptyState, Skeleton } from '../components/States'
 import { LoadFailed } from './business/Shared'
@@ -175,6 +176,7 @@ export function ThreadPage() {
           <p className="text-ink-secondary">The seller removed this listing.</p>
         )}
       </header>
+      <BuyerCalls threadId={id} seller={thread.seller} listing={thread.listing} onChanged={() => setAttempt((n) => n + 1)} />
       <section aria-label="Conversation" className="rounded-lg border border-hairline bg-surface p-md sm:p-lg">
         <Conversation
           messages={thread.messages}

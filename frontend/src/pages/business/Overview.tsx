@@ -10,16 +10,18 @@ import {
   Inbox,
   ListChecks,
   MessagesSquare,
+  Phone,
   Plus,
   Share2,
   UsersRound,
   Video,
 } from 'lucide-react'
-import { performanceApi, workspaceApi, type Crm, type Org, type Performance } from '../../lib/api'
+import { meetingsApi, performanceApi, workspaceApi, type Crm, type Org, type Performance, type UpcomingMeeting } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { canManage, dueLeads, followUpLabel, orgLine, orgTitle, today, useCrm, useCurrentOrg, useMyOrgs } from '../../lib/business'
 import { useCallsConfig } from '../../lib/calls'
 import { useListingSchema } from '../../lib/listings'
+import { channelLabel } from '../../lib/workspace'
 import { Button, ButtonLink } from '../../components/Button'
 import { Skeleton } from '../../components/States'
 import { LoadFailed, OrgSwitcher, SignInFor } from './Shared'
@@ -28,22 +30,27 @@ const row = 'press flex min-h-tap items-center gap-md rounded-lg border border-h
 const badge = 'ml-xs rounded-pill bg-accent-fill px-xs text-caption font-regular text-on-accent'
 const icon = { size: 22, strokeWidth: 1.75, className: 'shrink-0 text-ink-secondary', 'aria-hidden': true } as const
 
-type TeamCounts = { orgId: string; chat: number; due: number; open: number }
+type TeamCounts = { orgId: string; chat: number; due: number; open: number; huddles: { label: string; people: number }[] }
 
-/** New team messages and your open tasks. Null while loading, or if it fails: the tiles still link through. */
+/** New team messages, huddles going on, and your open tasks. Null while loading, or if it fails: the tiles still link through. */
 function useTeamCounts(org: Org): TeamCounts | null {
   const [counts, setCounts] = useState<TeamCounts | null>(null)
   const skip = org.kind === 'personal'
   useEffect(() => {
     if (skip) return
     const controller = new AbortController()
-    Promise.all([workspaceApi.unread(controller.signal), workspaceApi.tasks(org.id, { status: 'open', mine: true }, controller.signal)])
-      .then(([unread, tasks]) =>
+    Promise.all([
+      workspaceApi.unread(controller.signal),
+      workspaceApi.tasks(org.id, { status: 'open', mine: true }, controller.signal),
+      workspaceApi.load(org.id).catch(() => null),
+    ])
+      .then(([unread, tasks, ws]) =>
         setCounts({
           orgId: org.id,
           chat: unread.by_org[org.id] ?? 0,
           open: tasks.length,
           due: tasks.filter((t) => t.due_on && t.due_on <= today()).length,
+          huddles: (ws?.channels ?? []).filter((c) => c.huddle).map((c) => ({ label: channelLabel(c), people: c.huddle!.people.length })),
         }),
       )
       .catch(() => {
@@ -128,6 +135,51 @@ function FollowUps({ crm }: { crm: Crm }) {
                 <span className="block truncate text-caption text-ink-secondary">
                   {followUpLabel(l.follow_up_on!)} · {l.stage}
                   {l.listing ? ` · ${l.listing.title}` : ''}
+                </span>
+              </span>
+              <ChevronRight size={18} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+/** Buyers' call requests waiting for an answer, and calls booked in the next 2 weeks */
+function UpcomingCalls({ org }: { org: Org }) {
+  const [list, setList] = useState<{ orgId: string; items: UpcomingMeeting[] } | null>(null)
+  useEffect(() => {
+    const controller = new AbortController()
+    meetingsApi
+      .upcoming(org.id, controller.signal)
+      .then((items) => setList({ orgId: org.id, items }))
+      .catch(() => {
+        // The leads still show every request
+      })
+    return () => controller.abort()
+  }, [org.id])
+  const items = list?.orgId === org.id ? list.items : []
+  if (items.length === 0) return null
+  return (
+    <section aria-labelledby="calls-heading" className="flex flex-col gap-sm">
+      <h2 id="calls-heading" className="text-tagline font-semibold">
+        Calls with buyers
+      </h2>
+      <ul className="flex flex-col gap-xs">
+        {items.slice(0, 5).map((m) => (
+          <li key={m.id}>
+            <Link to={`/business/leads/${m.lead_id}`} className={row}>
+              {m.kind === 'video' ? <Video {...icon} /> : <Phone {...icon} />}
+              <span className="min-w-0 flex-1">
+                <span className="block truncate font-semibold">
+                  {m.status === 'requested' ? `${m.contact_name} asked for a ${m.kind} call` : `${m.kind === 'video' ? 'Video' : 'Voice'} call with ${m.contact_name}`}
+                  {m.joinable && <span className={badge}>Now</span>}
+                </span>
+                <span className="block truncate text-caption text-ink-secondary">
+                  {m.when}
+                  {m.listing_title ? ` · ${m.listing_title}` : ''}
+                  {m.status === 'requested' ? ' · Waiting for your answer' : ''}
                 </span>
               </span>
               <ChevronRight size={18} strokeWidth={1.75} className="shrink-0 text-ink-secondary" aria-hidden />
@@ -271,6 +323,7 @@ function OrgHome({ org }: { org: Org }) {
       )}
 
       {crm && <FollowUps crm={crm} />}
+      {callsOn && <UpcomingCalls org={org} />}
 
       <section aria-label="Your workspace" className="grid gap-sm sm:grid-cols-2">
         <Tile
@@ -288,7 +341,18 @@ function OrgHome({ org }: { org: Org }) {
             title="Team chat"
             extra={team && team.chat > 0 && <span className={badge}>{team.chat} new</span>}
           >
-            Channels and direct messages. Type @ to mention someone.
+            {team?.huddles.length ? (
+              <span className="inline-flex items-center gap-xxs text-positive">
+                <Headphones size={14} aria-hidden />
+                Huddle on in {team.huddles[0].label}
+                {team.huddles[0].people ? ` · ${team.huddles[0].people} ${team.huddles[0].people === 1 ? 'person' : 'people'}` : ''}
+                {team.huddles.length > 1 ? ` and ${team.huddles.length - 1} more` : ''}
+              </span>
+            ) : callsOn ? (
+              'Channels, direct messages, and huddles. Type @ to mention someone.'
+            ) : (
+              'Channels and direct messages. Type @ to mention someone.'
+            )}
           </Tile>
         )}
         {!personal && (
@@ -308,20 +372,6 @@ function OrgHome({ org }: { org: Org }) {
             {org.members === 1 ? 'Only you so far.' : `${org.members} people.`} {canManage(org.role) ? 'Invite people and set their roles.' : 'See who’s on the team.'}
           </Tile>
         )}
-        {!personal &&
-          (callsOn ? (
-            <Tile to="/business/workspace" glyph={<Headphones {...icon} />} title="Huddles">
-              Start a call from any team chat channel. Live tours for buyers start from a lead.
-            </Tile>
-          ) : (
-            <Tile
-              glyph={<Headphones {...icon} />}
-              title="Huddles"
-              extra={<span className="ml-xs rounded-pill border border-hairline px-xs text-caption font-regular text-ink-secondary">Coming soon</span>}
-            >
-              Voice and video calls with your team, and live tours for buyers.
-            </Tile>
-          ))}
       </section>
 
       {!guest && <YourListings org={org} perf={week.perf} failed={week.failed} videoOn={videoOn} maxVideos={schema?.video?.max_per_listing ?? 3} />}

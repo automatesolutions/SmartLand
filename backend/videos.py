@@ -241,4 +241,8 @@ def local_file(t: str):
     if not os.path.exists(path):
         raise HTTPException(status_code=404, detail=GONE)
     # FileResponse answers range requests, so the player can seek
-    return FileResponse(path, media_type=claims["mime"], headers={"Cache-Control": "private, max-age=3000"})
+    headers = {"Cache-Control": "private, max-age=3000"}
+    if claims.get("name"):
+        # Team chat files keep their names, like R2's links do
+        headers["Content-Disposition"] = video_storage.disposition(claims["name"])
+    return FileResponse(path, media_type=claims["mime"], headers=headers)

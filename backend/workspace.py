@@ -14,6 +14,7 @@ import crm_repo
 import db
 import orgs_repo
 import store
+import team_files_repo
 import workspace_repo as ws
 from deps import authenticate, limiter
 from permissions import can, may
@@ -53,12 +54,14 @@ class DmIn(BaseModel):
 
 
 class MessageIn(BaseModel):
-    body: str = Field(min_length=1, max_length=4000)
+    body: str = Field(default="", max_length=4000)
+    # Files uploaded first with team_files.py; a message can be files alone
+    file_ids: list[str] = Field(default_factory=list, max_length=5)
 
     @model_validator(mode="after")
     def check(self):
         self.body = self.body.strip()
-        if not self.body:
+        if not self.body and not self.file_ids:
             raise ValueError("Write a message first.")
         return self
 
@@ -194,7 +197,11 @@ def post_message(request: Request, org_id: str, channel_id: str, body: MessageIn
     if ch["archived_at"]:
         raise HTTPException(status_code=409, detail="This channel is archived.")
     mentions = ws.mentioned_ids(body.body) & _member_ids(org_id)
-    return ws.post(channel_id, user["id"], body.body, mentions)
+    for fid in body.file_ids:
+        f = team_files_repo.get(fid)
+        if f is None or f["channel_id"] != channel_id or f["user_id"] != user["id"] or f["status"] != "ready" or f["message_id"]:
+            raise HTTPException(status_code=422, detail="One of the files didn't finish uploading. Remove it and add it again.")
+    return ws.post(channel_id, user["id"], body.body, mentions, list(dict.fromkeys(body.file_ids)))
 
 
 def _own_message(user: dict, org_id: str, message_id: str):
@@ -210,6 +217,8 @@ def edit_message(org_id: str, message_id: str, body: MessageIn, user: dict = Dep
     msg = _own_message(user, org_id, message_id)
     if msg["author_id"] != user["id"]:
         raise HTTPException(status_code=403, detail="You can only edit your own messages.")
+    if body.file_ids or not body.body:
+        raise HTTPException(status_code=422, detail="Edit the words only. To change files, delete the message and send it again.")
     return ws.edit(message_id, body.body, ws.mentioned_ids(body.body) & _member_ids(org_id))
 
 
@@ -222,6 +231,7 @@ def delete_message(org_id: str, message_id: str, user: dict = Depends(authentica
     if msg["author_id"] != user["id"] and not moderator:
         raise HTTPException(status_code=403, detail="You can only delete your own messages.")
     ws.delete(message_id)
+    team_files_repo.drop_for_message(message_id)
     return Response(status_code=204)
 
 

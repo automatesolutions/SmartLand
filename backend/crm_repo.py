@@ -430,3 +430,22 @@ def unread_for_buyer(user_id: str) -> int:
             (user_id,),
         ).fetchone()
     return row[0]
+
+
+def buyer_lead(user_id: str, lead_id: str) -> dict | None:
+    """The lead behind a buyer's conversation, with the name they gave, or None if it isn't theirs"""
+    with db.lock:
+        r = db.conn().execute(
+            """SELECT l.id, l.org_id, c.name AS contact_name FROM leads l JOIN contacts c ON c.id = l.contact_id
+               WHERE l.id = ? AND c.user_id = ?""",
+            (lead_id, user_id),
+        ).fetchone()
+    return dict(r) if r else None
+
+
+def buyer_has_account(lead_id: str) -> bool:
+    with db.lock:
+        r = db.conn().execute(
+            "SELECT c.user_id FROM leads l JOIN contacts c ON c.id = l.contact_id WHERE l.id = ?", (lead_id,)
+        ).fetchone()
+    return bool(r and r["user_id"])

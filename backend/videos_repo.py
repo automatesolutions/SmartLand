@@ -53,7 +53,10 @@ def bytes_used(user_id: str | None = None) -> int:
     upload in progress counts at the size it said it would be."""
     with db.transaction() as c:
         if user_id is None:
-            return c.execute("SELECT COALESCE(SUM(size), 0) FROM listing_videos").fetchone()[0]
+            # The whole site shares one bucket: listing videos and team chat files
+            return c.execute(
+                "SELECT (SELECT COALESCE(SUM(size), 0) FROM listing_videos) + (SELECT COALESCE(SUM(size), 0) FROM ws_files)"
+            ).fetchone()[0]
         return c.execute("SELECT COALESCE(SUM(size), 0) FROM listing_videos WHERE user_id = ?", (user_id,)).fetchone()[0]
 
 

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
-import { Archive, AtSign, ChevronLeft, Headphones, LoaderCircle, MessageSquarePlus, Plus, Send, X } from 'lucide-react'
+import { Archive, AtSign, ChevronLeft, Headphones, LoaderCircle, MessageSquarePlus, Paperclip, Plus, Send, X } from 'lucide-react'
 import { ApiError, callsApi, workspaceApi, type CallPass, type Org, type Workspace, type WsChannel, type WsMember, type WsMessage } from '../../lib/api'
 import { useCallsConfig } from '../../lib/calls'
+import { ACCEPT, MAX_FILES, useAttachments, useFilesOn, type AttachFn } from '../../lib/teamFiles'
+import { AttachmentChips, FileList } from '../../components/ChatFiles'
 import { Call, type LeaveReason } from '../../components/Call'
 import { useUser } from '../../lib/auth'
 import { canManage, useCurrentOrg, useMyOrgs } from '../../lib/business'
@@ -187,7 +189,7 @@ function Body({ body, members, me }: { body: string; members: WsMember[]; me: st
   )
 }
 
-/** Textarea with @mention suggestions. Enter sends, Shift+Enter adds a line. */
+/** Textarea with @mention suggestions, and files when `attach` is set. Enter sends, Shift+Enter adds a line. */
 function Composer({
   members,
   initial = '',
@@ -195,13 +197,15 @@ function Composer({
   submitLabel,
   onSubmit,
   onCancel,
+  attach,
 }: {
   members: WsMember[]
   initial?: string
   placeholder?: string
   submitLabel: string
-  onSubmit: (stored: string) => Promise<void>
+  onSubmit: (stored: string, fileIds: string[]) => Promise<void>
   onCancel?: () => void
+  attach?: AttachFn
 }) {
   const me = useUser()!
   const [text, setText] = useState(initial)
@@ -210,6 +214,9 @@ function Composer({
   const [busy, setBusy] = useState(false)
   const [failure, setFailure] = useState<string | null>(null)
   const box = useRef<HTMLTextAreaElement>(null)
+  const picker = useRef<HTMLInputElement>(null)
+  const attachments = useAttachments(attach)
+  const canSend = !busy && !attachments.uploading && (!!text.trim() || attachments.ready.length > 0)
 
   // "@an" right before the caret: suggest teammates whose names start with "an"
   const query = /(?:^|\s)@([^\s@]{0,30})$/.exec(text.slice(0, caret))?.[1]
@@ -230,13 +237,14 @@ function Composer({
 
   async function submit(e?: FormEvent) {
     e?.preventDefault()
-    if (!text.trim() || busy) return
+    if (!canSend) return
     setBusy(true)
     setFailure(null)
     try {
-      await onSubmit(toStored(text.trim(), members))
+      await onSubmit(toStored(text.trim(), members), attachments.ready)
       setText('')
       setCaret(0)
+      attachments.clear()
     } catch (err) {
       setFailure(
         err instanceof ApiError && err.kind === 'rate-limited'
@@ -288,7 +296,32 @@ function Composer({
           ))}
         </ul>
       )}
+      <AttachmentChips files={attachments.files} onRemove={attachments.remove} />
       <div className="flex items-end gap-xs">
+        {attach && (
+          <>
+            <input
+              ref={picker}
+              type="file"
+              multiple
+              accept={ACCEPT}
+              hidden
+              onChange={(e) => {
+                setFailure(attachments.add(e.target.files))
+                e.target.value = ''
+              }}
+            />
+            <button
+              type="button"
+              aria-label="Attach files"
+              disabled={attachments.files.length >= MAX_FILES}
+              onClick={() => picker.current?.click()}
+              className="press inline-flex size-tap shrink-0 items-center justify-center rounded-pill text-accent disabled:text-ink-disabled"
+            >
+              <Paperclip size={20} aria-hidden />
+            </button>
+          </>
+        )}
         <label className="sr-only" htmlFor={onCancel ? 'edit-message' : 'new-message'}>
           {onCancel ? 'Edit your message' : 'Message'}
         </label>
@@ -309,7 +342,7 @@ function Composer({
           className="min-w-0 flex-1 resize-y rounded-sm border border-hairline bg-surface px-md py-sm text-ink placeholder:text-ink-secondary focus-visible:border-focus"
         />
         {!onCancel && (
-          <Button type="submit" disabled={busy || !text.trim()} icon={busy ? <LoaderCircle size={18} className="animate-spin" aria-hidden /> : <Send size={18} aria-hidden />}>
+          <Button type="submit" disabled={!canSend} icon={busy ? <LoaderCircle size={18} className="animate-spin" aria-hidden /> : <Send size={18} aria-hidden />}>
             Send
           </Button>
         )}
@@ -351,7 +384,7 @@ function MessageRow({
   const [confirm, setConfirm] = useState(false)
   const mine = m.author?.id === me.id
   const canDelete = !m.deleted && (mine || (channel.kind === 'channel' && canManage(ws.role)))
-  const canEdit = !m.deleted && mine && ws.role !== 'guest'
+  const canEdit = !m.deleted && mine && ws.role !== 'guest' && !!m.body
 
   return (
     <li className="group flex flex-col gap-xxs rounded-sm px-sm py-xs hover:bg-canvas-alt">
@@ -377,7 +410,10 @@ function MessageRow({
           }}
         />
       ) : (
-        <Body body={m.body} members={ws.members} me={me.id} />
+        <>
+          {m.body && <Body body={m.body} members={ws.members} me={me.id} />}
+          {m.files.length > 0 && <FileList orgId={org.id} files={m.files} />}
+        </>
       )}
       {!editing && (canEdit || canDelete) && (
         <div className="flex gap-sm text-caption">
@@ -562,6 +598,7 @@ function ChannelView({
 
   const canPost = ws.role !== 'guest'
   const label = channelLabel(channel)
+  const filesOn = useFilesOn()
 
   return (
     <section aria-label={label} className="flex min-h-[60dvh] min-w-0 flex-col rounded-lg border border-hairline bg-surface">
@@ -639,10 +676,11 @@ function ChannelView({
             members={ws.members}
             placeholder={`Message ${label}`}
             submitLabel="Send"
-            onSubmit={async (stored) => {
+            onSubmit={async (stored, fileIds) => {
               stick.current = true
-              merge([await workspaceApi.post(org.id, channel.id, stored)])
+              merge([await workspaceApi.post(org.id, channel.id, stored, fileIds)])
             }}
+            attach={filesOn ? (file, mime, onProgress) => workspaceApi.attach(org.id, channel.id, file, mime, onProgress) : undefined}
           />
         ) : (
           <p className="p-xs text-caption text-ink-secondary">Guests can read the workspace but can’t post.</p>

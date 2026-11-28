@@ -61,10 +61,14 @@ export function PrivacyPage() {
         <p>Record the property, not people who haven’t agreed to be in it. Don’t show the title or other documents. Add those under Documents, where they stay private.</p>
       </Part>
 
-      <Part title="Huddles and live tours">
+      <Part title="Calls and live tours">
         <p>
-          A seller can invite you to a live video tour of a property. You join from their link with just your name. They see your name, and hear and see you
-          only when your microphone or camera is on. Your camera starts off.
+          A seller can call you or show you a property on a live video tour. With a SmartLand account, you join from your Messages; without one, you join
+          from the seller’s link with just your name. They see your name, and hear and see you only when your microphone or camera is on. Your camera
+          starts off.
+        </p>
+        <p>
+          If you ask for a call or book one, we keep the kind of call, the time, and any note you add, with your conversation. They’re removed with it.
         </p>
         <p>
           Calls go through LiveKit. We don’t record them. LiveKit keeps a record of who joined each call and for how long, stored in the United States,
