@@ -847,6 +847,8 @@ export interface WsChannel {
   last_message_at: string | null
   /** DMs only: the other person */
   with?: { id: string; name: string } | null
+  /** A huddle going on now, with the names of who's in it */
+  huddle?: { id: string; people: string[] } | null
 }
 
 export interface WsMember {
@@ -956,4 +958,67 @@ export interface Performance {
 export const performanceApi = {
   load: (orgId: string, days: PerformanceDays, signal?: AbortSignal) =>
     request<Performance>(`${oid(orgId)}/performance?days=${days}`, {}, signal),
+}
+
+// Huddles and live tours (backend/calls.py) ---------------------------------------------
+
+export interface CallsConfig {
+  enabled: boolean
+  max_minutes: number
+  huddle_people: number
+  tour_people: number
+}
+
+export interface CallView {
+  id: string
+  kind: 'huddle' | 'tour'
+  channel_id: string | null
+  lead_id: string | null
+  created_at: string
+  /** The call ends here (a tour's link stops working here) */
+  expires_at: string
+  people: { name: string; me: boolean }[]
+}
+
+/** What the browser needs to join: a short pass for one room. The LiveKit secret stays on the server. */
+export interface CallPass {
+  call: CallView
+  url: string
+  token: string
+  identity: string
+  /** This visit ends here: the call's end, or the call length from now, whichever comes first */
+  ends_at: string
+}
+
+export interface TourInfo {
+  state: 'live' | 'ended'
+  enabled: boolean
+  host: string
+  listing: { id: string; title: string } | null
+  expires_at: string
+  people: number
+  max_minutes: number
+}
+
+const tourPath = (token: string) => `/api/tours/${encodeURIComponent(token)}`
+
+export const callsApi = {
+  config: () => request<CallsConfig>('/api/calls/config'),
+  huddle: (orgId: string, channelId: string) =>
+    request<CallPass>(`${wsPath(orgId)}/channels/${encodeURIComponent(channelId)}/huddle`, { method: 'POST' }),
+  join: (orgId: string, callId: string) => request<CallPass>(`${oid(orgId)}/calls/${encodeURIComponent(callId)}/join`, { method: 'POST' }),
+  /** keepalive, so leaving still counts when the page is closing */
+  leave: (orgId: string, callId: string) =>
+    request<void>(`${oid(orgId)}/calls/${encodeURIComponent(callId)}/leave`, { method: 'POST', keepalive: true }),
+  end: (orgId: string, callId: string) => request<void>(`${oid(orgId)}/calls/${encodeURIComponent(callId)}/end`, { method: 'POST' }),
+  tour: (orgId: string, leadId: string, signal?: AbortSignal) =>
+    request<{ enabled: boolean; call: CallView | null }>(`${oid(orgId)}/leads/${encodeURIComponent(leadId)}/tour`, {}, signal),
+  /** A new link for the buyer. Any earlier link stops working. */
+  startTour: (orgId: string, leadId: string) =>
+    request<{ call: CallView; link: string }>(`${oid(orgId)}/leads/${encodeURIComponent(leadId)}/tour`, { method: 'POST' }),
+  tourInfo: (token: string, signal?: AbortSignal) => request<TourInfo>(tourPath(token), {}, signal),
+  joinTour: (token: string, name: string) =>
+    request<CallPass>(`${tourPath(token)}/join`, { method: 'POST', body: JSON.stringify({ name, consent: true }) }),
+  leaveTour: (token: string, identity: string) =>
+    request<void>(`${tourPath(token)}/leave`, { method: 'POST', body: JSON.stringify({ identity }), keepalive: true }),
 }

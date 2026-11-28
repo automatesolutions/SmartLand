@@ -29,7 +29,7 @@ export function PrivacyPage() {
         <p className="text-ink-secondary">
           How SmartLand handles your details when you message a seller, under the Data Privacy Act of 2012 (Republic Act No. 10173).
         </p>
-        <p className="text-caption text-ink-secondary">Last updated November 27, 2026</p>
+        <p className="text-caption text-ink-secondary">Last updated November 28, 2026</p>
       </header>
 
       <Part title="Who we are">
@@ -59,6 +59,17 @@ export function PrivacyPage() {
           the Philippines. When you remove a video or the listing, we delete the video.
         </p>
         <p>Record the property, not people who haven’t agreed to be in it. Don’t show the title or other documents. Add those under Documents, where they stay private.</p>
+      </Part>
+
+      <Part title="Huddles and live tours">
+        <p>
+          A seller can invite you to a live video tour of a property. You join from their link with just your name. They see your name, and hear and see you
+          only when your microphone or camera is on. Your camera starts off.
+        </p>
+        <p>
+          Calls go through LiveKit. We don’t record them. LiveKit keeps a record of who joined each call and for how long, stored in the United States,
+          outside the Philippines. We keep the names of who joined for 30 days after the call, and only a monthly count of minutes after that.
+        </p>
       </Part>
 
       <Part title="Why we collect it">

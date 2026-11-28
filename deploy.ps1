@@ -84,10 +84,21 @@ if ($r2Missing) {
   $videoVars = "VIDEO_STORAGE=r2;$videoVars"
 }
 
+# Huddles and live tours go through LiveKit Cloud. Same rule: values come from your settings by name.
+$lkNames = "LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET"
+$lkMissing = $lkNames | Where-Object { -not (Get-Setting $_) }
+if ($lkMissing) {
+  Write-Warning "Huddles and live tours stay off. Missing: $($lkMissing -join ', ')"
+  $callVars = ""
+} else {
+  Write-Host "Huddles and live tours use LiveKit at $(Get-Setting 'LIVEKIT_URL')"
+  $callVars = ";" + (($lkNames | ForEach-Object { "$_=$(Get-Setting $_)" }) -join ";")
+}
+
 # One instance: accounts live in a SQLite file, which instances can't share
 gcloud run deploy smartland-web --source "$root" --project $Project --region $Region `
   --allow-unauthenticated --memory 512Mi --max-instances 1 --quiet `
-  --set-env-vars "^;^AI_SERVICE_URL=$aiUrl/predict;CORS_ORIGIN=*;JWT_SECRET=$JwtSecret;$storageVars;ADMIN_EMAILS=$AdminEmails;GOOGLE_CLIENT_ID=$GoogleClientId;$videoVars"
+  --set-env-vars "^;^AI_SERVICE_URL=$aiUrl/predict;CORS_ORIGIN=*;JWT_SECRET=$JwtSecret;$storageVars;ADMIN_EMAILS=$AdminEmails;GOOGLE_CLIENT_ID=$GoogleClientId;$videoVars$callVars"
 if ($LASTEXITCODE) { exit $LASTEXITCODE }
 
 $webUrl = gcloud run services describe smartland-web --project $Project --region $Region --format "value(status.url)"

@@ -9,6 +9,7 @@ import { sourceLabel } from '../../lib/utm'
 import { Button } from '../../components/Button'
 import { Conversation } from '../../components/Conversation'
 import { Banner, EmptyState, Skeleton } from '../../components/States'
+import { LiveTour } from './LiveTour'
 import { SignInFor } from './Shared'
 import { LeadTasks } from './Tasks'
 
@@ -340,6 +341,7 @@ export function LeadPage() {
               Use them only to reply about this property.
             </p>
           </Panel>
+          {canWorkLeads(crm?.role) && <LiveTour lead={lead} />}
           <Details lead={lead} crm={crm} onChange={async (change) => set(await crmApi.update(lead.org_id, lead.id, change))} />
           <LeadTasks orgId={lead.org_id} leadId={lead.id} />
           {canManage(crm?.role) && <DeleteLead lead={lead} />}

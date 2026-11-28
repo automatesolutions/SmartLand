@@ -1,6 +1,6 @@
 # SmartLand Business Suite: plan
 
-Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1, 2, and 3 (the in-app team workspace, Q9) built and deployed. Checkpoint 7 (performance and UTM tracking) built 2026-11-27. Checkpoint 4 (listing videos on R2's free tier) built 2026-11-27, tested with local storage. Checkpoints 5 and 6 are costed in section 10 and wait for a yes; free tiers come first. Branch `feat/business-suite` from `main` at e562292.
+Status: Checkpoint 0 approved 2026-11-26 (decisions in section 9). Checkpoints 1, 2, and 3 (the in-app team workspace, Q9) built and deployed. Checkpoint 7 (performance and UTM tracking) built 2026-11-27. Checkpoint 4 (listing videos on R2's free tier) built and deployed 2026-11-27. Checkpoint 5 (huddles and live tours on LiveKit's free plan) built 2026-11-28 and tested with a real LiveKit project. Checkpoint 6 is costed in section 10; free tiers come first. Branch `feat/business-suite` from `main` at e562292.
 Written 2026-11-26 from the Business Suite prompt. `docs/business-suite-plan.md` wasn't in the repo, so this plan uses the prompt alone.
 
 ## What exists today
@@ -392,6 +392,17 @@ AutoShorts Studio and Cloqui aren't available, so 4 and 6 are planned as SmartLa
 - **Who removes a video**: whoever can edit the listing (the poster, or the business's owner and admins), and SmartLand reviewers (`ADMIN_EMAILS`).
 - **Storage** (`backend/video_storage.py`): `VIDEO_STORAGE=r2` with `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, and `R2_BUCKET`. `local` keeps files in `uploads/videos` behind signed links to the app's own routes. Unset means `local` on a computer and off on Cloud Run, so the feature stays hidden until R2 is turned on on purpose. Tests always use `local`.
 - **Known limit**: R2 can't cap the size of a signed PUT. The server deletes anything larger than declared when the upload finishes, but within the hour a seller could replace their own finished video using the same link. The cost of that is small (storage is $0.015 per GB a month) and limited to sellers who are signed in.
+
+### 5. Huddles and live tours on LiveKit (built)
+
+- **Huddles**: a **Start huddle** button on every team chat channel and DM. Anyone who can see the channel joins; guests can join a huddle but not start one. It starts as a voice call, and anyone can turn on their camera or share their screen (computers only). The channel list shows a headset with the number of people in it, refreshed with the 15-second channel poll. A huddle ends when its last person leaves, or at 60 minutes. Whoever can manage channels can end it for everyone.
+- **Live tours**: on a lead, **Make a tour link** gives a private link (`/tour/<token>`) to send by text, Messenger, or email. The buyer opens it, types a name, ticks the consent box, and joins with no account. The seller's phone starts on the back camera; the buyer's camera starts off and buyers can't share their screen. The link works for 2 hours or until the seller ends the tour; a new link replaces the old one. Only the link's SHA-256 is stored.
+- **How joining works** (`backend/calls.py`, `backend/livekit_api.py`): the server signs a LiveKit join pass (HS256 JWT) for one person and one room, valid 10 minutes to join. The pass carries the room's limits (`roomConfig`: 6 people for huddles, 4 for tours, closes 2 minutes after it empties). The browser never gets the API secret. Rooms are `smartland-<call id>`. Tables are in migration 006.
+- **Caps that keep it at $0** (LiveKit's free Build plan has 5,000 participant minutes a month): each visit lasts at most 60 minutes (`CALL_MAX_MINUTES`); each business gets 600 participant minutes a month (`CALLS_ORG_MONTH_MINUTES`); new calls stop for everyone at 4,000 (`CALLS_SITE_MONTH_MINUTES`). Minutes are counted per person from joining to leaving, in Philippine months.
+- **Counting who's in**: the app reports leaving (with `keepalive`, so closing the page still counts). When a call looks full, the server asks LiveKit who's really there. LiveKit's webhooks (`POST /api/calls/livekit`, signed with the API secret) make the counts exact; add that URL under Settings, Webhooks in LiveKit Cloud. Calls past their time are ended in LiveKit and here on the next request.
+- **Privacy**: nothing is recorded (no Egress). Names of who joined are kept 30 days after the call; only monthly minute totals after that. LiveKit keeps join records in its US region. The privacy notice says so, and the buyer's consent text is on the tour page.
+- **Off unless configured**: `LIVEKIT_URL`, `LIVEKIT_API_KEY`, and `LIVEKIT_API_SECRET`. Without all three, the buttons stay hidden and the routes answer 503. `deploy.ps1` reads them by name from your user settings.
+- **The app**: `livekit-client` loads only when a call opens (`components/Call.tsx` lazy-loads `CallRoom.tsx`, about 148 KB gzipped).
 
 ### 7. Performance and UTM tracking (built)
 

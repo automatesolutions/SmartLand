@@ -120,7 +120,12 @@ def workspace(org_id: str, user: dict = Depends(authenticate)):
     role = _org(user, org_id, "workspace.view")
     ws.ensure_general(org_id, user["id"])
     members = [{"id": m["id"], "name": m["name"] or m["email"], "role": m["role"]} for m in orgs_repo.members(org_id)]
-    return {"channels": ws.channels_for(org_id, user["id"]), "members": members, "role": role}
+    # Imported here: calls.py builds on this module's checks
+    import calls
+
+    huddles = calls.huddles_by_channel(org_id)
+    channels = [{**ch, "huddle": huddles.get(ch["id"])} for ch in ws.channels_for(org_id, user["id"])]
+    return {"channels": channels, "members": members, "role": role}
 
 
 @router.post("/api/business/orgs/{org_id}/workspace/channels", status_code=201)

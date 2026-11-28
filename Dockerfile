@@ -21,7 +21,8 @@ RUN python -c "import urllib.request as u; u.urlretrieve('https://github.com/ben
 
 COPY backend/main.py backend/store.py backend/storage.py backend/listing_rules.py backend/db.py backend/deps.py \
      backend/business.py backend/crm.py backend/crm_repo.py backend/orgs_repo.py backend/permissions.py backend/workspace.py backend/workspace_repo.py \
-     backend/performance.py backend/performance_repo.py backend/videos.py backend/videos_repo.py backend/video_storage.py backend/start.sh ./
+     backend/performance.py backend/performance_repo.py backend/videos.py backend/videos_repo.py backend/video_storage.py \
+     backend/calls.py backend/calls_repo.py backend/livekit_api.py backend/start.sh ./
 COPY backend/migrations/ ./migrations/
 # Windows checkouts can add CR line endings, which sh can't run
 RUN sed -i 's/\r$//' start.sh && chmod +x start.sh

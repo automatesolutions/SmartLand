@@ -12,6 +12,7 @@ import { AccountPage } from './pages/Account'
 import { SharedPage } from './pages/Shared'
 import { ListingsPage } from './pages/Listings'
 import { ListingPage } from './pages/Listing'
+import { TourPage } from './pages/Tour'
 import { NewListingPage, NewListingPickerPage } from './pages/NewListing'
 import { ReviewsPage } from './pages/Reviews'
 import { MyListingsPage } from './pages/MyListings'
@@ -90,6 +91,7 @@ export default function App() {
           <Route path="listings/mine" element={<MyListingsPage />} />
           <Route path="listings/:slug" element={<ListingsPage />} />
           <Route path="listing/:id" element={<ListingPage />} />
+          <Route path="tour/:token" element={<TourPage />} />
           <Route path="business" element={<BusinessPage />} />
           <Route path="business/new" element={<NewOrgPage />} />
           <Route path="business/team" element={<TeamPage />} />

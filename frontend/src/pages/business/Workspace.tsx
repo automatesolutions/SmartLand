@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Link, useLocation, useSearchParams } from 'react-router-dom'
-import { Archive, AtSign, ChevronLeft, LoaderCircle, MessageSquarePlus, Plus, Send, X } from 'lucide-react'
-import { ApiError, workspaceApi, type Org, type Workspace, type WsChannel, type WsMember, type WsMessage } from '../../lib/api'
+import { Archive, AtSign, ChevronLeft, Headphones, LoaderCircle, MessageSquarePlus, Plus, Send, X } from 'lucide-react'
+import { ApiError, callsApi, workspaceApi, type CallPass, type Org, type Workspace, type WsChannel, type WsMember, type WsMessage } from '../../lib/api'
+import { useCallsConfig } from '../../lib/calls'
+import { Call, type LeaveReason } from '../../components/Call'
 import { useUser } from '../../lib/auth'
 import { canManage, useCurrentOrg, useMyOrgs } from '../../lib/business'
 import { formatDate } from '../../lib/format'
@@ -87,6 +89,13 @@ function Sidebar({
         }`}
       >
         <span className="min-w-0 flex-1 truncate">{channelLabel(c)}</span>
+        {c.huddle && (
+          <span className="inline-flex shrink-0 items-center gap-xxs text-caption text-positive">
+            <Headphones size={14} aria-hidden />
+            <span className="sr-only">Huddle on,</span>
+            {c.huddle.people.length || ''}
+          </span>
+        )}
         <Badge c={c} />
       </button>
     </li>
@@ -402,6 +411,64 @@ function MessageRow({
   )
 }
 
+/** Start or join the channel's huddle. The call opens full screen. */
+function HuddleButton({ org, ws, channel, onChanged }: { org: Org; ws: Workspace; channel: WsChannel; onChanged: () => void }) {
+  const cfg = useCallsConfig()
+  const [pass, setPass] = useState<CallPass | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const on = channel.huddle
+  if (!cfg?.enabled || (!on && ws.role === 'guest')) return null
+
+  async function open() {
+    setBusy(true)
+    setError(null)
+    try {
+      setPass(await callsApi.huddle(org.id, channel.id))
+    } catch (err) {
+      setError(err instanceof ApiError && err.detail ? err.detail : 'The huddle didn’t open. Check your connection, then try again.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  function closed(reason: LeaveReason) {
+    if (pass && reason !== 'ended') void callsApi.leave(org.id, pass.call.id).catch(() => {})
+    if (reason === 'failed') setError('You were disconnected from the huddle. Join again to go back in.')
+    setPass(null)
+    onChanged()
+  }
+
+  const n = on?.people.length ?? 0
+  return (
+    <div className="flex shrink-0 flex-col items-end">
+      <Button
+        variant={on ? 'primary' : 'secondary'}
+        disabled={busy}
+        icon={busy ? <LoaderCircle size={16} className="animate-spin" aria-hidden /> : <Headphones size={16} aria-hidden />}
+        onClick={() => void open()}
+      >
+        {on ? (n ? `Join huddle (${n})` : 'Join huddle') : 'Start huddle'}
+      </Button>
+      {error && (
+        <p role="alert" className="max-w-64 text-right text-caption text-critical">
+          {error}
+        </p>
+      )}
+      {pass && (
+        <Call
+          pass={pass}
+          title={`Huddle in ${channelLabel(channel)}`}
+          start="voice"
+          screenShare
+          onLeave={closed}
+          onEndForAll={canManage(ws.role) ? () => callsApi.end(org.id, pass.call.id) : undefined}
+        />
+      )}
+    </div>
+  )
+}
+
 function ChannelView({
   org,
   ws,
@@ -409,6 +476,7 @@ function ChannelView({
   onBack,
   onRead,
   onArchived,
+  onHuddle,
 }: {
   org: Org
   ws: Workspace
@@ -416,6 +484,7 @@ function ChannelView({
   onBack: () => void
   onRead: () => void
   onArchived: () => void
+  onHuddle: () => void
 }) {
   const [list, setList] = useState<WsMessage[] | null>(null)
   const [failed, setFailed] = useState(false)
@@ -503,7 +572,11 @@ function ChannelView({
         <div className="min-w-0 flex-1">
           <h2 className="truncate font-semibold">{label}</h2>
           {channel.topic && <p className="truncate text-caption text-ink-secondary">{channel.topic}</p>}
+          {channel.huddle && channel.huddle.people.length > 0 && (
+            <p className="truncate text-caption text-positive">In the huddle: {channel.huddle.people.join(', ')}</p>
+          )}
         </div>
+        <HuddleButton org={org} ws={ws} channel={channel} onChanged={onHuddle} />
         {channel.kind === 'channel' && channel.name !== 'general' && canManage(ws.role) && (
           <Button
             variant="plain"
@@ -657,6 +730,7 @@ function OrgWorkspace({ org, orgs }: { org: Org; orgs: Org[] }) {
                 setParams({})
                 void load()
               }}
+              onHuddle={() => void load()}
             />
           ) : (
             <div className="hidden items-center justify-center rounded-lg border border-dashed border-hairline p-xl text-ink-secondary md:flex">

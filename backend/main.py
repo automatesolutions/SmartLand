@@ -20,6 +20,8 @@ import jwt
 import httpx
 
 import business
+import calls
+import calls_repo
 import crm
 import crm_repo
 import listing_rules
@@ -68,6 +70,8 @@ app.include_router(workspace.router)
 app.include_router(performance.router)
 # Walkthrough videos on listings, stored in R2 (videos.py)
 app.include_router(videos.router)
+# Huddles and live tours over LiveKit (calls.py)
+app.include_router(calls.router)
 
 
 # Database Connections -------------------------------------------------------
@@ -111,6 +115,11 @@ async def startup_event():
         videos.clear_stale()
     except Exception as e:
         logger.warning(f"Video cleanup failed: {e}")
+    try:
+        calls.tidy()
+        calls_repo.purge_old()
+    except Exception as e:
+        logger.warning(f"Call cleanup failed: {e}")
 
 
 # Pydantic Models for Validation ---------------------------------------------

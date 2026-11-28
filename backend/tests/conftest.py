@@ -15,6 +15,9 @@ os.environ["UPLOAD_DIR"] = os.path.join(_scratch, "uploads")
 os.environ["JWT_SECRET"] = "test-secret-not-for-production"
 # Videos on disk, even when this computer has R2 keys set: tests never call Cloudflare
 os.environ["VIDEO_STORAGE"] = "local"
+# Calls stay off unless a test turns them on with fake keys; nothing calls LiveKit
+for _k in ("LIVEKIT_URL", "LIVEKIT_API_KEY", "LIVEKIT_API_SECRET"):
+    os.environ.pop(_k, None)
 
 from fastapi.testclient import TestClient  # noqa: E402
 

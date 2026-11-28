@@ -18,6 +18,7 @@ import {
 import { performanceApi, workspaceApi, type Crm, type Org, type Performance } from '../../lib/api'
 import { useUser } from '../../lib/auth'
 import { canManage, dueLeads, followUpLabel, orgLine, orgTitle, today, useCrm, useCurrentOrg, useMyOrgs } from '../../lib/business'
+import { useCallsConfig } from '../../lib/calls'
 import { useListingSchema } from '../../lib/listings'
 import { Button, ButtonLink } from '../../components/Button'
 import { Skeleton } from '../../components/States'
@@ -218,6 +219,7 @@ function OrgHome({ org }: { org: Org }) {
   const personal = org.kind === 'personal'
   const guest = org.role === 'guest'
   const videoOn = !!schema?.video?.enabled
+  const callsOn = !!useCallsConfig()?.enabled
 
   const open = crm ? crm.leads.filter((l) => !l.closed_at) : []
   const leadUnread = crm ? crm.leads.reduce((n, l) => n + l.unread, 0) : 0
@@ -306,15 +308,20 @@ function OrgHome({ org }: { org: Org }) {
             {org.members === 1 ? 'Only you so far.' : `${org.members} people.`} {canManage(org.role) ? 'Invite people and set their roles.' : 'See who’s on the team.'}
           </Tile>
         )}
-        {!personal && (
-          <Tile
-            glyph={<Headphones {...icon} />}
-            title="Huddles"
-            extra={<span className="ml-xs rounded-pill border border-hairline px-xs text-caption font-regular text-ink-secondary">Coming soon</span>}
-          >
-            Voice and video calls with your team, and live tours for buyers.
-          </Tile>
-        )}
+        {!personal &&
+          (callsOn ? (
+            <Tile to="/business/workspace" glyph={<Headphones {...icon} />} title="Huddles">
+              Start a call from any team chat channel. Live tours for buyers start from a lead.
+            </Tile>
+          ) : (
+            <Tile
+              glyph={<Headphones {...icon} />}
+              title="Huddles"
+              extra={<span className="ml-xs rounded-pill border border-hairline px-xs text-caption font-regular text-ink-secondary">Coming soon</span>}
+            >
+              Voice and video calls with your team, and live tours for buyers.
+            </Tile>
+          ))}
       </section>
 
       {!guest && <YourListings org={org} perf={week.perf} failed={week.failed} videoOn={videoOn} maxVideos={schema?.video?.max_per_listing ?? 3} />}
